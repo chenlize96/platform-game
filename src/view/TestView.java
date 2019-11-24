@@ -3,6 +3,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import controller.MainCharacterController;
+import javafx.animation.AnimationTimer;
 import javafx.animation.PathTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
@@ -27,6 +28,7 @@ public class TestView  extends Application implements Observer  {
 	// Initialize the window size
 	final int WINDOW_WIDTH = 600;
 	final int WINDOW_HEIGHT = 300;
+	final int ticksPerFrame = 60;
 	
 	private int[] startpoint = {20,20};
 	private int[] character_size = {20,20};
@@ -41,7 +43,7 @@ public class TestView  extends Application implements Observer  {
 		launch(TestView.class,args);
 	}
 	/**
-	 * Set up the main character(place holder as circle)
+	 * Set up the main character(place holder as circle) and empty scene
 	 * @author Eujin Ko
 	 */
 	@Override
@@ -62,9 +64,15 @@ public class TestView  extends Application implements Observer  {
 
 	    
 	    scene.setOnKeyPressed(new MainCharacterMovement());
+	    
+	    //How to implement tick?????/
 	}
 
 
+	/**
+	 * Update function 
+	 * @author Eujin Ko
+	 */
 	@Override
 	public void update(Observable o, Object arg) {
 		CharacterMoveMessage msg = (CharacterMoveMessage) arg;
@@ -72,6 +80,12 @@ public class TestView  extends Application implements Observer  {
 		
 	}
 	
+	/**
+	 * Parses CharacterMoveMessage and moves the character object from the scene
+	 * TODO: Need to setup Gravity
+	 * @param msg CharacterMoveMessage which contains information for the movement of character
+	 * @author Eujin Ko
+	 */
 	public void characterMoveTransition(CharacterMoveMessage msg) {
 		
 		int prevX = msg.getXMoveFrom();
@@ -126,7 +140,10 @@ public class TestView  extends Application implements Observer  {
 				System.out.println("LEFT");
 				character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, -move_size, 0);
 				break;
-			
+			case SPACE:
+				System.out.println("JUMP");
+				character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, 0, -move_size*7);
+				break;
 			}
 
 		}

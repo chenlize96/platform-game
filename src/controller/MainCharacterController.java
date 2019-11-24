@@ -4,13 +4,31 @@ import java.util.Arrays;
 
 import model.MainCharacterModel;
 
+/**
+ * Controller for the MainCharacterModel
+ * @author Eujin Ko
+ *
+ */
 public class MainCharacterController {
-	MainCharacterModel character_model;
+	private MainCharacterModel character_model;
 	
+	/**
+	 * Constructor for MainCharacterController, saves the model object into global variable
+	 * @param model
+	 * @author Eujin Ko
+	 */
 	public MainCharacterController(MainCharacterModel model) {
 		this.character_model = model;
 	}
 	
+	/**
+	 * Calls the MainCharacterModel's function to move the position of the character
+	 * @param window_width width size of the window
+	 * @param window_height height size of the window
+	 * @param moveX x movement of main character
+	 * @param moveY y movement of main character
+	 * @author Eujin Ko
+	 */
 	public void moveCharacter(int window_width, int window_height,
 			int moveX, int moveY) {
 		int curr_x = character_model.getCordX() + moveX;

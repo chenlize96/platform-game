@@ -2,6 +2,11 @@ package model;
 
 import java.io.Serializable;
 
+/**
+ * A class to exchange movement status of the main character
+ * @author Eujin Ko
+ *
+ */
 public class CharacterMoveMessage implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -11,6 +16,14 @@ public class CharacterMoveMessage implements Serializable {
     private int x_move_to;
     private int y_move_to;
     
+    /**
+     * Constructor for the CharacterMoveMessage, saves the coordinate of previous location to the new position
+     * @param x_move_from previous x coordinate
+     * @param y_move_from previous y coordinate
+     * @param x_move_to new x coordinate
+     * @param y_move_to new y coordinate
+     * @author Eujin Ko
+     */
     public CharacterMoveMessage(int x_move_from, int y_move_from,
     		int x_move_to, int y_move_to){
     	
