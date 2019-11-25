@@ -7,6 +7,7 @@ import javafx.animation.AnimationTimer;
 import javafx.animation.PathTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -29,6 +30,7 @@ public class TestView  extends Application implements Observer  {
 	final int WINDOW_WIDTH = 600;
 	final int WINDOW_HEIGHT = 300;
 	final int ticksPerFrame = 60;
+	final int MOVE_SIZE = 10;
 	
 	private int[] startpoint = {20,20};
 	private int[] character_size = {20,20};
@@ -61,11 +63,34 @@ public class TestView  extends Application implements Observer  {
 		stage.setTitle("TestStage-makes the circle moves smoothly while detecting edge");
 		stage.show();
 		// STAGE PLACE HOLDER:REMOVE_END
+		
+		
+		
+		AnimationTimer at = new AnimationTimer() {
+			@Override
+			public void handle(long now) {
+			// perform ticksPerFrame ticks
+			// by default this is 1
+				for (int i = 0; i < ticksPerFrame; i++) {
+//					tick();
+				}
+			}
+		};
+		at.start();
+
 
 	    
 	    scene.setOnKeyPressed(new MainCharacterMovement());
 	    
 	    //How to implement tick?????/
+	}
+	
+	public void tick() {
+		gravity();
+	}
+	
+	public void gravity() {
+		character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, 0, +MOVE_SIZE);
 	}
 
 
@@ -76,7 +101,15 @@ public class TestView  extends Application implements Observer  {
 	@Override
 	public void update(Observable o, Object arg) {
 		CharacterMoveMessage msg = (CharacterMoveMessage) arg;
-		characterMoveTransition(msg);
+		Platform.runLater(new Runnable() {
+
+			@Override
+			public void run() {
+				characterMoveTransition(msg);
+			}
+			
+		});
+		
 		
 	}
 	
@@ -117,7 +150,6 @@ public class TestView  extends Application implements Observer  {
 	 *
 	 */
 	class MainCharacterMovement implements EventHandler<KeyEvent>{
-		final int move_size = 10;
 
 		@Override
 		public void handle(KeyEvent event) {
@@ -126,23 +158,23 @@ public class TestView  extends Application implements Observer  {
 			
 			case DOWN:
 				System.out.println("DOWN");
-				character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, 0, +move_size);
+				character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, 0, +MOVE_SIZE);
 				break;
 			case UP:
 				System.out.println("UP");
-				character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, 0, -move_size);
+				character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, 0, -MOVE_SIZE);
 				break;
 			case RIGHT:
 				System.out.println("RIGHT");
-				character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, +move_size, 0);
+				character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, +MOVE_SIZE, 0);
 				break;
 			case LEFT:
 				System.out.println("LEFT");
-				character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, -move_size, 0);
+				character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, -MOVE_SIZE, 0);
 				break;
 			case SPACE:
 				System.out.println("JUMP");
-				character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, 0, -move_size*7);
+				character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, 0, -MOVE_SIZE*7);
 				break;
 			}
 
