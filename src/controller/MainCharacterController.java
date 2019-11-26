@@ -62,4 +62,10 @@ public class MainCharacterController {
 		
 	}
 
+	public boolean returnJumpStatus() {
+		return character_model.returnJumpStatus();
+	}
+	public void toggleJumpStatus() {
+		character_model.toggleJump();
+	}
 }

@@ -49,7 +49,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	final int WINDOW_WIDTH = 800;
 	final int WINDOW_HEIGHT = 600;
 	final int ticksPerFrame = 60;
-	final int MOVE_SIZE = 10;
+	final int MOVE_SIZE = 5;
 	
 	private int[] startpoint = {20,20};
 	private int[] character_size = {20,20};
@@ -191,11 +191,15 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		}
 
 		//y-axis
-		move_direction[1] = velocity[1];
 		if(velocity[1] < MOVE_SIZE) {
 			velocity[1] += MOVE_SIZE;
-		}else {
+			move_direction[1] = -MOVE_SIZE;
+		}else if(velocity[1] == 0){
 			velocity[1] -= MOVE_SIZE;
+			move_direction[1] = MOVE_SIZE;
+		}else {
+			move_direction[1] = velocity[1];
+			character_controller.toggleJumpStatus();
 		}
 		
 		character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, move_direction[0], move_direction[1]);
@@ -272,9 +276,11 @@ public class PuzzlePlatformerView extends Application implements Observer {
 				velocity[0] = -MOVE_SIZE;
 				break;
 			case SPACE:
-				if(!character_model.returnJumpStatus()) {
-					velocity[1] = -MOVE_SIZE*5;
-					System.out.println("JUMP");
+				System.out.println("JUMP");
+				if(!character_controller.returnJumpStatus()) {
+					velocity[1] = -MOVE_SIZE*10;
+//					System.out.println("JUMP");
+					character_controller.toggleJumpStatus();
 				}
 				break;
 			}
