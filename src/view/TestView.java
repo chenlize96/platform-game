@@ -72,7 +72,7 @@ public class TestView  extends Application implements Observer  {
 			// perform ticksPerFrame ticks
 			// by default this is 1
 				for (int i = 0; i < ticksPerFrame; i++) {
-//					tick();
+					tick();
 				}
 			}
 		};
