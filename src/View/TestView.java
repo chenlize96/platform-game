@@ -1,7 +1,9 @@
-package View;
+package view;
+
 import java.util.Observable;
 import java.util.Observer;
 
+import controller.MainCharacterController;
 import javafx.animation.AnimationTimer;
 import javafx.animation.PathTransition;
 import javafx.application.Application;
@@ -17,6 +19,8 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import model.CharacterMoveMessage;
+import model.MainCharacterModel;
 
 public class TestView  extends Application implements Observer  {
 	private double cordX = 100;
