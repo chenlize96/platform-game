@@ -55,6 +55,7 @@ public class MainCharacterController {
 		}else if(curr_y > window_height-char_height) {
 			curr_y= window_height-char_height;
 			System.out.println("4. COLLISON("+curr_x+","+curr_y+")");
+			character_model.toggleJump();
 		}
 		
 		character_model.moveCharacter(curr_x, curr_y);

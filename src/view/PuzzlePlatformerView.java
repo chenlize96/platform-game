@@ -58,6 +58,12 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	private Circle character = new Circle(startpoint[0], startpoint[1], 20, Color.RED);
 	private MainCharacterModel character_model;
 	private MainCharacterController character_controller;
+	private int[] velocity = {0, + MOVE_SIZE};
+	
+	
+	public static void main(String[] args) {
+		launch(PuzzlePlatformerView.class, args);
+	}
 	
 	
 	// ATTENTION: for now, we directly use number, we would change them to [public final] later 
@@ -145,12 +151,13 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		
 		
 		AnimationTimer at = new AnimationTimer() {
+			int ticksPerFrame = 1;
 			@Override
 			public void handle(long now) {
 			// perform ticksPerFrame ticks
 			// by default this is 1
 				for (int i = 0; i < ticksPerFrame; i++) {
-//					callTickController();
+					callTickController();
 				}
 			}
 		};
@@ -160,12 +167,38 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		    
 	}
 	
+	/** Need to move this function into the controller
+	 * @author Eujin Ko
+	 */
 	public void callTickController() {
 		gravity();
 	}
 	
+	/** Need to move this function into the model
+	 * @author Eujin Ko
+	 */
 	public void gravity() {
-		character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, 0, +MOVE_SIZE);
+		int[] move_direction = {0,0};
+		//x-axis
+		if(velocity[0] != 0) {
+			if(velocity[0]<0) {
+				move_direction[0] = -MOVE_SIZE;
+				velocity[0] += MOVE_SIZE;
+			}else {
+				move_direction[0] = +MOVE_SIZE;
+				velocity[0] -= MOVE_SIZE;
+			}
+		}
+
+		//y-axis
+		move_direction[1] = velocity[1];
+		if(velocity[1] < MOVE_SIZE) {
+			velocity[1] += MOVE_SIZE;
+		}else {
+			velocity[1] -= MOVE_SIZE;
+		}
+		
+		character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, move_direction[0], move_direction[1]);
 	}
 
 
@@ -230,26 +263,19 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		public void handle(KeyEvent event) {
 		    
 			switch(event.getCode()) {
-			
-			case DOWN:
-				System.out.println("DOWN");
-				character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, 0, +MOVE_SIZE);
-				break;
-			case UP:
-				System.out.println("UP");
-				character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, 0, -MOVE_SIZE);
-				break;
 			case RIGHT:
 				System.out.println("RIGHT");
-				character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, +MOVE_SIZE, 0);
+				velocity[0] = MOVE_SIZE;
 				break;
 			case LEFT:
 				System.out.println("LEFT");
-				character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, -MOVE_SIZE, 0);
+				velocity[0] = -MOVE_SIZE;
 				break;
 			case SPACE:
-				System.out.println("JUMP");
-				character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, 0, -MOVE_SIZE*12);
+				if(!character_model.returnJumpStatus()) {
+					velocity[1] = -MOVE_SIZE*5;
+					System.out.println("JUMP");
+				}
 				break;
 			}
 
