@@ -2,12 +2,14 @@ package model;
 
 import java.util.Observable;
 
+import message.CharacterMoveMessage;
+
 /**
  * Main Character Model
  * @author Eujin Ko
  *
  */
-public class MainCharacterModel extends Observable{
+public class MainCharacterModel{
 	boolean isJumping;
 	
 	//Character position
@@ -114,7 +116,8 @@ public class MainCharacterModel extends Observable{
 	 * @param moveY new Y coordinate for the character
 	 * @author Eujin Ko
 	 */
-	public void moveCharacter(int moveX, int moveY) {
+	public CharacterMoveMessage moveCharacter(int moveX, int moveY) {
+
 		if(cord_x != moveX || cord_y != moveY) {
 			
 			CharacterMoveMessage msg = new CharacterMoveMessage(cord_x,cord_y, moveX, moveY);
@@ -122,9 +125,9 @@ public class MainCharacterModel extends Observable{
 			this.cord_x = moveX;
 			this.cord_y = moveY;
 			
-			setChanged();
-			notifyObservers(msg);	
+			return msg;
 		}
+		return null;
 	}
 
 }

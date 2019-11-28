@@ -1,19 +1,17 @@
 package view;
 
-import java.awt.event.KeyListener;
 import java.util.Observable;
 import java.util.Observer;
 
+import controller.ControllerCollections;
 import controller.MainCharacterController;
 import javafx.animation.AnimationTimer;
 import javafx.animation.PathTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -22,27 +20,28 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import model.CharacterMoveMessage;
+import message.CharacterMoveMessage;
+import message.CollectionsMessage;
 import model.MainCharacterModel;
+import view.TestView.MovementPressed;
+import view.TestView.MovementReleased;
 
 public class TestView  extends Application implements Observer  {
-	private double cordX = 100;
-	private double cordY = 100;
-    
+
+	
+	ControllerCollections controller;
+	MainCharacterController character_controller;
+	
+	private int[] startpoint = {20,20};
+	private int[] character_size = {20,20};
+
+	private Circle character = new Circle(startpoint[0], startpoint[1], 20, Color.RED);
+	
 	// Initialize the window size
 	final int WINDOW_WIDTH = 600;
 	final int WINDOW_HEIGHT = 300;
 	final int ticksPerFrame = 1;
 	final int MOVE_SIZE = 10;
-	
-	private int[] startpoint = {20,20};
-	private int[] character_size = {20,20};
-	
-	//Character
-	private Circle character = new Circle(startpoint[0], startpoint[1], 20, Color.RED);
-	private MainCharacterModel character_model;
-	private MainCharacterController character_controller;
-
 	
 	private boolean UP = false;
 	private boolean DOWN = false;
@@ -50,23 +49,22 @@ public class TestView  extends Application implements Observer  {
 	private boolean LEFT = false;
 	private boolean JUMP = false;
 	
-	
-	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		launch(TestView.class,args);
 	}
-	/**
-	 * Set up the main character(place holder as circle) and empty scene
-	 * @author Eujin Ko
-	 */
+
+	
 	@Override
 	public void start(Stage stage) throws Exception {
+		this.controller = new ControllerCollections(this);
+		this.controller.callModelAddPlayer(startpoint, character_size);
+		this.character_controller = controller.returnMainCharacterController();
 		
-		character_model = new MainCharacterModel(
-				startpoint[0],startpoint[1],character_size[0],character_size[1]);
-		character_model.addObserver(this);
-		character_controller = new MainCharacterController(character_model);
+		setupStage(stage);
+	}
+	
+	public void setupStage(Stage stage) {
 		
 		// STAGE PLACE HOLDER:REMOVE
 	    Group root = new Group(character);
@@ -75,7 +73,6 @@ public class TestView  extends Application implements Observer  {
 		stage.setTitle("TestStage-makes the circle moves smoothly while detecting edge");
 		stage.show();
 		// STAGE PLACE HOLDER:REMOVE_END
-		
 		
 		
 		AnimationTimer at = new AnimationTimer() {
@@ -94,14 +91,22 @@ public class TestView  extends Application implements Observer  {
 	    
 	    scene.setOnKeyPressed(new MovementPressed());
 	    scene.setOnKeyReleased(new MovementReleased());
-	    
-	    //How to implement tick?????/
+		
 	}
 	
-	public void tick() {
+
+	private void tick() {
+		handleCharacterVelocity();
+		controller.callModelTick();
+		
+	}
+	/**
+	 * @author Eujin Ko
+	 */
+	private void handleCharacterVelocity() {
 		int moveX=0; int moveY=0;
 		if(JUMP) {
-			moveY = -MOVE_SIZE*5;
+			moveY = -MOVE_SIZE*2;
 		}else if(UP) {
 			moveY = -MOVE_SIZE;
 		}
@@ -114,27 +119,21 @@ public class TestView  extends Application implements Observer  {
 			moveX = -MOVE_SIZE;
 		}
 		character_controller.addVelocity(moveX, moveY);
-		character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT);
 	}
 
 
-	/**
-	 * Update function 
-	 * @author Eujin Ko
-	 */
 	@Override
 	public void update(Observable o, Object arg) {
-		CharacterMoveMessage msg = (CharacterMoveMessage) arg;
+		CollectionsMessage msg = (CollectionsMessage) arg;
+		CharacterMoveMessage char_msg = msg.getCharacterMoveMessage();
 		Platform.runLater(new Runnable() {
 
 			@Override
 			public void run() {
-				characterMoveTransition(msg);
+				characterMoveTransition(char_msg);
 			}
 			
 		});
-		
-		
 	}
 	
 	/**
@@ -144,6 +143,9 @@ public class TestView  extends Application implements Observer  {
 	 * @author Eujin Ko
 	 */
 	public void characterMoveTransition(CharacterMoveMessage msg) {
+		if(msg == null) {
+			return;
+		}
 		
 		int prevX = msg.getXMoveFrom();
 		int prevY = msg.getYMoveFrom();
@@ -165,12 +167,13 @@ public class TestView  extends Application implements Observer  {
 	
 	
 	
+	
 	// Private Event Handler classes
 	
 	
 	/**
-	 * Private class that handles movement of the main character depends on KeyEvents
-	 * Available Movement: UP, DOWN, RIGHT, LEFT
+	 * Private class that handles movement of the main character depends on KeyEvents when key pressed
+	 * Available Movement: UP, DOWN, RIGHT, LEFT, JUMP
 	 * @author Eujin Ko
 	 *
 	 */
@@ -207,6 +210,12 @@ public class TestView  extends Application implements Observer  {
 		
 
 	}
+	/**
+	 * Private class that handles movement of the main character depends on KeyEvents when key released
+	 * Available Movement: UP, DOWN, RIGHT, LEFT, JUMP
+	 * @author Eujin Ko
+	 *
+	 */
 	class MovementReleased implements EventHandler<KeyEvent>{
 
 		@Override
@@ -235,5 +244,4 @@ public class TestView  extends Application implements Observer  {
 		
 
 	}
-
 }

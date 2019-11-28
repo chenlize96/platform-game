@@ -2,6 +2,7 @@ package controller;
 
 import java.util.Arrays;
 
+import message.CharacterMoveMessage;
 import model.MainCharacterModel;
 
 /**
@@ -30,7 +31,7 @@ public class MainCharacterController {
 	 * @param moveY y movement of main character
 	 * @author Eujin Ko
 	 */
-	public void moveCharacter(int window_width, int window_height) {
+	public CharacterMoveMessage moveCharacter(int window_width, int window_height) {
 		int moveX = 0;
 		int moveY = 0;
 		
@@ -87,7 +88,9 @@ public class MainCharacterController {
 			character_model.toggleJump();
 		}
 		
-		character_model.moveCharacter(curr_x, curr_y);
+		CharacterMoveMessage msg = character_model.moveCharacter(curr_x, curr_y);
+		
+		return msg;
 		
 	}
 	public void addVelocity(int dx, int dy) {
@@ -101,3 +104,4 @@ public class MainCharacterController {
 		character_model.toggleJump();
 	}
 }
+
