@@ -1,4 +1,4 @@
-package view;
+package placeholder_etc;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -23,8 +23,8 @@ import javafx.util.Duration;
 import message.CharacterMoveMessage;
 import message.CollectionsMessage;
 import model.MainCharacterModel;
-import view.TestView.MovementPressed;
-import view.TestView.MovementReleased;
+import placeholder_etc.TestView.MovementPressed;
+import placeholder_etc.TestView.MovementReleased;
 
 public class TestView  extends Application implements Observer  {
 
