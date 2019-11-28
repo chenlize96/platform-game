@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.event.KeyListener;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -8,9 +9,11 @@ import javafx.animation.AnimationTimer;
 import javafx.animation.PathTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -29,7 +32,7 @@ public class TestView  extends Application implements Observer  {
 	// Initialize the window size
 	final int WINDOW_WIDTH = 600;
 	final int WINDOW_HEIGHT = 300;
-	final int ticksPerFrame = 60;
+	final int ticksPerFrame = 1;
 	final int MOVE_SIZE = 10;
 	
 	private int[] startpoint = {20,20};
@@ -40,6 +43,15 @@ public class TestView  extends Application implements Observer  {
 	private MainCharacterModel character_model;
 	private MainCharacterController character_controller;
 
+	
+	private boolean UP = false;
+	private boolean DOWN = false;
+	private boolean RIGHT = false;
+	private boolean LEFT = false;
+	private boolean JUMP = false;
+	
+	
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		launch(TestView.class,args);
@@ -80,17 +92,29 @@ public class TestView  extends Application implements Observer  {
 
 
 	    
-	    scene.setOnKeyPressed(new MainCharacterMovement());
+	    scene.setOnKeyPressed(new MovementPressed());
+	    scene.setOnKeyReleased(new MovementReleased());
 	    
 	    //How to implement tick?????/
 	}
 	
 	public void tick() {
-		gravity();
-	}
-	
-	public void gravity() {
-		character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, 0, +MOVE_SIZE);
+		int moveX=0; int moveY=0;
+		if(JUMP) {
+			moveY = -MOVE_SIZE*5;
+		}else if(UP) {
+			moveY = -MOVE_SIZE;
+		}
+		
+		
+		if(RIGHT) {
+			moveX = MOVE_SIZE;
+		}
+		if(LEFT) {
+			moveX = -MOVE_SIZE;
+		}
+		character_controller.addVelocity(moveX, moveY);
+		character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT);
 	}
 
 
@@ -125,6 +149,7 @@ public class TestView  extends Application implements Observer  {
 		int prevY = msg.getYMoveFrom();
 		int curX = msg.getXMoveTo();
 		int curY = msg.getYMoveTo();
+		System.out.println(prevX+","+prevY+"->"+curX+","+curY);
 		
 	    Path path = new Path();
 	    path.getElements().add(new MoveTo(prevX, prevY));
@@ -149,7 +174,7 @@ public class TestView  extends Application implements Observer  {
 	 * @author Eujin Ko
 	 *
 	 */
-	class MainCharacterMovement implements EventHandler<KeyEvent>{
+	class MovementPressed implements EventHandler<KeyEvent>{
 
 		@Override
 		public void handle(KeyEvent event) {
@@ -158,30 +183,57 @@ public class TestView  extends Application implements Observer  {
 			
 			case DOWN:
 				System.out.println("DOWN");
-				character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, 0, +MOVE_SIZE);
+				DOWN = true;
 				break;
 			case UP:
 				System.out.println("UP");
-				character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, 0, -MOVE_SIZE);
+				UP = true;
 				break;
 			case RIGHT:
 				System.out.println("RIGHT");
-				character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, +MOVE_SIZE, 0);
+				RIGHT = true;
 				break;
 			case LEFT:
 				System.out.println("LEFT");
-				character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, -MOVE_SIZE, 0);
+				LEFT = true;
 				break;
 			case SPACE:
 				System.out.println("JUMP");
-				character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, 0, -MOVE_SIZE*7);
+				JUMP = true;
 				break;
 			}
 
 		}
+		
 
 	}
+	class MovementReleased implements EventHandler<KeyEvent>{
 
-	
+		@Override
+		public void handle(KeyEvent event) {
+		    
+			switch(event.getCode()) {
+			
+			case DOWN:
+				DOWN = false;
+				break;
+			case UP:
+				UP = false;
+				break;
+			case RIGHT:
+				RIGHT = false;
+				break;
+			case LEFT:
+				LEFT = false;
+				break;
+			case SPACE:
+				JUMP = false;
+				break;
+			}
+
+		}
+		
+
+	}
 
 }

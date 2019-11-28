@@ -14,6 +14,9 @@ public class MainCharacterModel extends Observable{
 	private int cord_x;
 	private int cord_y;
 	
+	private int dx=0;
+	private int dy=0;
+	
 	//Chracter size
 	private int size_width = 20;
 	private int size_height = 20;
@@ -91,6 +94,20 @@ public class MainCharacterModel extends Observable{
 		return this.size_height;
 	}
 	
+	public void addVelocity(int x, int y) {
+		dx += x;
+		dy += y;
+	}
+	public void setVelocity(int x, int y) {
+		dx = x;
+		dy = y;
+	}
+	public int getdx() {
+		return this.dx;
+	}
+	public int getdy() {
+		return this.dy;
+	}
 	/**
 	 * Moves the character into position {moveX, moveY}
 	 * @param moveX new X coordinate for the character

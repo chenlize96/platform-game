@@ -41,7 +41,6 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import model.CharacterMoveMessage;
 import model.MainCharacterModel;
-import view.TestView.MainCharacterMovement;
 
 public class PuzzlePlatformerView extends Application implements Observer {
     
@@ -202,7 +201,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 			character_controller.toggleJumpStatus();
 		}
 		
-		character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, move_direction[0], move_direction[1]);
+//		character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, move_direction[0], move_direction[1]);
 	}
 
 
