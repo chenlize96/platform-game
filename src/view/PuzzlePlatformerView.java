@@ -1,7 +1,11 @@
 package view;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Scanner;
 
 import controller.MainCharacterController;
 import javafx.animation.AnimationTimer;
@@ -36,6 +40,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -54,15 +59,55 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	private int[] startpoint = {20,20};
 	private int[] character_size = {20,20};
 	
+	private int unit_size = 25; // every unit in the map is 25*25    ***ATTENTION***
 	//Character
-	private Circle character = new Circle(startpoint[0], startpoint[1], 20, Color.RED);
+	private Circle character = new Circle(startpoint[0], startpoint[1], 10, Color.RED); //radius = 10
 	private MainCharacterModel character_model;
 	private MainCharacterController character_controller;
+	
+	private char[][] map;
+	
+	//Lize
+	public PuzzlePlatformerView() {
+		map = getMap("PublicTestCases/basic.txt");// default
+		print2DArray();
+	}
+	
+	//Lize
+	public void print2DArray() { // helper function
+		for (int i = 0; i < map.length; i++) {
+			for (int j = 0; j <map[0].length; j++) {
+				System.out.print(map[i][j]);
+			}
+			System.out.println();
+		}
+	}
+	
+	//Lize
+	public char[][] getMap(String fileName) {
+		Scanner sc = null;
+		char[][] map = new char[WINDOW_HEIGHT / unit_size][WINDOW_WIDTH / unit_size];  // it should be 32*24 for 2d-array
+		try {
+			sc = new Scanner(new File(fileName));
+			int j = 0;
+            while (sc.hasNextLine()) {
+            	String[] line = sc.nextLine().split("");
+            	for (int i = 0; i < line.length; i++) {
+            		map[j][i] = line[i].charAt(0);
+            	}
+            	j++;
+            }
+            sc.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return map;
+	}
 	
 	
 	// ATTENTION: for now, we directly use number, we would change them to [public final] later 
 	/**
-	 * @author Leeze
+	 * @author Lize
 	 * @author Eujin Ko
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" }) // do not modify this line
@@ -80,6 +125,28 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		GridPane grid = new GridPane();
 		grid.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
 		grid.setPrefSize( WINDOW_WIDTH, WINDOW_HEIGHT ); // not sure its best size
+		//**********************************************
+		for (int i = 0; i < map.length; i++) {
+			for (int j = 0; j < map[0].length; j++) {
+				if (map[i][j] == '*') {
+					Rectangle wall = new Rectangle(25, 25); 
+					wall.setFill(Color.BLACK);
+					grid.add(wall, j, i);
+				}else if (map[i][j] == 'S') {// start
+					grid.add(character, j, i); //jump doesnt work
+				}else if (map[i][j] == 'E') { //exit
+					Rectangle exit = new Rectangle(25, 25); 
+					exit.setFill(Color.BLUE);
+					grid.add(exit, j, i);
+				}
+			}
+			
+		}
+		
+		
+		
+		
+		//**********************************************
 		// info contains hearts, time, bag (use vbox instead of BorderPane)
 		VBox info = new VBox();
 		info.setBackground(new Background(new BackgroundFill(Color.GREY, null, null)));
@@ -128,14 +195,14 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		BorderPane p = new BorderPane();
 		p.setCenter(grid); p.setTop(mb); p.setRight(info);
 		// there should be someway to zoom up automatically without influencing coordinates (do later or ignore)
-		Scene scene = new Scene(p, 1000, 600); 
+		Scene scene = new Scene(p, 1000, 625); 
 		stage.setScene(scene); stage.setTitle("Puzzle Platformer");
 		stage.show();
 		
 		
 		
 		// Need to fix the gravity and event handler but added to show the progress
-		grid.add(character, startpoint[0],startpoint[1]);
+		
 		
 		character_model = new MainCharacterModel(
 				startpoint[0],startpoint[1],character_size[0],character_size[1]);
