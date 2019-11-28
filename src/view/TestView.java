@@ -64,6 +64,7 @@ public class TestView  extends Application implements Observer  {
 		setupStage(stage);
 	}
 	
+	//PLACEHOLDER
 	public void setupStage(Stage stage) {
 		
 		// STAGE PLACE HOLDER:REMOVE
@@ -94,13 +95,17 @@ public class TestView  extends Application implements Observer  {
 		
 	}
 	
-
+	/**
+	 * Calls tick using ControllerCollections & set up current velocity
+	 * @author Eujin Ko
+	 */
 	private void tick() {
 		handleCharacterVelocity();
 		controller.callModelTick();
 		
 	}
 	/**
+	 * Setup current Velocity according to the key pressed
 	 * @author Eujin Ko
 	 */
 	private void handleCharacterVelocity() {
@@ -122,6 +127,10 @@ public class TestView  extends Application implements Observer  {
 	}
 
 
+	/**
+	 * Fetches the message received from observable, updates the view
+	 * @author Eujin Ko
+	 */
 	@Override
 	public void update(Observable o, Object arg) {
 		CollectionsMessage msg = (CollectionsMessage) arg;

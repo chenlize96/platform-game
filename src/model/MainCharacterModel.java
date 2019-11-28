@@ -95,18 +95,41 @@ public class MainCharacterModel{
 	public int getCharSizeHeight() {
 		return this.size_height;
 	}
-	
+	/**
+	 * Adds velocity in dx, dy direction
+	 * @param x
+	 * @param y
+	 * @author Eujin Ko
+	 */
 	public void addVelocity(int x, int y) {
 		dx += x;
 		dy += y;
 	}
+	/**
+	 * Set up velocity directly
+	 * @param x
+	 * @param y
+	 * @author Eujin Ko
+	 */
 	public void setVelocity(int x, int y) {
 		dx = x;
 		dy = y;
 	}
+	
+	/**
+	 * Returns dx ( velocity in x direction )
+	 * @return int
+	 * @author Eujin Ko
+	 */
 	public int getdx() {
 		return this.dx;
 	}
+	
+	/**
+	 * Returns dy ( velocity in y direction )
+	 * @return int
+	 * @author Eujin Ko
+	 */
 	public int getdy() {
 		return this.dy;
 	}
