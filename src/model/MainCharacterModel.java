@@ -2,17 +2,22 @@ package model;
 
 import java.util.Observable;
 
+import message.CharacterMoveMessage;
+
 /**
  * Main Character Model
  * @author Eujin Ko
  *
  */
-public class MainCharacterModel extends Observable{
+public class MainCharacterModel{
 	boolean isJumping;
 	
 	//Character position
 	private int cord_x;
 	private int cord_y;
+	
+	private int dx=0;
+	private int dy=0;
 	
 	//Chracter size
 	private int size_width = 20;
@@ -90,14 +95,52 @@ public class MainCharacterModel extends Observable{
 	public int getCharSizeHeight() {
 		return this.size_height;
 	}
+	/**
+	 * Adds velocity in dx, dy direction
+	 * @param x
+	 * @param y
+	 * @author Eujin Ko
+	 */
+	public void addVelocity(int x, int y) {
+		dx += x;
+		dy += y;
+	}
+	/**
+	 * Set up velocity directly
+	 * @param x
+	 * @param y
+	 * @author Eujin Ko
+	 */
+	public void setVelocity(int x, int y) {
+		dx = x;
+		dy = y;
+	}
 	
+	/**
+	 * Returns dx ( velocity in x direction )
+	 * @return int
+	 * @author Eujin Ko
+	 */
+	public int getdx() {
+		return this.dx;
+	}
+	
+	/**
+	 * Returns dy ( velocity in y direction )
+	 * @return int
+	 * @author Eujin Ko
+	 */
+	public int getdy() {
+		return this.dy;
+	}
 	/**
 	 * Moves the character into position {moveX, moveY}
 	 * @param moveX new X coordinate for the character
 	 * @param moveY new Y coordinate for the character
 	 * @author Eujin Ko
 	 */
-	public void moveCharacter(int moveX, int moveY) {
+	public CharacterMoveMessage moveCharacter(int moveX, int moveY) {
+
 		if(cord_x != moveX || cord_y != moveY) {
 			
 			CharacterMoveMessage msg = new CharacterMoveMessage(cord_x,cord_y, moveX, moveY);
@@ -105,9 +148,9 @@ public class MainCharacterModel extends Observable{
 			this.cord_x = moveX;
 			this.cord_y = moveY;
 			
-			setChanged();
-			notifyObservers(msg);	
+			return msg;
 		}
+		return null;
 	}
 
 }
