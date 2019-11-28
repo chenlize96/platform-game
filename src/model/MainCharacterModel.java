@@ -20,8 +20,8 @@ public class MainCharacterModel{
 	private int dy=0;
 	
 	//Chracter size
-	private int size_width = 20;
-	private int size_height = 20;
+	private int size_width = 10;
+	private int size_height = 10;
 	
 	/**
 	 * Constructor for MainCharacterModel

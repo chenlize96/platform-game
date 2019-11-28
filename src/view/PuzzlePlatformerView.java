@@ -1,12 +1,11 @@
 package view;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Scanner;
 
+import controller.ControllerCollections;
 import controller.MainCharacterController;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
@@ -16,9 +15,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.geometry.HPos;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -27,11 +24,9 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -44,16 +39,15 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import model.CharacterMoveMessage;
-import model.MainCharacterModel;
-import view.TestView.MainCharacterMovement;
+import message.CharacterMoveMessage;
+import message.CollectionsMessage;
 
 public class PuzzlePlatformerView extends Application implements Observer {
     
 	// Initialize the window size
 	final int WINDOW_WIDTH = 800;
 	final int WINDOW_HEIGHT = 600;
-	final int ticksPerFrame = 60;
+	final int ticksPerFrame = 1;
 	final int MOVE_SIZE = 10;
 	
 	private int[] startpoint = {20,20};
@@ -61,9 +55,18 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	
 	private int unit_size = 25; // every unit in the map is 25*25    ***ATTENTION***
 	//Character
-	private Circle character = new Circle(startpoint[0], startpoint[1], 10, Color.RED); //radius = 10
-	private MainCharacterModel character_model;
-	private MainCharacterController character_controller;
+	private Rectangle character = new Rectangle(10, 10, Color.RED); //radius = 10
+	
+	private boolean UP = false;
+	private boolean DOWN = false;
+	private boolean RIGHT = false;
+	private boolean LEFT = false;
+	private boolean JUMP = false;
+	
+	ControllerCollections controller;
+	MainCharacterController character_controller;
+	
+	
 	
 	private char[][] map;
 	
@@ -105,14 +108,50 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	}
 	
 	
-	// ATTENTION: for now, we directly use number, we would change them to [public final] later 
+	// 
 	/**
-	 * @author Lize
 	 * @author Eujin Ko
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" }) // do not modify this line
 	@Override
 	public void start(Stage stage) throws Exception {
+		Scene scene = setupStage(stage);	//Lize's stage setup
+
+		this.controller = new ControllerCollections(this);
+		this.controller.callModelAddPlayer(startpoint, character_size);
+		this.character_controller = controller.returnMainCharacterController();
+		
+		
+//		AnimationTimer at = new AnimationTimer() {
+//			@Override
+//			public void handle(long now) {
+//			// perform ticksPerFrame ticks
+//			// by default this is 1
+//				for (int i = 0; i < ticksPerFrame; i++) {
+//					tick();
+//				}
+//			}
+//		};
+//		at.start();
+		
+		
+	    scene.setOnKeyPressed(new MovementPressed());
+	    scene.setOnKeyReleased(new MovementReleased());
+		
+		
+		// Need to fix the gravity and event handler but added to show the progress
+		//TODO CHARACTER
+		    
+	}
+	
+	
+	/**
+	 * <ATTENTION> for now, we directly use number, we would change them to [public final] later 
+	 * @param stage
+	 * @author Lize
+	 * @return 
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" }) // do not modify this line
+	public Scene setupStage(Stage stage) {
 		// make menu
 		Menu menu = new Menu("File"); 
 		MenuItem item1 = new MenuItem("New Game"); // it can handle levels, networking (do later)
@@ -133,6 +172,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 					wall.setFill(Color.BLACK);
 					grid.add(wall, j, i);
 				}else if (map[i][j] == 'S') {// start
+					
 					grid.add(character, j, i); //jump doesnt work
 				}else if (map[i][j] == 'E') { //exit
 					Rectangle exit = new Rectangle(25, 25); 
@@ -199,60 +239,58 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		stage.setScene(scene); stage.setTitle("Puzzle Platformer");
 		stage.show();
 		
-		
-		
-		// Need to fix the gravity and event handler but added to show the progress
-		
-		
-		character_model = new MainCharacterModel(
-				startpoint[0],startpoint[1],character_size[0],character_size[1]);
-		character_model.addObserver(this);
-		character_controller = new MainCharacterController(character_model);
-		
-		
-		
-		AnimationTimer at = new AnimationTimer() {
-			@Override
-			public void handle(long now) {
-			// perform ticksPerFrame ticks
-			// by default this is 1
-				for (int i = 0; i < ticksPerFrame; i++) {
-//					callTickController();
-				}
-			}
-		};
-		at.start();
-		
-		scene.setOnKeyPressed(new MainCharacterMovement());
-		    
+		return scene;
 	}
 	
-	public void callTickController() {
-		gravity();
-	}
 	
-	public void gravity() {
-		character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, 0, +MOVE_SIZE);
+	/**
+	 * Calls tick using ControllerCollections & set up current velocity
+	 * @author Eujin Ko
+	 */
+	private void tick() {
+		handleCharacterVelocity();
+		controller.callModelTick();
+		
+	}
+	/**
+	 * Setup current Velocity according to the key pressed
+	 * @author Eujin Ko
+	 */
+	private void handleCharacterVelocity() {
+		int moveX=0; int moveY=0;
+		if(JUMP) {
+			moveY = -MOVE_SIZE*2;
+		}else if(UP) {
+			moveY = -MOVE_SIZE;
+		}
+		
+		
+		if(RIGHT) {
+			moveX = MOVE_SIZE;
+		}
+		if(LEFT) {
+			moveX = -MOVE_SIZE;
+		}
+		character_controller.addVelocity(moveX, moveY);
 	}
 
 
 	/**
-	 * Update function 
+	 * Fetches the message received from observable, updates the view
 	 * @author Eujin Ko
 	 */
 	@Override
 	public void update(Observable o, Object arg) {
-		CharacterMoveMessage msg = (CharacterMoveMessage) arg;
+		CollectionsMessage msg = (CollectionsMessage) arg;
+		CharacterMoveMessage char_msg = msg.getCharacterMoveMessage();
 		Platform.runLater(new Runnable() {
 
 			@Override
 			public void run() {
-				characterMoveTransition(msg);
+				characterMoveTransition(char_msg);
 			}
 			
 		});
-		
-		
 	}
 	
 	/**
@@ -262,11 +300,15 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	 * @author Eujin Ko
 	 */
 	public void characterMoveTransition(CharacterMoveMessage msg) {
+		if(msg == null) {
+			return;
+		}
 		
 		int prevX = msg.getXMoveFrom();
 		int prevY = msg.getYMoveFrom();
 		int curX = msg.getXMoveTo();
 		int curY = msg.getYMoveTo();
+		System.out.println(prevX+","+prevY+"->"+curX+","+curY);
 		
 	    Path path = new Path();
 	    path.getElements().add(new MoveTo(prevX, prevY));
@@ -282,16 +324,17 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	
 	
 	
+	
 	// Private Event Handler classes
 	
 	
 	/**
-	 * Private class that handles movement of the main character depends on KeyEvents
-	 * Available Movement: UP, DOWN, RIGHT, LEFT
+	 * Private class that handles movement of the main character depends on KeyEvents when key pressed
+	 * Available Movement: UP, DOWN, RIGHT, LEFT, JUMP
 	 * @author Eujin Ko
 	 *
 	 */
-	class MainCharacterMovement implements EventHandler<KeyEvent>{
+	class MovementPressed implements EventHandler<KeyEvent>{
 
 		@Override
 		public void handle(KeyEvent event) {
@@ -300,27 +343,66 @@ public class PuzzlePlatformerView extends Application implements Observer {
 			
 			case DOWN:
 				System.out.println("DOWN");
-				character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, 0, +MOVE_SIZE);
+				DOWN = true;
 				break;
 			case UP:
 				System.out.println("UP");
-				character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, 0, -MOVE_SIZE);
+				UP = true;
 				break;
 			case RIGHT:
 				System.out.println("RIGHT");
-				character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, +MOVE_SIZE, 0);
+				RIGHT = true;
 				break;
 			case LEFT:
 				System.out.println("LEFT");
-				character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, -MOVE_SIZE, 0);
+				LEFT = true;
 				break;
 			case SPACE:
 				System.out.println("JUMP");
-				character_controller.moveCharacter(WINDOW_WIDTH, WINDOW_HEIGHT, 0, -MOVE_SIZE*12);
+				JUMP = true;
+				break;
+			default:
 				break;
 			}
 
 		}
+		
+
+	}
+	/**
+	 * Private class that handles movement of the main character depends on KeyEvents when key released
+	 * Available Movement: UP, DOWN, RIGHT, LEFT, JUMP
+	 * @author Eujin Ko
+	 *
+	 */
+	class MovementReleased implements EventHandler<KeyEvent>{
+
+		@Override
+		public void handle(KeyEvent event) {
+		    
+			switch(event.getCode()) {
+			
+			case DOWN:
+				DOWN = false;
+				break;
+			case UP:
+				UP = false;
+				break;
+			case RIGHT:
+				RIGHT = false;
+				break;
+			case LEFT:
+				LEFT = false;
+				break;
+			case SPACE:
+				JUMP = false;
+				break;
+			default:
+				break;
+			}
+
+		}
+		
 
 	}
 }

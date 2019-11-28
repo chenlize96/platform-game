@@ -18,8 +18,8 @@ public class ModelCollections  extends Observable {
 	MainCharacterModel player;
 	ControllerCollections controllerCollections;
 	
-	int window_width = 600;
-	int window_height = 300;
+	int window_width = 800;
+	int window_height = 600;
 	
 	/**
 	 * Constructor for ModelCollections, saves controllerCollections for further use inside the class
