@@ -3,6 +3,7 @@ package controller;
 import java.util.Observer;
 
 import model.ModelCollections;
+import view.PuzzlePlatformerView;
 
 /**
  * Controller for ModelCollections
@@ -13,15 +14,17 @@ import model.ModelCollections;
 public class ControllerCollections {
 	ModelCollections model;
 	MainCharacterController character_controller;
+	PuzzlePlatformerView view;
 
 	/**
 	 * Constructor for ControllerCollections, creates ModelCollections and adds the observer(View) passed in as a argument
 	 * @param observer
 	 * @author Eujin Ko
 	 */
-	public ControllerCollections(Observer observer) {
+	public ControllerCollections(PuzzlePlatformerView observer) {
 		model = new ModelCollections(this);
 		model.addObserver(observer);
+		view = observer;
 	}
 
 	/**
@@ -33,7 +36,7 @@ public class ControllerCollections {
 	 */
 	public void callModelAddPlayer(int[] startpoint, int[] character_size) {
 		model.addPlayer(startpoint, character_size);
-		character_controller = new MainCharacterController(model.returnPlayer());
+		character_controller = new MainCharacterController(model.returnPlayer(), view.getGrid());
 	}
 	/**
 	 * Returns the MainCharacterController

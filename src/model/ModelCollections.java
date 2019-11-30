@@ -18,9 +18,6 @@ public class ModelCollections  extends Observable {
 	MainCharacterModel player;
 	ControllerCollections controllerCollections;
 	
-	int window_width = 800;
-	int window_height = 600;
-	
 	/**
 	 * Constructor for ModelCollections, saves controllerCollections for further use inside the class
 	 * @param controllerCollections
@@ -78,7 +75,7 @@ public class ModelCollections  extends Observable {
 	public CharacterMoveMessage movePlayer() {
 		CharacterMoveMessage msg = controllerCollections
 				.returnMainCharacterController()
-				.moveCharacter(window_width, window_height);
+				.moveCharacter();
 		
 		return msg;
 		

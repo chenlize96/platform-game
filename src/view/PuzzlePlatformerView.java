@@ -1,5 +1,7 @@
 package view;
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
@@ -16,6 +18,7 @@ import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -65,6 +68,8 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	
 	ControllerCollections controller;
 	MainCharacterController character_controller;
+	
+	GridPane grid;
 	
 	
 	
@@ -121,17 +126,17 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		this.character_controller = controller.returnMainCharacterController();
 		
 		
-//		AnimationTimer at = new AnimationTimer() {
-//			@Override
-//			public void handle(long now) {
-//			// perform ticksPerFrame ticks
-//			// by default this is 1
-//				for (int i = 0; i < ticksPerFrame; i++) {
-//					tick();
-//				}
-//			}
-//		};
-//		at.start();
+		AnimationTimer at = new AnimationTimer() {
+			@Override
+			public void handle(long now) {
+			// perform ticksPerFrame ticks
+			// by default this is 1
+				for (int i = 0; i < ticksPerFrame; i++) {
+					tick();
+				}
+			}
+		};
+		at.start();
 		
 		
 	    scene.setOnKeyPressed(new MovementPressed());
@@ -161,7 +166,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		MenuBar mb = new MenuBar(); mb.setMinHeight(25); 
 		mb.getMenus().add(menu); 
 		// grid holds map
-		GridPane grid = new GridPane();
+		grid = new GridPane();
 		grid.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
 		grid.setPrefSize( WINDOW_WIDTH, WINDOW_HEIGHT ); // not sure its best size
 		//**********************************************
@@ -170,6 +175,21 @@ public class PuzzlePlatformerView extends Application implements Observer {
 				if (map[i][j] == '*') {
 					Rectangle wall = new Rectangle(25, 25); 
 					wall.setFill(Color.BLACK);
+					
+					//<Eujin> TODO: ADDED EVENT HANDLER TO DETECT WALL GRID POSITION FOR TESTING PURPOSE: DELETE THIS BLOCK
+					wall.setOnMouseClicked(new EventHandler<Event>() {
+						 
+						@Override
+						public void handle(Event event) {
+							Node child = (Node) event.getSource();
+							int row = GridPane.getRowIndex(child)*20;
+							int col = GridPane.getColumnIndex(child)*20;
+							System.out.println("Grid:"+row+","+col);
+							
+						}
+				    });
+					//TODO: DELETE THIS BLOCK
+					
 					grid.add(wall, j, i);
 				}else if (map[i][j] == 'S') {// start
 					
@@ -239,6 +259,8 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		stage.setScene(scene); stage.setTitle("Puzzle Platformer");
 		stage.show();
 		
+
+
 		return scene;
 	}
 	
@@ -251,6 +273,15 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		handleCharacterVelocity();
 		controller.callModelTick();
 		
+	}
+	
+	/**
+	 * Returns grid where the character will be active
+	 * @return GridPane
+	 * @author Eujin Ko
+	 */
+	public GridPane getGrid() {
+		return grid;
 	}
 	/**
 	 * Setup current Velocity according to the key pressed
@@ -308,7 +339,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		int prevY = msg.getYMoveFrom();
 		int curX = msg.getXMoveTo();
 		int curY = msg.getYMoveTo();
-		System.out.println(prevX+","+prevY+"->"+curX+","+curY);
+//		System.out.println(prevX+","+prevY+"->"+curX+","+curY);
 		
 	    Path path = new Path();
 	    path.getElements().add(new MoveTo(prevX, prevY));
@@ -402,7 +433,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 			}
 
 		}
-		
 
 	}
+
 }

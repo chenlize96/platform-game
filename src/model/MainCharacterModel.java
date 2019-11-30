@@ -16,8 +16,8 @@ public class MainCharacterModel{
 	private int cord_x;
 	private int cord_y;
 	
-	private int dx=0;
-	private int dy=0;
+	private int dx;
+	private int dy;
 	
 	//Chracter size
 	private int size_width = 10;
@@ -41,6 +41,9 @@ public class MainCharacterModel{
 		this.size_height = character_size_height;
 		
 		this.isJumping = false;
+		
+		this.dx = 0;
+		this.dy = 0;
 	}
 	
 	/**

@@ -2,8 +2,11 @@ package controller;
 
 import java.util.Arrays;
 
+import javafx.scene.Node;
+import javafx.scene.layout.GridPane;
 import message.CharacterMoveMessage;
 import model.MainCharacterModel;
+import view.PuzzlePlatformerView;
 
 /**
  * Controller for the MainCharacterModel
@@ -12,15 +15,19 @@ import model.MainCharacterModel;
  */
 public class MainCharacterController {
 	private MainCharacterModel character_model;
+	GridPane stage;
 	final int MOVE_SIZE = 10;
+	private int unit_size = 25;
 	
 	/**
 	 * Constructor for MainCharacterController, saves the model object into global variable
 	 * @param model
 	 * @author Eujin Ko
+	 * @param gridPane 
 	 */
-	public MainCharacterController(MainCharacterModel model) {
+	public MainCharacterController(MainCharacterModel model, GridPane gridPane) {
 		this.character_model = model;
+		this.stage = gridPane;
 	}
 	
 	/**
@@ -31,13 +38,13 @@ public class MainCharacterController {
 	 * @param moveY y movement of main character
 	 * @author Eujin Ko
 	 */
-	public CharacterMoveMessage moveCharacter(int window_width, int window_height) {
+	public CharacterMoveMessage moveCharacter() {
 		int moveX = 0;
 		int moveY = 0;
 		
 		int dx = character_model.getdx();
 		int dy = character_model.getdy();
-		System.out.println("velocity: "+dx+","+dy);
+//		System.out.println("velocity: "+dx+","+dy);
 		if(dx!=0) {
 			if(dx<0) {
 				moveX = -MOVE_SIZE;
@@ -61,34 +68,54 @@ public class MainCharacterController {
 		
 		character_model.setVelocity(dx,dy);
 		
-		int curr_x = character_model.getCordX() + moveX;
-		int curr_y = character_model.getCordY() + moveY;
+		int curr_x = character_model.getCordX();
+		int curr_y = character_model.getCordY();
+		int after_x = curr_x + moveX;
+		int after_y = curr_y + moveY;
 		int char_width = character_model.getCharSizeWidth();
 		int char_height = character_model.getCharSizeHeight();
+
+		System.out.println("After: "+after_x+","+after_y);
+		
+		//TODO: Checks Collision
+		int char_half_width = char_width/2;
+		int char_half_height = char_height/2;
 		
 		
-		//Checks Collision
-		if(curr_x < 0+char_width) {
-			curr_x = char_width;
-//			System.out.println("1. COLLISON("+curr_x+","+curr_y+")");
+		for(Node child:stage.getChildren()) {
+//			Integer r = GridPane.getRowIndex(child);
+//			Integer c = GridPane.getColumnIndex(child);
+			double x = child.getLayoutX()*unit_size;
+			double y = child.getLayoutY()*unit_size;
+//			System.out.println("Child  (r,c) :"+r+","+c+"  (x,y) : "+x+"."+y);
+//			System.out.println("Child  (x,y) : "+x+"."+y);
 			
-		}else if(curr_x > window_width-char_width) {
-			curr_x = window_width-char_width;
-//			System.out.println("2. COLLISON("+curr_x+","+curr_y+")");
-		}
-		
-		
-		if(curr_y < 0 + char_height) {
-			curr_y = char_height;
-//			System.out.println("3. COLLISON("+curr_x+","+curr_y+")");
+			if(x <= after_x+unit_size && after_x+unit_size <= x+unit_size) {
+				if(y <= after_y+unit_size && after_y+unit_size <= y+unit_size) {
+//					System.out.println("COLLISION!");
+					if(after_x <= (x+x+unit_size)/2) {
+						after_x = (int) x;
+					}else {
+						after_x = (int) (x+unit_size);
+					}
+					
+					if(after_y <= (y+y+unit_size)/2) {
+						after_y = (int)y;
+					}else {
+						after_y = (int) (y+unit_size);
+					}
+				}
+
+			}
 			
-		}else if(curr_y > window_height-char_height) {
-			curr_y= window_height-char_height;
-//			System.out.println("4. COLLISON("+curr_x+","+curr_y+")");
-			character_model.toggleJump();
+
+			
 		}
+
+
+
 		
-		CharacterMoveMessage msg = character_model.moveCharacter(curr_x, curr_y);
+		CharacterMoveMessage msg = character_model.moveCharacter(after_x, after_y);
 		
 		return msg;
 		
