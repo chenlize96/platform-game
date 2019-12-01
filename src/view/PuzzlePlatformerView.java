@@ -53,8 +53,8 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	final int ticksPerFrame = 1;
 	final int MOVE_SIZE = 10;
 	
-	private int[] startpoint = {25,440};
-	private int[] character_size = {10,10};
+	private int[] startpoint = {20,20};
+	private int[] character_size = {20,20};
 	
 	private int unit_size = 25; // every unit in the map is 25*25    ***ATTENTION***
 	//Character
@@ -122,8 +122,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		Scene scene = setupStage(stage);	//Lize's stage setup
 
 		this.controller = new ControllerCollections(this);
-		this.controller.callModelAddPlayer(character, startpoint, character_size);
-		this.character.setOnMouseClicked(new ReturnGridPos());
+		this.controller.callModelAddPlayer(startpoint, character_size);
 		this.character_controller = controller.returnMainCharacterController();
 		
 		
@@ -146,12 +145,6 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		
 		// Need to fix the gravity and event handler but added to show the progress
 		//TODO CHARACTER
-		for(Node child : grid.getChildren()) {
-			Integer y = GridPane.getColumnIndex(child)*unit_size;
-			Integer x= GridPane.getRowIndex(child)*unit_size;
-			System.out.println("COLLISION = Child  (x,y) : "+x+","+y);
-
-		}
 		    
 	}
 	
@@ -184,7 +177,17 @@ public class PuzzlePlatformerView extends Application implements Observer {
 					wall.setFill(Color.BLACK);
 					
 					//<Eujin> TODO: ADDED EVENT HANDLER TO DETECT WALL GRID POSITION FOR TESTING PURPOSE: DELETE THIS BLOCK
-					wall.setOnMouseClicked(new ReturnGridPos());
+					wall.setOnMouseClicked(new EventHandler<Event>() {
+						 
+						@Override
+						public void handle(Event event) {
+							Node child = (Node) event.getSource();
+							int row = GridPane.getRowIndex(child)*20;
+							int col = GridPane.getColumnIndex(child)*20;
+							System.out.println("Grid:"+row+","+col);
+							
+						}
+				    });
 					//TODO: DELETE THIS BLOCK
 					
 					grid.add(wall, j, i);
@@ -213,7 +216,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		Canvas canvas = new Canvas(150, 50); // label.setGraphic(new ImageView()) doesnot work, so use canvas
 		// the size of canvas bases on the number of hearts (modify later)
 		GraphicsContext gc = canvas.getGraphicsContext2D();
-		Image heart = new Image("img/heart.png");
+		Image heart = new Image("img/heart.png"); 
 		gc.drawImage(heart, 0, 0, 50, 50); 
 		gc.drawImage(heart, 50, 0, 50, 50); // easy to update hearts by covering a 50*50 grey square (do later)
 		gc.drawImage(heart, 100, 0, 50, 50); 
@@ -287,9 +290,9 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	private void handleCharacterVelocity() {
 		int moveX=0; int moveY=0;
 		if(JUMP) {
-			moveY = MOVE_SIZE*2;
+			moveY = -MOVE_SIZE*2;
 		}else if(UP) {
-			moveY = MOVE_SIZE;
+			moveY = -MOVE_SIZE;
 		}
 		
 		
@@ -336,13 +339,11 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		int prevY = msg.getYMoveFrom();
 		int curX = msg.getXMoveTo();
 		int curY = msg.getYMoveTo();
+//		System.out.println(prevX+","+prevY+"->"+curX+","+curY);
 		
 	    Path path = new Path();
-//	    path.getElements().add(new MoveTo(prevX, prevY));
-//	    path.getElements().add(new LineTo(curX, curY));
-	    path.getElements().add(new MoveTo(100, -100));
-	    path.getElements().add(new LineTo(300, -400));
-		System.out.println(prevX+","+prevY+"->"+curX+","+curY);
+	    path.getElements().add(new MoveTo(prevX, prevY));
+	    path.getElements().add(new LineTo(curX, curY));
 		
 
 	    PathTransition pathTransition = new PathTransition();
@@ -435,16 +436,4 @@ public class PuzzlePlatformerView extends Application implements Observer {
 
 	}
 
-	
-	class ReturnGridPos implements EventHandler<Event>{
-		 
-		@Override
-		public void handle(Event event) {
-			Node child = (Node) event.getSource();
-			int row = GridPane.getRowIndex(child)*25;
-			int col = GridPane.getColumnIndex(child)*25;
-			System.out.println("Grid:"+col+","+row);
-			
-		}
-   }
 }

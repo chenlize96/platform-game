@@ -20,8 +20,8 @@ public class MainCharacterModel{
 	private int dy;
 	
 	//Chracter size
-	private int size_width;
-	private int size_height;
+	private int size_width = 10;
+	private int size_height = 10;
 	
 	/**
 	 * Constructor for MainCharacterModel
@@ -137,15 +137,6 @@ public class MainCharacterModel{
 		return this.dy;
 	}
 	/**
-	 * Reposition the character model
-	 * @param x
-	 * @param y
-	 */
-	public void setCoordinate(int x, int y) {
-		this.cord_x = x;
-		this.cord_y = y;
-	}
-	/**
 	 * Moves the character into position {moveX, moveY}
 	 * @param moveX new X coordinate for the character
 	 * @param moveY new Y coordinate for the character
@@ -156,7 +147,6 @@ public class MainCharacterModel{
 		if(cord_x != moveX || cord_y != moveY) {
 			
 			CharacterMoveMessage msg = new CharacterMoveMessage(cord_x,cord_y, moveX, moveY);
-//			System.out.println("model("+cord_x+", "+cord_y+":"+moveX+","+moveY);
 			
 			this.cord_x = moveX;
 			this.cord_y = moveY;
