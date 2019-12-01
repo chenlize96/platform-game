@@ -2,6 +2,7 @@ package controller;
 
 import java.util.Observer;
 
+import javafx.scene.shape.Rectangle;
 import model.ModelCollections;
 import view.PuzzlePlatformerView;
 
@@ -33,8 +34,9 @@ public class ControllerCollections {
 	 * @param startpoint
 	 * @param character_size
 	 * @author Eujin Ko
+	 * @param character 
 	 */
-	public void callModelAddPlayer(int[] startpoint, int[] character_size) {
+	public void callModelAddPlayer(Rectangle character, int[] startpoint, int[] character_size) {
 		model.addPlayer(startpoint, character_size);
 		character_controller = new MainCharacterController(model.returnPlayer(), view.getGrid());
 	}
