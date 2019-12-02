@@ -179,9 +179,16 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		for (int i = 0; i < map.length; i++) {
 			for (int j = 0; j < map[0].length; j++) {
 				if (map[i][j] == '*') {
-					Rectangle wall = new Rectangle(25, 25); 
-					wall.setFill(Color.BLACK);
-					grid.add(wall, j, i);
+					//Rectangle wall = new Rectangle(25, 25); 
+					Canvas canvas = new Canvas(unit_size, unit_size); 
+					GraphicsContext gc = canvas.getGraphicsContext2D();
+					Image wall = new Image("img/wall.png"); 
+					gc.drawImage(wall, 0, 0, unit_size, unit_size); 
+					
+					
+					
+					//wall.setFill(Color.BLACK);
+					grid.add(canvas, j, i);
 				}else if (map[i][j] == 'S') {// start
 					startpoint[0] = j*unit_size;
 					startpoint[1] = i*unit_size;//jump doesnt work
@@ -216,13 +223,13 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		timeline.setCycleCount(Timeline.INDEFINITE);
 		timeline.getKeyFrames().add(
 				new KeyFrame(Duration.seconds(1), new EventHandler() {
-					public int timeSeconds = 60; // make it 300 later, now for test
+					public int timeSeconds = 300; // make it 300 later, now for test
 					@Override
 					public void handle(Event event) {
 						timeSeconds--;
 						// update timerLabel
 						timer.setText(timeSeconds + " seconds");
-						if (timeSeconds <= 5) { // make it 60 later, now for test
+						if (timeSeconds <= 60) { // make it 60 later, now for test
 							timer.setTextFill(Color.RED);
 						}
 						if (timeSeconds <= 0) {
