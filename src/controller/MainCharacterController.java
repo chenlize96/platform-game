@@ -45,7 +45,7 @@ public class MainCharacterController {
 		
 		int dx = character_model.getdx();
 		int dy = character_model.getdy();
-		System.out.println("velocity: "+dx+","+dy);
+//		System.out.println("velocity: "+dx+","+dy);
 		if(dx!=0) {
 			if(dx<0) {
 				moveX = -MOVE_SIZE;
@@ -106,23 +106,27 @@ public class MainCharacterController {
 //		System.out.println("Child  (r,c) :"+r+","+c+"  (x,y) : "+x+"."+y);
 //		System.out.println("Child  (x,y) : "+x+"."+y);
 		
-		if(x <= after_x && after_x <= x+unit_size) {
-			if(y-unit_size <= after_y && after_y <= y) {
-//				if(curr_x < after_x) {
-//					after_x = (int) x-char_width;
-//				}else {
-//					after_x = (int) (x+unit_size);
-//				}
-				
+
+		
+		
+		if(y-unit_size <= after_y && after_y <= y) {
+			
+			if(x <= after_x && after_x < x+unit_size) {
+
 				if(after_y > curr_y) {
 					after_y = (int)y-char_height/2;
+					
+					
 				}else {
 					after_y = (int) (y-unit_size);
 				}
-				System.out.println("COLLISION!  ("+(int)x+","+(int)y+") ("+curr_y+"->"+after_y+")"+char_height);
 
 			}
-
+			
+			if((x+x+unit_size)/2 <= after_x) {
+				after_x = (int) (x+unit_size);
+			}
+			
 		}
 	}
 
