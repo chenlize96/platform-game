@@ -70,6 +70,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	ControllerCollections controller;
 	MainCharacterController character_controller;
 	GridPane grid;
+	AnimationTimer animationTimer;
 	
 	Canvas health_box;
 	
@@ -131,7 +132,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		
 		
 		
-		AnimationTimer at = new AnimationTimer() {
+		animationTimer = new AnimationTimer() {
 			@Override
 			public void handle(long now) {
 			// perform ticksPerFrame ticks
@@ -141,7 +142,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 				}
 			}
 		};
-		at.start();
+		animationTimer.start();
 		
 		
 	    scene.setOnKeyPressed(new MovementPressed());
@@ -382,6 +383,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
         alert.setTitle("Message");
         alert.setHeaderText("Message");
         alert.setContentText("To the next stage!");
+        animationTimer.stop();
         alert.showAndWait(); 
 		
 	}
@@ -395,7 +397,9 @@ public class PuzzlePlatformerView extends Application implements Observer {
         alert.setTitle("Message");
         alert.setHeaderText("Message");
         alert.setContentText("GAME OVER");
-        alert.showAndWait(); 
+        animationTimer.stop();
+        alert.showAndWait();
+        
 		
 	}
 	
