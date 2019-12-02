@@ -1,3 +1,5 @@
+package placeholder_etc;
+
 
 import java.io.File;
 import java.util.Scanner;
