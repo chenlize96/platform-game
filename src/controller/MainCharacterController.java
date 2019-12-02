@@ -110,11 +110,12 @@ public class MainCharacterController {
 		double y = child.getLayoutY();
 //		System.out.println("Child  (r,c) :"+r+","+c+"  (x,y) : "+x+"."+y);
 
+		boolean yInBound = (y-unit_size <= after_y && after_y <= y);
+		boolean xInBound = (x <= after_x && after_x < x+unit_size);
 		
-		
-		if(y-unit_size <= after_y && after_y <= y) {
+		if(yInBound) {
 			
-			if(x <= after_x && after_x < x+unit_size) {
+			if(xInBound) {
 
 				if(after_y > curr_y) {
 					after_y = (int)y-char_height/2;
@@ -127,7 +128,7 @@ public class MainCharacterController {
 				}
 
 			}else  {
-				if((x+x+unit_size)/2 <= after_x && after_x <= x) {
+				if(xInBound) {
 
 					System.out.println("Child  (x,y) : "+x+"."+y);
 					after_x = (int) (x+unit_size);
