@@ -292,6 +292,14 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	 */
 	@Override
 	public void update(Observable o, Object arg) {
+		
+//		try {
+//			Thread.sleep(1000);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
 		CollectionsMessage msg = (CollectionsMessage) arg;
 		CharacterMoveMessage char_msg = msg.getCharacterMoveMessage();
 		Platform.runLater(new Runnable() {

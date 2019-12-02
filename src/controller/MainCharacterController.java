@@ -108,23 +108,19 @@ public class MainCharacterController {
 		
 		if(x <= after_x && after_x <= x+unit_size) {
 			if(y-unit_size <= after_y && after_y <= y) {
-//				if(after_x <= (x+x+unit_size)/2) {
+//				if(curr_x < after_x) {
 //					after_x = (int) x-char_width;
 //				}else {
 //					after_x = (int) (x+unit_size);
 //				}
 				
-				if(after_y <= (y+y-unit_size)/2) {
+				if(after_y > curr_y) {
 					after_y = (int)y-char_height/2;
 				}else {
 					after_y = (int) (y-unit_size);
 				}
 				System.out.println("COLLISION!  ("+(int)x+","+(int)y+") ("+curr_y+"->"+after_y+")"+char_height);
-				
-				
-				CharacterMoveMessage msg = character_model.moveCharacter(after_x, after_y);
-				
-				return msg;	
+
 			}
 
 		}
