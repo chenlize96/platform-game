@@ -266,7 +266,9 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	 */
 	private void updateHealth(int health_status) {
 		// the size of canvas bases on the number of hearts (modify later)
+		clearCanvas(health_box);
 		GraphicsContext gc = health_box.getGraphicsContext2D();
+		
 		Image heart = new Image("img/heart.png"); 
 		
 		for(int i = 0; i< health_status; i++) {
@@ -279,6 +281,11 @@ public class PuzzlePlatformerView extends Application implements Observer {
 			gameOverMessage();
 		}
 		
+	}
+	
+	private void clearCanvas(Canvas canvas) {
+		GraphicsContext gc = canvas.getGraphicsContext2D();
+		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 	}
 	
 	
