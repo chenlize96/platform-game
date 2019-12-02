@@ -16,6 +16,7 @@ import message.CollectionsMessage;
  */
 public class ModelCollections  extends Observable {
 	MainCharacterModel player;
+	MainViewModel view_model;
 	ControllerCollections controllerCollections;
 	
 	int window_width = 800;
@@ -47,8 +48,31 @@ public class ModelCollections  extends Observable {
 		notifyObservers(msg);
 		
 	}
-
-	//PLAYER METHODS - STARTS
+	// <NEW> VIEW MODEL METHODS - STARTS
+	/**
+	 * Adds ViewModel to the ModelCollections
+	 * MUST BE CALLED FOR EVERY STAGE
+	 * @param start player starting coordinate
+	 * @param exit exit coordinate
+	 * @author Eujin Ko
+	 */
+	public void addViewModel(int start[], int[] exit) {
+		this.view_model = new MainViewModel(start, exit);
+	}
+	/**
+	 * Returns the ViewModel
+	 * @return MainViewModel
+	 * @author Eujin Ko
+	 */
+	public MainViewModel returnViewModel() {
+		return this.view_model;
+	}
+	
+	//VIEW MODEL METHODS - ENDS
+	
+	
+	
+	// <NEW> PLAYER METHODS - STARTS
 	
 	/**
 	 * Adds player to the player model
@@ -59,6 +83,7 @@ public class ModelCollections  extends Observable {
 	public void addPlayer(int[] startpoint, int[] character_size) {
 		this.player = new MainCharacterModel(startpoint[0], startpoint[1], character_size[0], character_size[1]);
 	}
+
 	
 	/**
 	 * Returns the player model

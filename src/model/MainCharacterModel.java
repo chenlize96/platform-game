@@ -12,6 +12,8 @@ import message.CharacterMoveMessage;
 public class MainCharacterModel{
 	boolean isJumping;
 	
+	private int[] start_pos= {0,0};
+	
 	//Character position
 	private int cord_x;
 	private int cord_y;
@@ -36,6 +38,9 @@ public class MainCharacterModel{
 		
 		this.cord_x = start_coordinate_x;
 		this.cord_y = start_coordinate_y;
+
+		this.start_pos[0] = start_coordinate_x;
+		this.start_pos[1] = start_coordinate_y;
 		
 		this.size_width = character_size_width;
 		this.size_height = character_size_height;
@@ -142,6 +147,15 @@ public class MainCharacterModel{
 	public void setCurrentLocation(int x, int y) {
 		cord_x = x;
 		cord_y = y;
+	}
+	
+	public CharacterMoveMessage returnToStart() {
+		CharacterMoveMessage msg = new CharacterMoveMessage(start_pos[0],start_pos[1]-size_height, start_pos[0], start_pos[1]);
+
+		this.cord_x = start_pos[0];
+		this.cord_y = start_pos[1];
+		
+		return msg;
 	}
 	/**
 	 * Moves the character into position {moveX, moveY}

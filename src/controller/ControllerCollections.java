@@ -14,6 +14,7 @@ import model.ModelCollections;
 public class ControllerCollections {
 	ModelCollections model;
 	MainCharacterController character_controller;
+	MainViewModelController view_controller;
 	GridPane stage_grid;
 
 	/**
@@ -37,7 +38,7 @@ public class ControllerCollections {
 	 */
 	public void callModelAddPlayer(int[] startpoint, int[] character_size) {
 		model.addPlayer(startpoint, character_size);
-		character_controller = new MainCharacterController(model.returnPlayer(), stage_grid);
+		character_controller = new MainCharacterController(this, model.returnPlayer(), stage_grid);
 	}
 	/**
 	 * Returns the MainCharacterController
@@ -46,6 +47,15 @@ public class ControllerCollections {
 	 */
 	public MainCharacterController returnMainCharacterController() {
 		return this.character_controller;
+	}
+	
+	public void callModelAddViewModel(int[] start, int[] exit) {
+		model.addViewModel(start, exit);
+		view_controller = new MainViewModelController(model.returnViewModel());
+	}
+	
+	public MainViewModelController returnViewModelController() {
+		return view_controller;
 	}
 	
 	/**

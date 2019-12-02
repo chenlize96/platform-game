@@ -54,6 +54,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	final int MOVE_SIZE = 5;
 	
 	private int[] startpoint = {0,0};
+	private int[] exitpoint = {0,0};
 	private int[] character_size = {10,10};
 	
 	private int unit_size = 25; // every unit in the map is 25*25    ***ATTENTION***
@@ -69,6 +70,8 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	ControllerCollections controller;
 	MainCharacterController character_controller;
 	GridPane grid;
+	
+	Canvas health_box;
 	
 	
 	
@@ -120,9 +123,12 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	public void start(Stage stage) throws Exception {
 		Scene scene = setupStage(stage);	//Lize's stage setup
 
-		this.controller = new ControllerCollections(this,grid);
-		this.controller.callModelAddPlayer(startpoint, character_size);
-		this.character_controller = controller.returnMainCharacterController();
+		controller = new ControllerCollections(this,grid);
+		controller.callModelAddPlayer(startpoint, character_size);
+		character_controller = controller.returnMainCharacterController();
+		controller.callModelAddViewModel(startpoint, exitpoint);
+		
+		
 		
 		
 		AnimationTimer at = new AnimationTimer() {
@@ -182,6 +188,8 @@ public class PuzzlePlatformerView extends Application implements Observer {
 					Rectangle exit = new Rectangle(25, 25); 
 					exit.setFill(Color.BLUE);
 					grid.add(exit, j, i);
+					exitpoint[0] = j*unit_size;
+					exitpoint[1] = i*unit_size;
 				}
 			}
 			
@@ -197,13 +205,8 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		info.setPrefSize(200, 600); // not sure its best size
 		Label health = new Label("Health");	
 		health.setFont(new Font("Arial", 30));
-		Canvas canvas = new Canvas(150, 50); // label.setGraphic(new ImageView()) doesnot work, so use canvas
-		// the size of canvas bases on the number of hearts (modify later)
-		GraphicsContext gc = canvas.getGraphicsContext2D();
-		Image heart = new Image("img/heart.png"); 
-		gc.drawImage(heart, 0, 0, 50, 50); 
-		gc.drawImage(heart, 50, 0, 50, 50); // easy to update hearts by covering a 50*50 grey square (do later)
-		gc.drawImage(heart, 100, 0, 50, 50); 
+		health_box = new Canvas(150, 50); // label.setGraphic(new ImageView()) doesnot work, so use canvas
+		updateHealth();
 		Label countdown = new Label("Countdown"); // (become red when less than 1 min)
 		countdown.setFont(new Font("Arial", 30));
 		Label timer = new Label("300 seconds"); // create timer
@@ -232,7 +235,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		items.setFont(new Font("Arial", 30));
 		// there should be a gridPane holding various images which represent items 
 		// Lize will do it later, since I am trying to find the best way to handle items (do later)
-		info.getChildren().addAll(health, canvas, countdown, timer, items); 
+		info.getChildren().addAll(health, health_box, countdown, timer, items); 
 		info.setAlignment(Pos.BASELINE_CENTER);
 		info.setSpacing(20); // POSSIBLE optimize: add separate line for readablity (do later)
 		// p holds everything
@@ -253,6 +256,20 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		stage.show();
 		
 		return scene;
+	}
+	/**
+	 * <EDIT> By Eujin, moved to seperate function so it draws the health image based on the health left
+	 * @author Lize
+	 */
+	private void updateHealth() {
+		// the size of canvas bases on the number of hearts (modify later)
+		GraphicsContext gc = health_box.getGraphicsContext2D();
+		Image heart = new Image("img/heart.png"); 
+		
+		gc.drawImage(heart, 0, 0, 50, 50); 
+		gc.drawImage(heart, 50, 0, 50, 50); // easy to update hearts by covering a 50*50 grey square (do later)
+		gc.drawImage(heart, 100, 0, 50, 50); 
+		
 	}
 	
 	

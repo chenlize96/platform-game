@@ -13,6 +13,7 @@ import model.MainCharacterModel;
  *
  */
 public class MainCharacterController {
+	ControllerCollections main_controller;
 	private MainCharacterModel character_model;
 	GridPane stage_grid;
 	int window_width = 800;
@@ -26,7 +27,8 @@ public class MainCharacterController {
 	 * @author Eujin Ko
 	 * @param stage_grid 
 	 */
-	public MainCharacterController(MainCharacterModel model, GridPane stage_grid) {
+	public MainCharacterController(ControllerCollections main_controller, MainCharacterModel model, GridPane stage_grid) {
+		this.main_controller = main_controller;
 		this.character_model = model;
 		this.stage_grid = stage_grid;
 	}
@@ -97,6 +99,10 @@ public class MainCharacterController {
 		}else if(after_y > window_height-char_height) {
 			after_y= window_height-char_height/2;
 			System.out.println("4. COLLISON("+after_x+","+after_y+")");
+			main_controller.returnViewModelController().decreaseHealth();
+			
+			CharacterMoveMessage msg = character_model.returnToStart();
+			return msg;
 		}
 		
 		for(Node child:stage_grid.getChildren()) {
