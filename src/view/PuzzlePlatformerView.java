@@ -16,13 +16,16 @@ import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
@@ -48,10 +51,11 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	final int WINDOW_WIDTH = 800;
 	final int WINDOW_HEIGHT = 600;
 	final int ticksPerFrame = 1;
-	final int MOVE_SIZE = 10;
+	final int MOVE_SIZE = 5;
 	
-	private int[] startpoint = {20,20};
-	private int[] character_size = {20,20};
+	private int[] startpoint = {0,0};
+	private int[] exitpoint = {0,0};
+	private int[] character_size = {10,10};
 	
 	private int unit_size = 25; // every unit in the map is 25*25    ***ATTENTION***
 	//Character
@@ -65,6 +69,10 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	
 	ControllerCollections controller;
 	MainCharacterController character_controller;
+	GridPane grid;
+	AnimationTimer animationTimer;
+	
+	Canvas health_box;
 	
 	
 	
@@ -116,22 +124,25 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	public void start(Stage stage) throws Exception {
 		Scene scene = setupStage(stage);	//Lize's stage setup
 
-		this.controller = new ControllerCollections(this);
-		this.controller.callModelAddPlayer(startpoint, character_size);
-		this.character_controller = controller.returnMainCharacterController();
+		controller = new ControllerCollections(this,grid);
+		controller.callModelAddPlayer(startpoint, character_size);
+		character_controller = controller.returnMainCharacterController();
+		controller.callModelAddViewModel(startpoint, exitpoint);
 		
 		
-//		AnimationTimer at = new AnimationTimer() {
-//			@Override
-//			public void handle(long now) {
-//			// perform ticksPerFrame ticks
-//			// by default this is 1
-//				for (int i = 0; i < ticksPerFrame; i++) {
-//					tick();
-//				}
-//			}
-//		};
-//		at.start();
+		
+		
+		animationTimer = new AnimationTimer() {
+			@Override
+			public void handle(long now) {
+			// perform ticksPerFrame ticks
+			// by default this is 1
+				for (int i = 0; i < ticksPerFrame; i++) {
+					tick();
+				}
+			}
+		};
+		animationTimer.start();
 		
 		
 	    scene.setOnKeyPressed(new MovementPressed());
@@ -161,7 +172,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		MenuBar mb = new MenuBar(); mb.setMinHeight(25); 
 		mb.getMenus().add(menu); 
 		// grid holds map
-		GridPane grid = new GridPane();
+		grid = new GridPane();
 		grid.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
 		grid.setPrefSize( WINDOW_WIDTH, WINDOW_HEIGHT ); // not sure its best size
 		//**********************************************
@@ -172,12 +183,14 @@ public class PuzzlePlatformerView extends Application implements Observer {
 					wall.setFill(Color.BLACK);
 					grid.add(wall, j, i);
 				}else if (map[i][j] == 'S') {// start
-					
-					grid.add(character, j, i); //jump doesnt work
+					startpoint[0] = j*unit_size;
+					startpoint[1] = i*unit_size;//jump doesnt work
 				}else if (map[i][j] == 'E') { //exit
 					Rectangle exit = new Rectangle(25, 25); 
 					exit.setFill(Color.BLUE);
 					grid.add(exit, j, i);
+					exitpoint[0] = j*unit_size;
+					exitpoint[1] = i*unit_size;
 				}
 			}
 			
@@ -193,13 +206,8 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		info.setPrefSize(200, 600); // not sure its best size
 		Label health = new Label("Health");	
 		health.setFont(new Font("Arial", 30));
-		Canvas canvas = new Canvas(150, 50); // label.setGraphic(new ImageView()) doesnot work, so use canvas
-		// the size of canvas bases on the number of hearts (modify later)
-		GraphicsContext gc = canvas.getGraphicsContext2D();
-		Image heart = new Image("img/heart.png"); 
-		gc.drawImage(heart, 0, 0, 50, 50); 
-		gc.drawImage(heart, 50, 0, 50, 50); // easy to update hearts by covering a 50*50 grey square (do later)
-		gc.drawImage(heart, 100, 0, 50, 50); 
+		health_box = new Canvas(150, 50); // label.setGraphic(new ImageView()) doesnot work, so use canvas
+//		updateHealth();
 		Label countdown = new Label("Countdown"); // (become red when less than 1 min)
 		countdown.setFont(new Font("Arial", 30));
 		Label timer = new Label("300 seconds"); // create timer
@@ -208,7 +216,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		timeline.setCycleCount(Timeline.INDEFINITE);
 		timeline.getKeyFrames().add(
 				new KeyFrame(Duration.seconds(1), new EventHandler() {
-					public int timeSeconds = 10; // make it 300 later, now for test
+					public int timeSeconds = 60; // make it 300 later, now for test
 					@Override
 					public void handle(Event event) {
 						timeSeconds--;
@@ -219,6 +227,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 						}
 						if (timeSeconds <= 0) {
 							timeline.stop(); // also show alert, and freeze (do later)
+							gameOverMessage();
 						}
 					}
 				}));
@@ -228,18 +237,61 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		items.setFont(new Font("Arial", 30));
 		// there should be a gridPane holding various images which represent items 
 		// Lize will do it later, since I am trying to find the best way to handle items (do later)
-		info.getChildren().addAll(health, canvas, countdown, timer, items); 
+		info.getChildren().addAll(health, health_box, countdown, timer, items); 
 		info.setAlignment(Pos.BASELINE_CENTER);
 		info.setSpacing(20); // POSSIBLE optimize: add separate line for readablity (do later)
 		// p holds everything
 		BorderPane p = new BorderPane();
 		p.setCenter(grid); p.setTop(mb); p.setRight(info);
 		// there should be someway to zoom up automatically without influencing coordinates (do later or ignore)
-		Scene scene = new Scene(p, 1000, 625); 
+		
+		
+		Group root = new Group();
+		root.getChildren().add(p);
+		root.getChildren().add(character);
+		Scene scene = new Scene(root, 1000, 625); 
+		
 		stage.setScene(scene); stage.setTitle("Puzzle Platformer");
+		
+		
+		
 		stage.show();
 		
 		return scene;
+	}
+	/**
+	 * 
+	 * @param health_status
+	 * @author Lize
+	 * @author Eujin Ko 
+	 */
+	private void updateHealth(int health_status) {
+		// the size of canvas bases on the number of hearts (modify later)
+		clearCanvas(health_box);
+		GraphicsContext gc = health_box.getGraphicsContext2D();
+		
+		Image heart = new Image("img/heart.png"); 
+		
+		for(int i = 0; i< health_status; i++) {
+			gc.drawImage(heart, i*50, 0, 50, 50); 
+		}
+//		gc.drawImage(heart, 50, 0, 50, 50); // easy to update hearts by covering a 50*50 grey square (do later)
+//		gc.drawImage(heart, 100, 0, 50, 50); 
+		
+		if(health_status == 0) {
+			gameOverMessage();
+		}
+		
+	}
+	
+	/**
+	 * This function clears canvas
+	 * @param canvas to be cleared
+	 * @author Eujin Ko 
+	 */
+	private void clearCanvas(Canvas canvas) {
+		GraphicsContext gc = canvas.getGraphicsContext2D();
+		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 	}
 	
 	
@@ -258,11 +310,13 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	 */
 	private void handleCharacterVelocity() {
 		int moveX=0; int moveY=0;
-		if(JUMP) {
-			moveY = -MOVE_SIZE*2;
-		}else if(UP) {
-			moveY = -MOVE_SIZE;
+		if(JUMP && character_controller.returnJumpStatus() == false) {
+			moveY = -MOVE_SIZE*10;
+			character_controller.toggleJumpStatus();
 		}
+//		else if(UP) {
+//			moveY = -MOVE_SIZE;
+//		}
 		
 		
 		if(RIGHT) {
@@ -281,13 +335,28 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	 */
 	@Override
 	public void update(Observable o, Object arg) {
+		
+//		try {
+//			Thread.sleep(1000);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
 		CollectionsMessage msg = (CollectionsMessage) arg;
 		CharacterMoveMessage char_msg = msg.getCharacterMoveMessage();
+		int health_status = msg.returnHealthStatus();
+		boolean win_status = msg.returnWinStatus();
+		
 		Platform.runLater(new Runnable() {
 
 			@Override
 			public void run() {
-				characterMoveTransition(char_msg);
+				if(char_msg != null) {
+					characterMoveTransition(char_msg);
+					updateHealth(health_status);
+					stageClearedMessage(win_status);
+				}
 			}
 			
 		});
@@ -308,11 +377,13 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		int prevY = msg.getYMoveFrom();
 		int curX = msg.getXMoveTo();
 		int curY = msg.getYMoveTo();
-		System.out.println(prevX+","+prevY+"->"+curX+","+curY);
+//		System.out.println(prevX+","+prevY+"->"+curX+","+curY);
 		
 	    Path path = new Path();
-	    path.getElements().add(new MoveTo(prevX, prevY));
-	    path.getElements().add(new LineTo(curX, curY));
+//	    path.getElements().add(new MoveTo(prevX+character_size[0]/2, prevY+unit_size));
+//	    path.getElements().add(new LineTo(curX+character_size[0]/2, curY+unit_size));
+	    path.getElements().add(new MoveTo(prevX+character_size[0]/2, prevY+unit_size+character_size[1]/2));
+	    path.getElements().add(new LineTo(curX+character_size[0]/2, curY+unit_size+character_size[1]/2));
 		
 
 	    PathTransition pathTransition = new PathTransition();
@@ -322,7 +393,37 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	    pathTransition.play();		
 	}
 	
-	
+	/**
+	 * Sends a Stage cleared message, stops the view
+	 * @param win_status indicates whether player has won the stage or not
+	 * @author Eujin Ko
+	 */
+	public void stageClearedMessage(boolean win_status) 
+	{
+		if(win_status == false) {
+			return;
+		}
+        Alert alert = new Alert(AlertType.INFORMATION); 
+        alert.setTitle("Message");
+        alert.setHeaderText("Message");
+        alert.setContentText("To the next stage!");
+        animationTimer.stop();
+        alert.showAndWait(); 
+		
+	}
+	/**
+	 * Sends a Game Over message, stops the view
+	 * @author Eujin Ko
+	 */
+	public void gameOverMessage() 
+	{
+        Alert alert = new Alert(AlertType.INFORMATION);  
+        alert.setTitle("Message");
+        alert.setHeaderText("Message");
+        alert.setContentText("GAME OVER");
+        animationTimer.stop();
+        alert.show();
+	}
 	
 	
 	// Private Event Handler classes
@@ -345,10 +446,10 @@ public class PuzzlePlatformerView extends Application implements Observer {
 				System.out.println("DOWN");
 				DOWN = true;
 				break;
-			case UP:
-				System.out.println("UP");
-				UP = true;
-				break;
+//			case UP:
+//				System.out.println("UP");
+//				UP = true;
+//				break;
 			case RIGHT:
 				System.out.println("RIGHT");
 				RIGHT = true;
@@ -385,9 +486,9 @@ public class PuzzlePlatformerView extends Application implements Observer {
 			case DOWN:
 				DOWN = false;
 				break;
-			case UP:
-				UP = false;
-				break;
+//			case UP:
+//				UP = false;
+//				break;
 			case RIGHT:
 				RIGHT = false;
 				break;

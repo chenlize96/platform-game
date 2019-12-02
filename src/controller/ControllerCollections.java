@@ -2,6 +2,7 @@ package controller;
 
 import java.util.Observer;
 
+import javafx.scene.layout.GridPane;
 import model.ModelCollections;
 
 /**
@@ -13,15 +14,19 @@ import model.ModelCollections;
 public class ControllerCollections {
 	ModelCollections model;
 	MainCharacterController character_controller;
+	MainViewModelController view_controller;
+	GridPane stage_grid;
 
 	/**
 	 * Constructor for ControllerCollections, creates ModelCollections and adds the observer(View) passed in as a argument
 	 * @param observer
+	 * @param stage_grid 
 	 * @author Eujin Ko
 	 */
-	public ControllerCollections(Observer observer) {
+	public ControllerCollections(Observer observer, GridPane stage_grid) {
 		model = new ModelCollections(this);
 		model.addObserver(observer);
+		this.stage_grid = stage_grid;
 	}
 
 	/**
@@ -33,7 +38,7 @@ public class ControllerCollections {
 	 */
 	public void callModelAddPlayer(int[] startpoint, int[] character_size) {
 		model.addPlayer(startpoint, character_size);
-		character_controller = new MainCharacterController(model.returnPlayer());
+		character_controller = new MainCharacterController(this, model.returnPlayer(), stage_grid);
 	}
 	/**
 	 * Returns the MainCharacterController
@@ -42,6 +47,26 @@ public class ControllerCollections {
 	 */
 	public MainCharacterController returnMainCharacterController() {
 		return this.character_controller;
+	}
+	
+	/**
+	 * Adds MainViewModel to the controller with creating controller which handles the stage
+	 * @param start start coordinate of the character
+	 * @param exit coordinate of the exit
+	 * @author Eujin Ko
+	 */
+	public void callModelAddViewModel(int[] start, int[] exit) {
+		model.addViewModel(start, exit);
+		view_controller = new MainViewModelController(model.returnViewModel());
+	}
+	
+	/**
+	 * Returns the controller which handles the MainViewModel
+	 * @return MainViewModelController
+	 * @author Eujin Ko
+	 */
+	public MainViewModelController returnViewModelController() {
+		return view_controller;
 	}
 	
 	/**

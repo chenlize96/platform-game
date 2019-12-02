@@ -12,6 +12,8 @@ import message.CharacterMoveMessage;
 public class MainCharacterModel{
 	boolean isJumping;
 	
+	private int[] start_pos= {0,0};
+	
 	//Character position
 	private int cord_x;
 	private int cord_y;
@@ -20,8 +22,8 @@ public class MainCharacterModel{
 	private int dy=0;
 	
 	//Chracter size
-	private int size_width = 10;
-	private int size_height = 10;
+	private int size_width;
+	private int size_height;
 	
 	/**
 	 * Constructor for MainCharacterModel
@@ -36,6 +38,9 @@ public class MainCharacterModel{
 		
 		this.cord_x = start_coordinate_x;
 		this.cord_y = start_coordinate_y;
+
+		this.start_pos[0] = start_coordinate_x;
+		this.start_pos[1] = start_coordinate_y;
 		
 		this.size_width = character_size_width;
 		this.size_height = character_size_height;
@@ -134,13 +139,37 @@ public class MainCharacterModel{
 		return this.dy;
 	}
 	/**
+	 * Sets current location
+	 * @param x
+	 * @param y
+	 * @author Eujin Ko
+	 */
+	public void setCurrentLocation(int x, int y) {
+		cord_x = x;
+		cord_y = y;
+	}
+	
+	/**
+	 * Returns the character to the start when player dies
+	 * Refactors the current coordinate and returns CharacterMoveMessage
+	 * @return CharacterMoveMessage
+	 * @author Eujin Ko
+	 */
+	public CharacterMoveMessage returnToStart() {
+		CharacterMoveMessage msg = new CharacterMoveMessage(start_pos[0],start_pos[1]-size_height, start_pos[0], start_pos[1]);
+
+		this.cord_x = start_pos[0];
+		this.cord_y = start_pos[1];
+		
+		return msg;
+	}
+	/**
 	 * Moves the character into position {moveX, moveY}
 	 * @param moveX new X coordinate for the character
 	 * @param moveY new Y coordinate for the character
 	 * @author Eujin Ko
 	 */
 	public CharacterMoveMessage moveCharacter(int moveX, int moveY) {
-
 		if(cord_x != moveX || cord_y != moveY) {
 			
 			CharacterMoveMessage msg = new CharacterMoveMessage(cord_x,cord_y, moveX, moveY);

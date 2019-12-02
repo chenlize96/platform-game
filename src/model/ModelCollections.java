@@ -16,6 +16,7 @@ import message.CollectionsMessage;
  */
 public class ModelCollections  extends Observable {
 	MainCharacterModel player;
+	MainViewModel view_model;
 	ControllerCollections controllerCollections;
 	
 	int window_width = 800;
@@ -39,16 +40,39 @@ public class ModelCollections  extends Observable {
 		CharacterMoveMessage char_msg = movePlayer();
 		moveEnemies();
 		moveProjectiles();
-		checkForDeath();
-		checkForWin();
+		int health_status = checkForDeath();
+		boolean win = checkForWin();
 		
-		CollectionsMessage msg = new CollectionsMessage(char_msg);
+		CollectionsMessage msg = new CollectionsMessage(char_msg, health_status,win);
 		setChanged();
 		notifyObservers(msg);
 		
 	}
-
-	//PLAYER METHODS - STARTS
+	// <NEW> VIEW MODEL METHODS - STARTS
+	/**
+	 * Adds ViewModel to the ModelCollections
+	 * MUST BE CALLED FOR EVERY STAGE
+	 * @param start player starting coordinate
+	 * @param exit exit coordinate
+	 * @author Eujin Ko
+	 */
+	public void addViewModel(int start[], int[] exit) {
+		this.view_model = new MainViewModel(start, exit);
+	}
+	/**
+	 * Returns the ViewModel
+	 * @return MainViewModel
+	 * @author Eujin Ko
+	 */
+	public MainViewModel returnViewModel() {
+		return this.view_model;
+	}
+	
+	//VIEW MODEL METHODS - ENDS
+	
+	
+	
+	// <NEW> PLAYER METHODS - STARTS
 	
 	/**
 	 * Adds player to the player model
@@ -59,6 +83,7 @@ public class ModelCollections  extends Observable {
 	public void addPlayer(int[] startpoint, int[] character_size) {
 		this.player = new MainCharacterModel(startpoint[0], startpoint[1], character_size[0], character_size[1]);
 	}
+
 	
 	/**
 	 * Returns the player model
@@ -78,7 +103,7 @@ public class ModelCollections  extends Observable {
 	public CharacterMoveMessage movePlayer() {
 		CharacterMoveMessage msg = controllerCollections
 				.returnMainCharacterController()
-				.moveCharacter(window_width, window_height);
+				.moveCharacter();
 		
 		return msg;
 		
@@ -96,15 +121,26 @@ public class ModelCollections  extends Observable {
 		// TODO
 	}
 	
-	private void checkForWin() {
-		// TODO
+	/**
+	 * Checks if the player reached the exit
+	 * @return boolean
+	 * @author Eujin Ko
+	 */
+	private boolean checkForWin() {
+		int[] exit = controllerCollections.returnViewModelController().returnExitPosition();
+		boolean win = controllerCollections.returnMainCharacterController().checkIfCharacterIsAtExit(exit[0], exit[1]);
+		return win;
 		
 	}
 
 
-	private void checkForDeath() {
-		// TODO
-		
+	/**
+	 * Checks the health status of the model
+	 * @return int remaining health
+	 * @author Eujin Ko
+	 */
+	private int checkForDeath() {
+		return controllerCollections.returnViewModelController().healthStatus();
 	}
 
 
