@@ -20,10 +20,12 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
@@ -269,8 +271,9 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	 */
 	private void handleCharacterVelocity() {
 		int moveX=0; int moveY=0;
-		if(JUMP) {
-			moveY = -MOVE_SIZE*2;
+		if(JUMP && character_controller.returnJumpStatus() == false) {
+			moveY = -MOVE_SIZE*10;
+			character_controller.toggleJumpStatus();
 		}else if(UP) {
 			moveY = -MOVE_SIZE;
 		}
@@ -343,7 +346,32 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	    pathTransition.play();		
 	}
 	
-	
+	/**
+	 * Sends a Stage cleared message, stops the view
+	 * @author Eujin Ko
+	 */
+	public void stageClearedMessage() 
+	{
+        Alert alert = new Alert(AlertType.INFORMATION); 
+        alert.setTitle("Message");
+        alert.setHeaderText("Message");
+        alert.setContentText("To the next stage!");
+        alert.showAndWait(); 
+		
+	}
+	/**
+	 * Sends a Game Over message, stops the view
+	 * @author Eujin Ko
+	 */
+	public void gameOverMessage() 
+	{
+        Alert alert = new Alert(AlertType.INFORMATION);  
+        alert.setTitle("Message");
+        alert.setHeaderText("Message");
+        alert.setContentText("GAME OVER");
+        alert.showAndWait(); 
+		
+	}
 	
 	
 	// Private Event Handler classes

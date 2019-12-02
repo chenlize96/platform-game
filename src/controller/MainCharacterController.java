@@ -112,16 +112,18 @@ public class MainCharacterController {
 
 				if(after_y > curr_y) {
 					after_y = (int)y-char_height/2;
-					
-					
+					if(character_model.returnJumpStatus() == true) {
+						character_model.toggleJump();
+						
+					}
 				}else {
 					after_y = (int) (y-unit_size);
 				}
 
 			}else  {
 				if((x+x+unit_size)/2 <= after_x && after_x <= x) {
+
 					System.out.println("Child  (x,y) : "+x+"."+y);
-					
 					after_x = (int) (x+unit_size);
 				}
 			}
