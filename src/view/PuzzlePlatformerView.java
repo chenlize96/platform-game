@@ -16,6 +16,7 @@ import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -50,8 +51,8 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	final int ticksPerFrame = 1;
 	final int MOVE_SIZE = 10;
 	
-	private int[] startpoint = {20,20};
-	private int[] character_size = {20,20};
+	private int[] startpoint = {0,0};
+	private int[] character_size = {10,10};
 	
 	private int unit_size = 25; // every unit in the map is 25*25    ***ATTENTION***
 	//Character
@@ -65,6 +66,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	
 	ControllerCollections controller;
 	MainCharacterController character_controller;
+	GridPane grid;
 	
 	
 	
@@ -116,22 +118,22 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	public void start(Stage stage) throws Exception {
 		Scene scene = setupStage(stage);	//Lize's stage setup
 
-		this.controller = new ControllerCollections(this);
+		this.controller = new ControllerCollections(this,grid);
 		this.controller.callModelAddPlayer(startpoint, character_size);
 		this.character_controller = controller.returnMainCharacterController();
 		
 		
-//		AnimationTimer at = new AnimationTimer() {
-//			@Override
-//			public void handle(long now) {
-//			// perform ticksPerFrame ticks
-//			// by default this is 1
-//				for (int i = 0; i < ticksPerFrame; i++) {
-//					tick();
-//				}
-//			}
-//		};
-//		at.start();
+		AnimationTimer at = new AnimationTimer() {
+			@Override
+			public void handle(long now) {
+			// perform ticksPerFrame ticks
+			// by default this is 1
+				for (int i = 0; i < ticksPerFrame; i++) {
+					tick();
+				}
+			}
+		};
+		at.start();
 		
 		
 	    scene.setOnKeyPressed(new MovementPressed());
@@ -161,7 +163,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		MenuBar mb = new MenuBar(); mb.setMinHeight(25); 
 		mb.getMenus().add(menu); 
 		// grid holds map
-		GridPane grid = new GridPane();
+		grid = new GridPane();
 		grid.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
 		grid.setPrefSize( WINDOW_WIDTH, WINDOW_HEIGHT ); // not sure its best size
 		//**********************************************
@@ -172,8 +174,8 @@ public class PuzzlePlatformerView extends Application implements Observer {
 					wall.setFill(Color.BLACK);
 					grid.add(wall, j, i);
 				}else if (map[i][j] == 'S') {// start
-					
-					grid.add(character, j, i); //jump doesnt work
+					startpoint[0] = j*unit_size;
+					startpoint[1] = i*unit_size;//jump doesnt work
 				}else if (map[i][j] == 'E') { //exit
 					Rectangle exit = new Rectangle(25, 25); 
 					exit.setFill(Color.BLUE);
@@ -235,8 +237,17 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		BorderPane p = new BorderPane();
 		p.setCenter(grid); p.setTop(mb); p.setRight(info);
 		// there should be someway to zoom up automatically without influencing coordinates (do later or ignore)
-		Scene scene = new Scene(p, 1000, 625); 
+		
+		
+		Group root = new Group();
+		root.getChildren().add(p);
+		root.getChildren().add(character);
+		Scene scene = new Scene(root, 1000, 625); 
+		
 		stage.setScene(scene); stage.setTitle("Puzzle Platformer");
+		
+		
+		
 		stage.show();
 		
 		return scene;
@@ -311,8 +322,8 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		System.out.println(prevX+","+prevY+"->"+curX+","+curY);
 		
 	    Path path = new Path();
-	    path.getElements().add(new MoveTo(prevX, prevY));
-	    path.getElements().add(new LineTo(curX, curY));
+	    path.getElements().add(new MoveTo(prevX, prevY+unit_size));
+	    path.getElements().add(new LineTo(curX, curY+unit_size));
 		
 
 	    PathTransition pathTransition = new PathTransition();

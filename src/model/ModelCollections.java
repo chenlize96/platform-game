@@ -78,7 +78,7 @@ public class ModelCollections  extends Observable {
 	public CharacterMoveMessage movePlayer() {
 		CharacterMoveMessage msg = controllerCollections
 				.returnMainCharacterController()
-				.moveCharacter(window_width, window_height);
+				.moveCharacter();
 		
 		return msg;
 		

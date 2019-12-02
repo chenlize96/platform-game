@@ -20,8 +20,8 @@ public class MainCharacterModel{
 	private int dy=0;
 	
 	//Chracter size
-	private int size_width = 10;
-	private int size_height = 10;
+	private int size_width;
+	private int size_height;
 	
 	/**
 	 * Constructor for MainCharacterModel
@@ -132,6 +132,16 @@ public class MainCharacterModel{
 	 */
 	public int getdy() {
 		return this.dy;
+	}
+	/**
+	 * Sets current location
+	 * @param x
+	 * @param y
+	 * @author Eujin Ko
+	 */
+	public void setCurrentLocation(int x, int y) {
+		cord_x = x;
+		cord_y = y;
 	}
 	/**
 	 * Moves the character into position {moveX, moveY}
