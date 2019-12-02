@@ -216,7 +216,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		timeline.setCycleCount(Timeline.INDEFINITE);
 		timeline.getKeyFrames().add(
 				new KeyFrame(Duration.seconds(1), new EventHandler() {
-					public int timeSeconds = 10; // make it 300 later, now for test
+					public int timeSeconds = 60; // make it 300 later, now for test
 					@Override
 					public void handle(Event event) {
 						timeSeconds--;
@@ -227,6 +227,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 						}
 						if (timeSeconds <= 0) {
 							timeline.stop(); // also show alert, and freeze (do later)
+							gameOverMessage();
 						}
 					}
 				}));
@@ -398,9 +399,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
         alert.setHeaderText("Message");
         alert.setContentText("GAME OVER");
         animationTimer.stop();
-        alert.showAndWait();
-        
-		
+        alert.show();
 	}
 	
 	
