@@ -49,7 +49,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	final int WINDOW_WIDTH = 800;
 	final int WINDOW_HEIGHT = 600;
 	final int ticksPerFrame = 1;
-	final int MOVE_SIZE = 10;
+	final int MOVE_SIZE = 5;
 	
 	private int[] startpoint = {0,0};
 	private int[] character_size = {10,10};
@@ -298,7 +298,9 @@ public class PuzzlePlatformerView extends Application implements Observer {
 
 			@Override
 			public void run() {
-				characterMoveTransition(char_msg);
+				if(char_msg != null) {
+					characterMoveTransition(char_msg);
+				}
 			}
 			
 		});
@@ -322,8 +324,8 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		System.out.println(prevX+","+prevY+"->"+curX+","+curY);
 		
 	    Path path = new Path();
-	    path.getElements().add(new MoveTo(prevX, prevY+unit_size));
-	    path.getElements().add(new LineTo(curX, curY+unit_size));
+	    path.getElements().add(new MoveTo(prevX+character_size[0]/2, prevY+unit_size));
+	    path.getElements().add(new LineTo(curX+character_size[0]/2, curY+unit_size));
 		
 
 	    PathTransition pathTransition = new PathTransition();

@@ -18,7 +18,7 @@ public class MainCharacterController {
 	int window_width = 800;
 	int window_height = 600;
 	int unit_size = 25;
-	final int MOVE_SIZE = 10;
+	final int MOVE_SIZE = 5;
 	
 	/**
 	 * Constructor for MainCharacterController, saves the model object into global variable
@@ -45,7 +45,7 @@ public class MainCharacterController {
 		
 		int dx = character_model.getdx();
 		int dy = character_model.getdy();
-//		System.out.println("velocity: "+dx+","+dy);
+		System.out.println("velocity: "+dx+","+dy);
 		if(dx!=0) {
 			if(dx<0) {
 				moveX = -MOVE_SIZE;
@@ -83,8 +83,8 @@ public class MainCharacterController {
 			after_x = char_width/2;
 //			System.out.println("1. COLLISON("+after_x+","+after_y+")");
 			
-		}else if(after_x > window_width-char_width) {
-			after_x = window_width-char_width/2;
+		}else if(after_x +char_width > window_width) {
+			after_x = window_width-char_width;
 //			System.out.println("2. COLLISON("+after_x+","+after_y+")");
 		}
 		
@@ -100,42 +100,36 @@ public class MainCharacterController {
 			//TODO: DEAD CONDITIONS
 		}
 		
+		for(Node child:stage_grid.getChildren()) {
+		double x = child.getLayoutX();
+		double y = child.getLayoutY();
+//		System.out.println("Child  (r,c) :"+r+","+c+"  (x,y) : "+x+"."+y);
+//		System.out.println("Child  (x,y) : "+x+"."+y);
 		
-//		for(Node child:stage_grid.getChildren()) {
-////			Integer r = GridPane.getRowIndex(child);
-////			Integer c = GridPane.getColumnIndex(child);
-//			double x = child.getLayoutX();
-//			double y = child.getLayoutY();
-////			System.out.println("Child  (r,c) :"+r+","+c+"  (x,y) : "+x+"."+y);
-////			System.out.println("Child  (x,y) : "+x+"."+y);
-//			
-//			if(x <= after_x && after_x <= x+unit_size) {
-//				if(y-unit_size <= after_y && after_y <= y) {
-////					if(after_x <= (x+x+unit_size)/2) {
-////						after_x = (int) x-char_width;
-////					}else {
-////						after_x = (int) (x+unit_size);
-////					}
-//					
-//					if(after_y <= (y+y-unit_size)/2) {
-//						System.out.println("COLLISION!  ("+(int)x+","+(int)y+")");
-//						after_y = (int)y;
-//					}else {
-//						after_y = (int) (y-unit_size);
-//					}
-//					
-//					
-//					CharacterMoveMessage msg = character_model.moveCharacter(after_x, after_y);
-//					
-//					return msg;	
+		if(x <= after_x && after_x <= x+unit_size) {
+			if(y-unit_size <= after_y && after_y <= y) {
+//				if(after_x <= (x+x+unit_size)/2) {
+//					after_x = (int) x-char_width;
+//				}else {
+//					after_x = (int) (x+unit_size);
 //				}
-//
-//			}
-		
-			
+				
+				if(after_y <= (y+y-unit_size)/2) {
+					after_y = (int)y-char_height/2;
+				}else {
+					after_y = (int) (y-unit_size);
+				}
+				System.out.println("COLLISION!  ("+(int)x+","+(int)y+") ("+curr_y+"->"+after_y+")"+char_height);
+				
+				
+				CharacterMoveMessage msg = character_model.moveCharacter(after_x, after_y);
+				
+				return msg;	
+			}
 
-			
 		}
+	}
+
 		
 		
 		CharacterMoveMessage msg = character_model.moveCharacter(after_x, after_y);

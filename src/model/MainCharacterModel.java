@@ -150,7 +150,6 @@ public class MainCharacterModel{
 	 * @author Eujin Ko
 	 */
 	public CharacterMoveMessage moveCharacter(int moveX, int moveY) {
-
 		if(cord_x != moveX || cord_y != moveY) {
 			
 			CharacterMoveMessage msg = new CharacterMoveMessage(cord_x,cord_y, moveX, moveY);
