@@ -40,10 +40,10 @@ public class ModelCollections  extends Observable {
 		CharacterMoveMessage char_msg = movePlayer();
 		moveEnemies();
 		moveProjectiles();
-		checkForDeath();
+		int health_status = checkForDeath();
 		checkForWin();
 		
-		CollectionsMessage msg = new CollectionsMessage(char_msg);
+		CollectionsMessage msg = new CollectionsMessage(char_msg, health_status);
 		setChanged();
 		notifyObservers(msg);
 		
@@ -127,9 +127,9 @@ public class ModelCollections  extends Observable {
 	}
 
 
-	private void checkForDeath() {
-		// TODO
-		
+
+	private int checkForDeath() {
+		return controllerCollections.returnViewModelController().healthStatus();
 	}
 
 

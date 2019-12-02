@@ -206,7 +206,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		Label health = new Label("Health");	
 		health.setFont(new Font("Arial", 30));
 		health_box = new Canvas(150, 50); // label.setGraphic(new ImageView()) doesnot work, so use canvas
-		updateHealth();
+//		updateHealth();
 		Label countdown = new Label("Countdown"); // (become red when less than 1 min)
 		countdown.setFont(new Font("Arial", 30));
 		Label timer = new Label("300 seconds"); // create timer
@@ -260,15 +260,22 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	/**
 	 * <EDIT> By Eujin, moved to seperate function so it draws the health image based on the health left
 	 * @author Lize
+	 * @param health_status 
 	 */
-	private void updateHealth() {
+	private void updateHealth(int health_status) {
 		// the size of canvas bases on the number of hearts (modify later)
 		GraphicsContext gc = health_box.getGraphicsContext2D();
 		Image heart = new Image("img/heart.png"); 
 		
-		gc.drawImage(heart, 0, 0, 50, 50); 
-		gc.drawImage(heart, 50, 0, 50, 50); // easy to update hearts by covering a 50*50 grey square (do later)
-		gc.drawImage(heart, 100, 0, 50, 50); 
+		for(int i = 0; i< health_status; i++) {
+			gc.drawImage(heart, i*50, 0, 50, 50); 
+		}
+//		gc.drawImage(heart, 50, 0, 50, 50); // easy to update hearts by covering a 50*50 grey square (do later)
+//		gc.drawImage(heart, 100, 0, 50, 50); 
+		
+		if(health_status == 0) {
+			gameOverMessage();
+		}
 		
 	}
 	
@@ -322,12 +329,14 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		
 		CollectionsMessage msg = (CollectionsMessage) arg;
 		CharacterMoveMessage char_msg = msg.getCharacterMoveMessage();
+		int health_status = msg.returnHealthStatus();
 		Platform.runLater(new Runnable() {
 
 			@Override
 			public void run() {
 				if(char_msg != null) {
 					characterMoveTransition(char_msg);
+					updateHealth(health_status);
 				}
 			}
 			
