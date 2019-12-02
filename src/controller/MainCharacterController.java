@@ -96,16 +96,13 @@ public class MainCharacterController {
 			
 		}else if(after_y > window_height-char_height) {
 			after_y= window_height-char_height/2;
-//			System.out.println("4. COLLISON("+after_x+","+after_y+")");
-			//TODO: DEAD CONDITIONS
+			System.out.println("4. COLLISON("+after_x+","+after_y+")");
 		}
 		
 		for(Node child:stage_grid.getChildren()) {
 		double x = child.getLayoutX();
 		double y = child.getLayoutY();
 //		System.out.println("Child  (r,c) :"+r+","+c+"  (x,y) : "+x+"."+y);
-//		System.out.println("Child  (x,y) : "+x+"."+y);
-		
 
 		
 		
@@ -121,10 +118,12 @@ public class MainCharacterController {
 					after_y = (int) (y-unit_size);
 				}
 
-			}
-			
-			if((x+x+unit_size)/2 <= after_x) {
-				after_x = (int) (x+unit_size);
+			}else  {
+				if((x+x+unit_size)/2 <= after_x && after_x <= x) {
+					System.out.println("Child  (x,y) : "+x+"."+y);
+					
+					after_x = (int) (x+unit_size);
+				}
 			}
 			
 		}
