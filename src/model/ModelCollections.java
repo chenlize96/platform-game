@@ -41,9 +41,9 @@ public class ModelCollections  extends Observable {
 		moveEnemies();
 		moveProjectiles();
 		int health_status = checkForDeath();
-		checkForWin();
+		boolean win = checkForWin();
 		
-		CollectionsMessage msg = new CollectionsMessage(char_msg, health_status);
+		CollectionsMessage msg = new CollectionsMessage(char_msg, health_status,win);
 		setChanged();
 		notifyObservers(msg);
 		
@@ -121,13 +121,24 @@ public class ModelCollections  extends Observable {
 		// TODO
 	}
 	
-	private void checkForWin() {
-		// TODO
+	/**
+	 * Checks if the player reached the exit
+	 * @return boolean
+	 * @author Eujin Ko
+	 */
+	private boolean checkForWin() {
+		int[] exit = controllerCollections.returnViewModelController().returnExitPosition();
+		boolean win = controllerCollections.returnMainCharacterController().checkIfCharacterIsAtExit(exit[0], exit[1]);
+		return win;
 		
 	}
 
 
-
+	/**
+	 * Checks the health status of the model
+	 * @return int remaining health
+	 * @author Eujin Ko
+	 */
 	private int checkForDeath() {
 		return controllerCollections.returnViewModelController().healthStatus();
 	}

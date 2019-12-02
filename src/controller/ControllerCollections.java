@@ -20,8 +20,8 @@ public class ControllerCollections {
 	/**
 	 * Constructor for ControllerCollections, creates ModelCollections and adds the observer(View) passed in as a argument
 	 * @param observer
-	 * @author Eujin Ko
 	 * @param stage_grid 
+	 * @author Eujin Ko
 	 */
 	public ControllerCollections(Observer observer, GridPane stage_grid) {
 		model = new ModelCollections(this);
@@ -49,11 +49,22 @@ public class ControllerCollections {
 		return this.character_controller;
 	}
 	
+	/**
+	 * Adds MainViewModel to the controller with creating controller which handles the stage
+	 * @param start start coordinate of the character
+	 * @param exit coordinate of the exit
+	 * @author Eujin Ko
+	 */
 	public void callModelAddViewModel(int[] start, int[] exit) {
 		model.addViewModel(start, exit);
 		view_controller = new MainViewModelController(model.returnViewModel());
 	}
 	
+	/**
+	 * Returns the controller which handles the MainViewModel
+	 * @return MainViewModelController
+	 * @author Eujin Ko
+	 */
 	public MainViewModelController returnViewModelController() {
 		return view_controller;
 	}

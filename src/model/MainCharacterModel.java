@@ -149,6 +149,12 @@ public class MainCharacterModel{
 		cord_y = y;
 	}
 	
+	/**
+	 * Returns the character to the start when player dies
+	 * Refactors the current coordinate and returns CharacterMoveMessage
+	 * @return CharacterMoveMessage
+	 * @author Eujin Ko
+	 */
 	public CharacterMoveMessage returnToStart() {
 		CharacterMoveMessage msg = new CharacterMoveMessage(start_pos[0],start_pos[1]-size_height, start_pos[0], start_pos[1]);
 

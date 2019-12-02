@@ -24,8 +24,8 @@ public class MainCharacterController {
 	/**
 	 * Constructor for MainCharacterController, saves the model object into global variable
 	 * @param model
-	 * @author Eujin Ko
 	 * @param stage_grid 
+	 * @author Eujin Ko
 	 */
 	public MainCharacterController(ControllerCollections main_controller, MainCharacterModel model, GridPane stage_grid) {
 		this.main_controller = main_controller;
@@ -145,17 +145,48 @@ public class MainCharacterController {
 		
 	}
 	
-	public void checkIfCharacterIsAtExit(int x, int y) {
-//		if(x<= curr_x && curr_x<=)
+	/**
+	 * Checks if the Character reaches the exit
+	 * @param x x-cordinate
+	 * @param y y-coordinate
+	 * @return boolean indicates if player has won the stage or not
+	 * @author Eujin Ko
+	 */
+	public boolean checkIfCharacterIsAtExit(int x, int y) {
+		int curr_x = character_model.getCordX();
+		int curr_y = character_model.getCordY();
+		
+		System.out.println("WIN STATUS"+curr_x+","+curr_y+"-"+x+","+y);
+		if(x<= curr_x && curr_x<=x+unit_size) {
+			if(y <= curr_y && curr_y <= y+unit_size) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
+	/**
+	 * Addes the velocity to the character model
+	 * @param dx x velocity
+	 * @param dy y velocity
+	 * @author Eujin Ko
+	 */
 	public void addVelocity(int dx, int dy) {
 		character_model.addVelocity(dx,dy);
 	}
 	
+	/**
+	 * Returns the jump status of character model
+	 * @return boolean
+	 * @author Eujin Ko
+	 */
 	public boolean returnJumpStatus() {
 		return character_model.returnJumpStatus();
 	}
+	/**
+	 * Toggles the jump status of character model
+	 * @author Eujin Ko
+	 */
 	public void toggleJumpStatus() {
 		character_model.toggleJump();
 	}

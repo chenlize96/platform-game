@@ -260,9 +260,10 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		return scene;
 	}
 	/**
-	 * <EDIT> By Eujin, moved to seperate function so it draws the health image based on the health left
+	 * 
+	 * @param health_status
 	 * @author Lize
-	 * @param health_status 
+	 * @author Eujin Ko 
 	 */
 	private void updateHealth(int health_status) {
 		// the size of canvas bases on the number of hearts (modify later)
@@ -283,6 +284,11 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		
 	}
 	
+	/**
+	 * This function clears canvas
+	 * @param canvas to be cleared
+	 * @author Eujin Ko 
+	 */
 	private void clearCanvas(Canvas canvas) {
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
@@ -340,6 +346,8 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		CollectionsMessage msg = (CollectionsMessage) arg;
 		CharacterMoveMessage char_msg = msg.getCharacterMoveMessage();
 		int health_status = msg.returnHealthStatus();
+		boolean win_status = msg.returnWinStatus();
+		
 		Platform.runLater(new Runnable() {
 
 			@Override
@@ -347,6 +355,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 				if(char_msg != null) {
 					characterMoveTransition(char_msg);
 					updateHealth(health_status);
+					stageClearedMessage(win_status);
 				}
 			}
 			
@@ -368,7 +377,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		int prevY = msg.getYMoveFrom();
 		int curX = msg.getXMoveTo();
 		int curY = msg.getYMoveTo();
-		System.out.println(prevX+","+prevY+"->"+curX+","+curY);
+//		System.out.println(prevX+","+prevY+"->"+curX+","+curY);
 		
 	    Path path = new Path();
 //	    path.getElements().add(new MoveTo(prevX+character_size[0]/2, prevY+unit_size));
@@ -386,10 +395,14 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	
 	/**
 	 * Sends a Stage cleared message, stops the view
+	 * @param win_status indicates whether player has won the stage or not
 	 * @author Eujin Ko
 	 */
-	public void stageClearedMessage() 
+	public void stageClearedMessage(boolean win_status) 
 	{
+		if(win_status == false) {
+			return;
+		}
         Alert alert = new Alert(AlertType.INFORMATION); 
         alert.setTitle("Message");
         alert.setHeaderText("Message");
