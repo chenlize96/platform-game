@@ -145,7 +145,9 @@ public class MainCharacterController {
 		
 	}
 	
-	
+	public void checkIfCharacterIsAtExit(int x, int y) {
+//		if(x<= curr_x && curr_x<=)
+	}
 	
 	public void addVelocity(int dx, int dy) {
 		character_model.addVelocity(dx,dy);
