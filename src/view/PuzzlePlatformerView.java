@@ -56,6 +56,8 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	private int[] startpoint = {0,0};
 	private int[] exitpoint = {0,0};
 	private int[] character_size = {10,10};
+	private int[] keys = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}; // there may be 5 keys in a map
+	
 	
 	private int unit_size = 25; // every unit in the map is 25*25    ***ATTENTION***
 	//Character
@@ -119,6 +121,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	// 
 	/**
 	 * @author Eujin Ko
+	 * @author Lize 
 	 */
 	@Override
 	public void start(Stage stage) throws Exception {
@@ -129,7 +132,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		character_controller = controller.returnMainCharacterController();
 		controller.callModelAddViewModel(startpoint, exitpoint);
 		
-		
+		controller.callModelAddKeys(keys); 
 		
 		
 		animationTimer = new AnimationTimer() {
@@ -179,31 +182,47 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		for (int i = 0; i < map.length; i++) {
 			for (int j = 0; j < map[0].length; j++) {
 				if (map[i][j] == '*') {
-					//Rectangle wall = new Rectangle(25, 25); 
 					Canvas canvas = new Canvas(unit_size, unit_size); 
 					GraphicsContext gc = canvas.getGraphicsContext2D();
 					Image wall = new Image("img/wall.png"); 
 					gc.drawImage(wall, 0, 0, unit_size, unit_size); 
-					
-					
-					
-					//wall.setFill(Color.BLACK);
 					grid.add(canvas, j, i);
 				}else if (map[i][j] == 'S') {// start
 					startpoint[0] = j*unit_size;
 					startpoint[1] = i*unit_size;//jump doesnt work
 				}else if (map[i][j] == 'E') { //exit
-					Rectangle exit = new Rectangle(25, 25); 
-					exit.setFill(Color.BLUE);
-					grid.add(exit, j, i);
+					Canvas canvas = new Canvas(unit_size, unit_size); 
+					GraphicsContext gc = canvas.getGraphicsContext2D();
+					Image exit = new Image("img/exit.png"); 
+					gc.drawImage(exit, 0, 0, unit_size, unit_size); 
+					grid.add(canvas, j, i);
 					exitpoint[0] = j*unit_size;
 					exitpoint[1] = i*unit_size;
+				}else if (map[i][j] == 'D') {
+					Canvas canvas = new Canvas(unit_size, unit_size); 
+					GraphicsContext gc = canvas.getGraphicsContext2D();
+					Image door = new Image("img/door.png"); 
+					gc.drawImage(door, 0, 0, unit_size, unit_size); 
+					grid.add(canvas, j, i);
+				}else if (map[i][j] == 'K') {
+					Canvas canvas = new Canvas(unit_size, unit_size); 
+					GraphicsContext gc = canvas.getGraphicsContext2D();
+					Image key = new Image("img/key.png"); 
+					gc.drawImage(key, 0, 0, unit_size, unit_size); 
+					grid.add(canvas, j, i);
+					for (int k = 0; k < keys.length / 2; k++) {
+						if (keys[k * 2] == -1) {
+							keys[k * 2] = j * unit_size;
+							keys[k * 2 + 1] = i * unit_size;
+							break;
+						}
+					}
 				}
 			}
 			
 		}
 		
-		
+		System.out.println(keys[0] + " "+ keys[1]+ " "+ keys[2]+"******");
 		
 		
 		//**********************************************
@@ -309,6 +328,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	private void tick() {
 		handleCharacterVelocity();
 		controller.callModelTick();
+			
 		
 	}
 	/**
@@ -339,6 +359,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	/**
 	 * Fetches the message received from observable, updates the view
 	 * @author Eujin Ko
+	 * @author Lize Chen
 	 */
 	@Override
 	public void update(Observable o, Object arg) {
@@ -354,6 +375,8 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		CharacterMoveMessage char_msg = msg.getCharacterMoveMessage();
 		int health_status = msg.returnHealthStatus();
 		boolean win_status = msg.returnWinStatus();
+		int keyPos = msg.returnKeyStatus();
+		System.out.println(keyPos +"***************************************"); // correct
 		
 		Platform.runLater(new Runnable() {
 
@@ -363,11 +386,19 @@ public class PuzzlePlatformerView extends Application implements Observer {
 					characterMoveTransition(char_msg);
 					updateHealth(health_status);
 					stageClearedMessage(win_status);
+					pickUpKey(keyPos);
 				}
 			}
 			
 		});
 	}
+	
+	
+	//lize (disappear on the map and show in the item bag)
+	public void pickUpKey(int keyPos) {
+		
+	}
+	
 	
 	/**
 	 * Parses CharacterMoveMessage and moves the character object from the scene

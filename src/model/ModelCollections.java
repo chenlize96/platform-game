@@ -35,19 +35,26 @@ public class ModelCollections  extends Observable {
 	/**
 	 * performs one tick for all models inside the MOdelCollections
 	 * @author Eujin Ko
+	 * @author Lize Chen
 	 */
 	public void tick() {
 		CharacterMoveMessage char_msg = movePlayer();
 		moveEnemies();
 		moveProjectiles();
+		
+		int keyPos = checkForKey();//get key postion, if -1 then not found
 		int health_status = checkForDeath();
 		boolean win = checkForWin();
-		
-		CollectionsMessage msg = new CollectionsMessage(char_msg, health_status,win);
+		CollectionsMessage msg = new CollectionsMessage(char_msg, health_status,win,keyPos);
 		setChanged();
 		notifyObservers(msg);
 		
 	}
+	
+
+	
+	
+	
 	// <NEW> VIEW MODEL METHODS - STARTS
 	/**
 	 * Adds ViewModel to the ModelCollections
@@ -133,6 +140,14 @@ public class ModelCollections  extends Observable {
 		
 	}
 
+	//lize
+	private int checkForKey() {
+		int[] keys = controllerCollections.returnViewModelController().returnKeyPosition();
+		int k = controllerCollections.returnMainCharacterController().checkIfThereIsAKey(keys);
+		return k;
+	}
+	
+	
 
 	/**
 	 * Checks the health status of the model

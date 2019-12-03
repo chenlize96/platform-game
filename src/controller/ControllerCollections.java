@@ -60,6 +60,14 @@ public class ControllerCollections {
 		view_controller = new MainViewModelController(model.returnViewModel());
 	}
 	
+	
+	//lize
+	public void callModelAddKeys(int[] keys) {
+		model.returnViewModel().setKeyPosition(keys);
+	}
+	
+	
+	
 	/**
 	 * Returns the controller which handles the MainViewModel
 	 * @return MainViewModelController

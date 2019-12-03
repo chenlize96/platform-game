@@ -8,6 +8,7 @@ package model;
 public class MainViewModel {
 	int[] start = {0,0};
 	int[] exit = {0,0};
+	int[] keys = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}; // there may be 5 keys in a map
 	int health_left;
 	
 	/**
@@ -23,6 +24,18 @@ public class MainViewModel {
 		this.start[0] = start[0];
 		this.start[1] = start[1];
 	}
+	
+	
+	//lize  only handle five keys but i think enough
+	public void setKeyPosition(int[] keys) {
+		this.keys = keys; 
+	}
+	
+	//lize
+	public int[] returnKeysPosition() {
+		return this.keys;
+	}
+	
 	
 	/**
 	 * Returns the health status
@@ -40,6 +53,7 @@ public class MainViewModel {
 	public int[] returnExitPosition() {
 		return this.exit;
 	}
+	
 	
 	/**
 	 * Decreases health by 1
