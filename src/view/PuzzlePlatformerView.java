@@ -482,8 +482,8 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	    Path path = new Path();
 //	    path.getElements().add(new MoveTo(prevX+character_size[0]/2, prevY+unit_size));
 //	    path.getElements().add(new LineTo(curX+character_size[0]/2, curY+unit_size));
-	    path.getElements().add(new MoveTo(prevX+character_size[0]/2, prevY+unit_size+character_size[1]/2));
-	    path.getElements().add(new LineTo(curX+character_size[0]/2, curY+unit_size+character_size[1]/2));
+	    path.getElements().add(new MoveTo(prevX+character_size[0]/2, prevY+unit_size));
+	    path.getElements().add(new LineTo(curX+character_size[0]/2, curY+unit_size));
 		
 
 	    PathTransition pathTransition = new PathTransition();

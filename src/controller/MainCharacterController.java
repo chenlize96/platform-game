@@ -138,7 +138,7 @@ public class MainCharacterController {
 				if(x <= after_x && after_x <= x+unit_size) {
 
 					if(curr_x >= after_x) {
-						System.out.println("ESCAPE");
+//						System.out.println("ESCAPE");
 						x_pos = (int) (x+unit_size);
 					}else {
 						x_pos = (int) (x-char_width);
@@ -228,7 +228,7 @@ public class MainCharacterController {
 		}
 		
 		
-		System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y);
+//		System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y);
 		
 		return -1;
 		
