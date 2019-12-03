@@ -1,6 +1,7 @@
 package view;
 
 import java.io.File;
+import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Scanner;
@@ -17,6 +18,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -57,7 +59,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	private int[] exitpoint = {0,0};
 	private int[] character_size = {10,10};
 	private int[] keys = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; // there may be 5 keys in a map
-	private int[] doors = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100};; // five doors
+	private int[] doors = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; // five doors
 	
 	private int keyNum = 0;
 	private int unit_size = 25; // every unit in the map is 25*25    ***ATTENTION***
@@ -215,6 +217,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 						if (doors[k * 2] == -100) {
 							doors[k * 2] = j * unit_size;
 							doors[k * 2 + 1] = i * unit_size;
+							System.out.println(doors[0]+"-"+doors[1]);
 							break;
 						}
 					}
@@ -579,6 +582,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	 * Private class that handles movement of the main character depends on KeyEvents when key released
 	 * Available Movement: UP, DOWN, RIGHT, LEFT, JUMP
 	 * @author Eujin Ko
+	 * @author Lize Chen
 	 *
 	 */
 	class MovementReleased implements EventHandler<KeyEvent>{
@@ -604,26 +608,77 @@ public class PuzzlePlatformerView extends Application implements Observer {
 				JUMP = false;
 				break;
     		case K:
-    			boolean flag = false;
     			System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!********************************************!!!!!!!!!!!!!!!!");
     			// get player's current coordinate
-    			/*int curr_x = character_controller.getPlayerPosition().getCordX();
+    			int curr_x = character_controller.getPlayerPosition().getCordX();
     			int curr_y = character_controller.getPlayerPosition().getCordY();
-    			// check surrounding if there is a door
-    			for (int k = 0; k < doors.length / 2; k++) {
-    				if (doors[k * 2] <= curr_x && keys[k * 2] + unit_size >= curr_x) {
-    					if (doors[k * 2 + 1] <= curr_y && keys[k * 2 + 1] + unit_size >= curr_y) {
-    						flag = true;
-    						break;
-    					}
-    				}
-    			}
+    			// return surrounding doors' positions
+    			int[] surrounding = returnSurroundingDoors(curr_x, curr_y);
     			// if true, then disapear the door and update the label
-    			break;*/
+    			if (keyNum > 0) {
+    				openDoors(surrounding);
+    			}
+    			break;
 			default:
 				break;
 			}
 
+		}
+
+		//lize
+		@SuppressWarnings("static-access")
+		public void openDoors(int[] surrounding) {
+			boolean flag = false; // indicate if open one or more doors
+			for (int g = 0; g < surrounding.length / 2; g++) {
+				if (surrounding[g * 2] == -100) {
+					continue;
+				}
+				int j = surrounding[g * 2] / unit_size;
+				int i = surrounding[g * 2 + 1] / unit_size;
+				// only iteration works (one key for multiple doors)
+				Iterator<Node> itr = grid.getChildren().iterator();
+				while (itr.hasNext()) {
+					Object temp = itr.next();
+					if (temp instanceof Canvas) {
+						Canvas target = (Canvas) temp;
+						if (grid.getColumnIndex(target) == j && grid.getRowIndex(target) == i) {
+							itr.remove();
+							doors[g * 2] = -100;
+							doors[g * 2 + 1] = -100;
+							flag = true;
+						}
+					}
+				}
+			} // one key can open all the doors surrounded, I set it for making trap
+			if (flag) {
+				keyNum--;
+				itemKeyNum.setText(" x " + keyNum);
+			}
+		}
+
+		//lize
+		public int[] returnSurroundingDoors(int x, int y) {
+			System.out.println("x= "+x+" y= "+y);
+			int[] temp = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100};
+			for (int k = 0; k < doors.length / 2; k++) {
+				if (doors[k * 2] <= x + unit_size && doors[k * 2] + unit_size * 2 >= x) {
+					if (doors[k * 2 + 1] <= y + unit_size && doors[k * 2 + 1] + unit_size * 2 >= y) {
+						// update to temp[]
+						temp[2 * k] = doors[2 * k]; 
+						temp[2 * k + 1] = doors[2 * k + 1];
+					}
+				}
+			}
+			//check
+			for (int k = 0; k < temp.length /2;k++) {
+				System.out.println(doors[2*k]+", "+doors[2*k+1]);
+			}
+			//check
+			for (int k = 0; k < temp.length /2;k++) {
+				System.out.println(temp[2*k]+", "+temp[2*k+1]);
+			}
+			
+			return temp;
 		}
 
 	}
