@@ -180,13 +180,16 @@ public class MainCharacterController {
 		}
 		
 		
-		System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y);
+		//System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y);
 		
 		return -1;
 		
 	}
 	
-	
+	//lize
+	public MainCharacterModel getPlayerPosition() {
+		return character_model;
+	}
 	
 	
 	/**
