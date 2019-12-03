@@ -105,9 +105,8 @@ public class MainCharacterController {
 			return msg;
 		}
 		
-		int[] handleY= handleYCoordinate(curr_x, curr_y, after_x, after_y, char_height);
-		after_x = handleY[0];
-		after_y = handleY[1];
+		int handleY= handleYCoordinate(curr_x, curr_y, after_x, after_y, char_height);
+		after_y = handleY;
 		
 		int handleX = handleXCoordinate(curr_x, after_x, after_y, char_width, char_height);
 		after_x = handleX;
@@ -117,6 +116,7 @@ public class MainCharacterController {
 		return msg;
 		
 	}
+	
 	public int handleXCoordinate(int curr_x, int after_x, int after_y, int char_width, int char_height) {
 		int x_pos = after_x;
 		for(Node child:stage_grid.getChildren()) {
@@ -142,7 +142,9 @@ public class MainCharacterController {
 		return x_pos;
 	}
 	
-	public int[] handleYCoordinate(int curr_x, int curr_y, int after_x, int after_y, int char_height) {
+	
+	public int handleYCoordinate(int curr_x, int curr_y, int after_x, int after_y, int char_height) {
+		int y_pos = after_y;
 		for(Node child:stage_grid.getChildren()) {
 			double x = child.getLayoutX();
 			double y = child.getLayoutY();
@@ -155,23 +157,19 @@ public class MainCharacterController {
 				if(x <= after_x && after_x < x+unit_size) {
 	
 					if(after_y > curr_y) {
-						after_y = (int)y-char_height/2;
+						y_pos = (int)y-char_height/2;
 						if(character_model.returnJumpStatus() == true) {
 							character_model.toggleJump();
 							
 						}
 					}
-	
-	//				if(after_x< curr_x) {
-	//					System.out.println("ESCAPE");
-	//				}
 					
 				}
 	
 				
 			}
 		}
-		return new int[] {after_x, after_y};
+		return y_pos;
 		
 	}
 	
