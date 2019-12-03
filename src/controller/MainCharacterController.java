@@ -156,7 +156,7 @@ public class MainCharacterController {
 		int curr_x = character_model.getCordX();
 		int curr_y = character_model.getCordY();
 		
-		System.out.println("WIN STATUS"+curr_x+","+curr_y+"-"+x+","+y);
+		//System.out.println("WIN STATUS"+curr_x+","+curr_y+"-"+x+","+y);
 		if(x<= curr_x && curr_x<=x+unit_size) {
 			if(y <= curr_y && curr_y <= y+unit_size) {
 				return true;
@@ -164,6 +164,30 @@ public class MainCharacterController {
 		}
 		return false;
 	}
+	
+	//lize
+	public int checkIfThereIsAKey(int[] keys) {
+		int curr_x = character_model.getCordX();
+		int curr_y = character_model.getCordY();
+		for (int k = 0; k < keys.length / 2; k++) {
+			if (keys[k * 2] <= curr_x && keys[k * 2] + unit_size >= curr_x) {
+				if (keys[k * 2 + 1] <= curr_y && keys[k * 2 + 1] + unit_size >= curr_y) {
+					System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y+
+							"key's num = " + k + "keys'position: ("+keys[k*2]+","+keys[k*2+1]+")****************************");
+					return k; // which key
+				}
+			}
+		}
+		
+		
+		System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y);
+		
+		return -1;
+		
+	}
+	
+	
+	
 	
 	/**
 	 * Addes the velocity to the character model

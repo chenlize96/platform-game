@@ -4,6 +4,7 @@ public class CollectionsMessage {
 	CharacterMoveMessage char_msg;
 	int health_status;
 	boolean win_status;
+	int key_status;
 	
 //	MonsterMoveMessage monster_msg;
 	
@@ -13,12 +14,20 @@ public class CollectionsMessage {
 	 * @param health_status int, remaining health
 	 * @param win boolean, indicates whether player has reached the exit
 	 * @author Eujin Ko
+	 * @author Lize Chen
 	 */
-	public CollectionsMessage(CharacterMoveMessage char_msg, int health_status, boolean win) {
+	public CollectionsMessage(CharacterMoveMessage char_msg, int health_status, boolean win,
+			int key_status) {
 		this.char_msg = char_msg;
 		this.health_status = health_status;
 		this.win_status = win;
-		
+		this.key_status = key_status;
+	}
+	
+	
+	//lize
+	public int returnKeyStatus() {
+		return key_status;
 	}
 	
 	/**

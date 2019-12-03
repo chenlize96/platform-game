@@ -40,5 +40,11 @@ public class MainViewModelController {
 	public int[] returnExitPosition() {
 		return view_model.returnExitPosition();
 	}
+	
+	
+	//lize
+	public int[] returnKeyPosition() {
+		return view_model.returnKeysPosition();
+	}
 
 }
