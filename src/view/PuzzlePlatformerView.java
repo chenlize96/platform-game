@@ -17,6 +17,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -34,6 +35,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
@@ -56,7 +58,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	private int[] startpoint = {0,0};
 	private int[] exitpoint = {0,0};
 	private int[] character_size = {10,10};
-	private int[] keys = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}; // there may be 5 keys in a map
+	private int[] keys = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; // there may be 5 keys in a map
 	
 	
 	private int unit_size = 25; // every unit in the map is 25*25    ***ATTENTION***
@@ -211,7 +213,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 					gc.drawImage(key, 0, 0, unit_size, unit_size); 
 					grid.add(canvas, j, i);
 					for (int k = 0; k < keys.length / 2; k++) {
-						if (keys[k * 2] == -1) {
+						if (keys[k * 2] == -100) {
 							keys[k * 2] = j * unit_size;
 							keys[k * 2 + 1] = i * unit_size;
 							break;
@@ -262,6 +264,14 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		Label items = new Label("Items"); //
 		items.setFont(new Font("Arial", 30));
 		// there should be a gridPane holding various images which represent items 
+		
+		
+		
+		
+		
+		
+		
+		
 		// Lize will do it later, since I am trying to find the best way to handle items (do later)
 		info.getChildren().addAll(health, health_box, countdown, timer, items); 
 		info.setAlignment(Pos.BASELINE_CENTER);
@@ -385,8 +395,10 @@ public class PuzzlePlatformerView extends Application implements Observer {
 				if(char_msg != null) {
 					characterMoveTransition(char_msg);
 					updateHealth(health_status);
+					if (keyPos != -1) {
+						pickUpKey(keyPos);
+					}
 					stageClearedMessage(win_status);
-					pickUpKey(keyPos);
 				}
 			}
 			
@@ -395,10 +407,31 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	
 	
 	//lize (disappear on the map and show in the item bag)
+	@SuppressWarnings("static-access")
 	public void pickUpKey(int keyPos) {
+		int gridSize = grid.getChildren().size();
+		int j = keys[keyPos * 2] / unit_size;
+		int i = keys[keyPos * 2 + 1] / unit_size;
+		for (int k = 0; k < gridSize; k++) {
+			Object temp = grid.getChildren().get(k);
+			if (temp instanceof Canvas) {
+				Canvas target = (Canvas) temp;
+				if (grid.getColumnIndex(target) == j && grid.getRowIndex(target) == i) {
+					grid.getChildren().remove(k);
+					keys[keyPos * 2] = -100;
+					keys[keyPos * 2 + 1] = -100;
+					controller.callModelAddKeys(keys); 
+					break;
+				}
+			}
+		}
+		// show in the item bag
 		
-	}
 	
+
+
+}
+
 	
 	/**
 	 * Parses CharacterMoveMessage and moves the character object from the scene

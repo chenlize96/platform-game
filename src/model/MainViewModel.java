@@ -8,7 +8,7 @@ package model;
 public class MainViewModel {
 	int[] start = {0,0};
 	int[] exit = {0,0};
-	int[] keys = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}; // there may be 5 keys in a map
+	int[] keys = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; // there may be 5 keys in a map
 	int health_left;
 	
 	/**
