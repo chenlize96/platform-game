@@ -9,6 +9,7 @@ public class MainViewModel {
 	int[] start = {0,0};
 	int[] exit = {0,0};
 	int[] keys = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; // there may be 5 keys in a map
+	//int[] doors = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; 
 	int health_left;
 	
 	/**
@@ -30,6 +31,9 @@ public class MainViewModel {
 	public void setKeyPosition(int[] keys) {
 		this.keys = keys; 
 	}
+	
+
+	
 	
 	//lize
 	public int[] returnKeysPosition() {

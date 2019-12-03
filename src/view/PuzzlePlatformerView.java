@@ -1,6 +1,7 @@
 package view;
 
 import java.io.File;
+import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Scanner;
@@ -33,10 +34,9 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
@@ -59,11 +59,13 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	private int[] exitpoint = {0,0};
 	private int[] character_size = {10,10};
 	private int[] keys = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; // there may be 5 keys in a map
+	private int[] doors = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; // five doors
 	
-	
+	private int keyNum = 0;
 	private int unit_size = 25; // every unit in the map is 25*25    ***ATTENTION***
 	//Character
 	private Rectangle character = new Rectangle(10, 10, Color.RED); //radius = 10
+	private Label itemKeyNum;
 	
 	private boolean UP = false;
 	private boolean DOWN = false;
@@ -75,6 +77,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	MainCharacterController character_controller;
 	GridPane grid;
 	AnimationTimer animationTimer;
+	Timeline timeline;
 	
 	Canvas health_box;
 	
@@ -152,15 +155,13 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		
 	    scene.setOnKeyPressed(new MovementPressed());
 	    scene.setOnKeyReleased(new MovementReleased());
-		
-		
-		// Need to fix the gravity and event handler but added to show the progress
-		//TODO CHARACTER
-	    
 
-		    
+
+	    // Need to fix the gravity and event handler but added to show the progress
+	    //TODO CHARACTER
+
 	}
-	
+
 	
 	/**
 	 * <ATTENTION> for now, we directly use number, we would change them to [public final] later 
@@ -208,6 +209,14 @@ public class PuzzlePlatformerView extends Application implements Observer {
 					Image door = new Image("img/door.png"); 
 					gc.drawImage(door, 0, 0, unit_size, unit_size); 
 					grid.add(canvas, j, i);
+					for (int k = 0; k < doors.length / 2; k++) {
+						if (doors[k * 2] == -100) {
+							doors[k * 2] = j * unit_size;
+							doors[k * 2 + 1] = i * unit_size;
+							System.out.println(doors[0]+"-"+doors[1]);
+							break;
+						}
+					}
 				}else if (map[i][j] == 'K') {
 					Canvas canvas = new Canvas(unit_size, unit_size); 
 					GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -242,7 +251,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		countdown.setFont(new Font("Arial", 30));
 		Label timer = new Label("300 seconds"); // create timer
 		timer.setFont(new Font("Arial", 24));
-		Timeline timeline = new Timeline();
+		timeline = new Timeline();
 		timeline.setCycleCount(Timeline.INDEFINITE);
 		timeline.getKeyFrames().add(
 				new KeyFrame(Duration.seconds(1), new EventHandler() {
@@ -266,16 +275,31 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		Label items = new Label("Items"); //
 		items.setFont(new Font("Arial", 30));
 		// there should be a gridPane holding various images which represent items 
-		
-		
-		
-		
-		
-		
-		
-		
+		Label itemPress = new Label("Press"); 
+		itemPress.setFont(new Font("Arial", 18));
+		Label itemImage = new Label("Image");
+		itemImage.setFont(new Font("Arial", 18));
+		Label itemNum = new Label("Unit");
+		itemNum.setFont(new Font("Arial", 18));
+		HBox hbox1 = new HBox(itemPress, itemImage, itemNum);
+		hbox1.setSpacing(10);
+		hbox1.setAlignment(Pos.CENTER);
+		Canvas canvas = new Canvas(unit_size, unit_size); 
+		GraphicsContext gc = canvas.getGraphicsContext2D();
+		Image key = new Image("img/key.png"); 
+		gc.drawImage(key, 0, 0, unit_size, unit_size); 
+		Label itemKey = new Label("K = "); 
+		itemKey.setFont(new Font("Arial", 24));
+		itemKeyNum = new Label(" x " + keyNum);
+		itemKeyNum.setFont(new Font("Arial", 24));
+		HBox hbox2 = new HBox(itemKey, canvas, itemKeyNum);
+		hbox2.setAlignment(Pos.CENTER);
+		hbox2.setSpacing(10);
+		VBox list = new VBox();
+		list.getChildren().addAll(hbox1, hbox2);
+	
 		// Lize will do it later, since I am trying to find the best way to handle items (do later)
-		info.getChildren().addAll(health, health_box, countdown, timer, items); 
+		info.getChildren().addAll(health, health_box, countdown, timer, items, list); 
 		info.setAlignment(Pos.BASELINE_CENTER);
 		info.setSpacing(20); // POSSIBLE optimize: add separate line for readablity (do later)
 		// p holds everything
@@ -388,7 +412,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		int health_status = msg.returnHealthStatus();
 		boolean win_status = msg.returnWinStatus();
 		int keyPos = msg.returnKeyStatus();
-//		System.out.println(keyPos +"***************************************"); // correct
+
 		
 		Platform.runLater(new Runnable() {
 
@@ -411,6 +435,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	//lize (disappear on the map and show in the item bag)
 	@SuppressWarnings("static-access")
 	public void pickUpKey(int keyPos) {
+		boolean flag = false;
 		int gridSize = grid.getChildren().size();
 		int j = keys[keyPos * 2] / unit_size;
 		int i = keys[keyPos * 2 + 1] / unit_size;
@@ -423,15 +448,17 @@ public class PuzzlePlatformerView extends Application implements Observer {
 					keys[keyPos * 2] = -100;
 					keys[keyPos * 2 + 1] = -100;
 					controller.callModelAddKeys(keys); 
+					flag = true;
 					break;
 				}
 			}
 		}
 		// show in the item bag
-		
+		if (flag) {
+			keyNum += 1;
+			itemKeyNum.setText(" x " + keyNum);
+		}
 	
-
-
 }
 
 	
@@ -467,9 +494,10 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	}
 	
 	/**
-	 * Sends a Stage cleared message, stops the view
+	 * Sends a Stage cleared message, stops the view, stops the timer
 	 * @param win_status indicates whether player has won the stage or not
 	 * @author Eujin Ko
+	 * @author Lize Chen
 	 */
 	public void stageClearedMessage(boolean win_status) 
 	{
@@ -481,12 +509,14 @@ public class PuzzlePlatformerView extends Application implements Observer {
         alert.setHeaderText("Message");
         alert.setContentText("To the next stage!");
         animationTimer.stop();
+        timeline.stop();
         alert.showAndWait(); 
 		
 	}
 	/**
-	 * Sends a Game Over message, stops the view
+	 * Sends a Game Over message, stops the view, stops the timer
 	 * @author Eujin Ko
+	 * @author Lize Chen
 	 */
 	public void gameOverMessage() 
 	{
@@ -495,6 +525,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
         alert.setHeaderText("Message");
         alert.setContentText("GAME OVER");
         animationTimer.stop();
+        timeline.stop();
         alert.show();
 	}
 	
@@ -547,6 +578,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	 * Private class that handles movement of the main character depends on KeyEvents when key released
 	 * Available Movement: UP, DOWN, RIGHT, LEFT, JUMP
 	 * @author Eujin Ko
+	 * @author Lize Chen
 	 *
 	 */
 	class MovementReleased implements EventHandler<KeyEvent>{
@@ -571,12 +603,79 @@ public class PuzzlePlatformerView extends Application implements Observer {
 			case SPACE:
 				JUMP = false;
 				break;
+    		case K:
+    			System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!********************************************!!!!!!!!!!!!!!!!");
+    			// get player's current coordinate
+    			int curr_x = character_controller.getPlayerPosition().getCordX();
+    			int curr_y = character_controller.getPlayerPosition().getCordY();
+    			// return surrounding doors' positions
+    			int[] surrounding = returnSurroundingDoors(curr_x, curr_y);
+    			// if true, then disapear the door and update the label
+    			if (keyNum > 0) {
+    				openDoors(surrounding);
+    			}
+    			break;
 			default:
 				break;
 			}
 
 		}
-		
+
+		//lize
+		@SuppressWarnings("static-access")
+		public void openDoors(int[] surrounding) {
+			boolean flag = false; // indicate if open one or more doors
+			for (int g = 0; g < surrounding.length / 2; g++) {
+				if (surrounding[g * 2] == -100) {
+					continue;
+				}
+				int j = surrounding[g * 2] / unit_size;
+				int i = surrounding[g * 2 + 1] / unit_size;
+				// only iteration works (one key for multiple doors)
+				Iterator<Node> itr = grid.getChildren().iterator();
+				while (itr.hasNext()) {
+					Object temp = itr.next();
+					if (temp instanceof Canvas) {
+						Canvas target = (Canvas) temp;
+						if (grid.getColumnIndex(target) == j && grid.getRowIndex(target) == i) {
+							itr.remove();
+							doors[g * 2] = -100;
+							doors[g * 2 + 1] = -100;
+							flag = true;
+						}
+					}
+				}
+			} // one key can open all the doors surrounded, I set it for making trap
+			if (flag) {
+				keyNum--;
+				itemKeyNum.setText(" x " + keyNum);
+			}
+		}
+
+		//lize
+		public int[] returnSurroundingDoors(int x, int y) {
+			System.out.println("x= "+x+" y= "+y);
+			int[] temp = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100};
+			for (int k = 0; k < doors.length / 2; k++) {
+				if (doors[k * 2] <= x + unit_size && doors[k * 2] + unit_size * 2 >= x) {
+					if (doors[k * 2 + 1] <= y + unit_size && doors[k * 2 + 1] + unit_size * 2 >= y) {
+						// update to temp[]
+						temp[2 * k] = doors[2 * k]; 
+						temp[2 * k + 1] = doors[2 * k + 1];
+					}
+				}
+			}
+			//check
+			for (int k = 0; k < temp.length /2;k++) {
+				System.out.println(doors[2*k]+", "+doors[2*k+1]);
+			}
+			//check
+			for (int k = 0; k < temp.length /2;k++) {
+				System.out.println(temp[2*k]+", "+temp[2*k+1]);
+			}
+			
+			return temp;
+		}
 
 	}
 }
