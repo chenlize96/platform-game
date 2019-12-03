@@ -108,8 +108,8 @@ public class MainCharacterController {
 		int handleY= handleYCoordinate(curr_x, curr_y, after_x, after_y, char_height);
 		after_y = handleY;
 		
-//		int handleX = handleXCoordinate(curr_x, after_x, after_y, char_width, char_height);
-//		after_x = handleX;
+		int handleX = handleXCoordinate(curr_x, after_x, after_y, char_width, char_height);
+		after_x = handleX;
 		
 		CharacterMoveMessage msg = character_model.moveCharacter(after_x, after_y);
 		
