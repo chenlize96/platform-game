@@ -108,8 +108,8 @@ public class MainCharacterController {
 		int handleY= handleYCoordinate(curr_x, curr_y, after_x, after_y, char_height);
 		after_y = handleY;
 		
-		int handleX = handleXCoordinate(curr_x, after_x, after_y, char_width, char_height);
-		after_x = handleX;
+//		int handleX = handleXCoordinate(curr_x, after_x, after_y, char_width, char_height);
+//		after_x = handleX;
 		
 		CharacterMoveMessage msg = character_model.moveCharacter(after_x, after_y);
 		
@@ -117,6 +117,16 @@ public class MainCharacterController {
 		
 	}
 	
+	/**
+	 * 
+	 * @param curr_x
+	 * @param after_x
+	 * @param after_y
+	 * @param char_width
+	 * @param char_height
+	 * @return
+	 * @author Eujin Ko
+	 */
 	public int handleXCoordinate(int curr_x, int after_x, int after_y, int char_width, int char_height) {
 		int x_pos = after_x;
 		for(Node child:stage_grid.getChildren()) {
@@ -142,7 +152,16 @@ public class MainCharacterController {
 		return x_pos;
 	}
 	
-	
+	/**
+	 * 
+	 * @param curr_x
+	 * @param curr_y
+	 * @param after_x
+	 * @param after_y
+	 * @param char_height
+	 * @return
+	 * @author Eujin Ko
+	 */
 	public int handleYCoordinate(int curr_x, int curr_y, int after_x, int after_y, int char_height) {
 		int y_pos = after_y;
 		for(Node child:stage_grid.getChildren()) {
@@ -209,7 +228,7 @@ public class MainCharacterController {
 		}
 		
 		
-  System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y);
+		System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y);
 		
 		return -1;
 		
