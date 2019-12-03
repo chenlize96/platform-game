@@ -156,6 +156,8 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		
 		// Need to fix the gravity and event handler but added to show the progress
 		//TODO CHARACTER
+	    
+
 		    
 	}
 	
@@ -386,7 +388,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		int health_status = msg.returnHealthStatus();
 		boolean win_status = msg.returnWinStatus();
 		int keyPos = msg.returnKeyStatus();
-		System.out.println(keyPos +"***************************************"); // correct
+//		System.out.println(keyPos +"***************************************"); // correct
 		
 		Platform.runLater(new Runnable() {
 

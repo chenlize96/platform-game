@@ -105,45 +105,76 @@ public class MainCharacterController {
 			return msg;
 		}
 		
-		for(Node child:stage_grid.getChildren()) {
-		double x = child.getLayoutX();
-		double y = child.getLayoutY();
-//		System.out.println("Child  (r,c) :"+r+","+c+"  (x,y) : "+x+"."+y);
-
+		int[] handleY= handleYCoordinate(curr_x, curr_y, after_x, after_y, char_height);
+		after_x = handleY[0];
+		after_y = handleY[1];
 		
-		
-		if(y-unit_size <= after_y && after_y <= y) {
-			
-			if(x <= after_x && after_x < x+unit_size) {
-
-				if(after_y > curr_y) {
-					after_y = (int)y-char_height/2;
-					if(character_model.returnJumpStatus() == true) {
-						character_model.toggleJump();
-						
-					}
-				}else {
-					after_y = (int) (y-unit_size);
-				}
-
-			}else  {
-				if((x+x+unit_size)/2 <= after_x && after_x <= x) {
-
-					System.out.println("Child  (x,y) : "+x+"."+y);
-					after_x = (int) (x+unit_size);
-				}
-			}
-			
-		}
-	}
-
-		
+		int handleX = handleXCoordinate(curr_x, after_x, after_y, char_width, char_height);
+		after_x = handleX;
 		
 		CharacterMoveMessage msg = character_model.moveCharacter(after_x, after_y);
 		
 		return msg;
 		
 	}
+	public int handleXCoordinate(int curr_x, int after_x, int after_y, int char_width, int char_height) {
+		int x_pos = after_x;
+		for(Node child:stage_grid.getChildren()) {
+			double x = child.getLayoutX();
+			double y = child.getLayoutY();
+//			System.out.println("Child  (r,c) :"+r+","+c+"  (x,y) : "+x+"."+y);
+
+			if(y+unit_size == after_y+char_height/2) {
+				if(x <= after_x && after_x <= x+unit_size) {
+
+					if(curr_x >= after_x) {
+						System.out.println("ESCAPE");
+						x_pos = (int) (x+unit_size);
+					}else {
+						x_pos = (int) (x-char_width);
+					}
+				}
+	
+				
+			}
+		}
+
+		return x_pos;
+	}
+	
+	public int[] handleYCoordinate(int curr_x, int curr_y, int after_x, int after_y, int char_height) {
+		for(Node child:stage_grid.getChildren()) {
+			double x = child.getLayoutX();
+			double y = child.getLayoutY();
+//			System.out.println("Child  (r,c) :"+r+","+c+"  (x,y) : "+x+"."+y);
+
+		
+		
+			if(y-unit_size <= after_y && after_y <= y) {
+				
+				if(x <= after_x && after_x < x+unit_size) {
+	
+					if(after_y > curr_y) {
+						after_y = (int)y-char_height/2;
+						if(character_model.returnJumpStatus() == true) {
+							character_model.toggleJump();
+							
+						}
+					}
+	
+	//				if(after_x< curr_x) {
+	//					System.out.println("ESCAPE");
+	//				}
+					
+				}
+	
+				
+			}
+		}
+		return new int[] {after_x, after_y};
+		
+	}
+	
 	
 	/**
 	 * Checks if the Character reaches the exit
@@ -172,15 +203,15 @@ public class MainCharacterController {
 		for (int k = 0; k < keys.length / 2; k++) {
 			if (keys[k * 2] <= curr_x && keys[k * 2] + unit_size >= curr_x) {
 				if (keys[k * 2 + 1] <= curr_y && keys[k * 2 + 1] + unit_size >= curr_y) {
-					System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y+
-							"key's num = " + k + "keys'position: ("+keys[k*2]+","+keys[k*2+1]+")****************************");
+//					System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y+
+//							"key's num = " + k + "keys'position: ("+keys[k*2]+","+keys[k*2+1]+")****************************");
 					return k; // which key
 				}
 			}
 		}
 		
 		
-		System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y);
+//		System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y);
 		
 		return -1;
 		
