@@ -124,18 +124,16 @@ public class MainCharacterController {
 			double y = child.getLayoutY();
 //			System.out.println("Child  (r,c) :"+r+","+c+"  (x,y) : "+x+"."+y);
 
-			if(y+unit_size == after_y+char_height/2) {
-				if(x <= after_x && after_x <= x+unit_size) {
+			if(x < after_x && after_x < x+unit_size) {
 
+				if(y < after_y && after_y <= y+unit_size) {
 					if(curr_x >= after_x) {
 						System.out.println("ESCAPE");
-						x_pos = (int) (x+unit_size);
-					}else {
+						x_pos = after_x;
+					}else if(curr_x <= after_x){
 						x_pos = (int) (x-char_width);
 					}
 				}
-	
-				
 			}
 		}
 
@@ -162,6 +160,7 @@ public class MainCharacterController {
 							character_model.toggleJump();
 							
 						}
+						return y_pos;
 					}
 					
 				}
@@ -209,7 +208,7 @@ public class MainCharacterController {
 		}
 		
 		
-  System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y);
+//		System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y);
 		
 		return -1;
 		

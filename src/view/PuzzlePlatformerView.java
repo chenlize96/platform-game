@@ -235,7 +235,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 			
 		}
 		
-		System.out.println(keys[0] + " "+ keys[1]+ " "+ keys[2]+"******");
+//		System.out.println(keys[0] + " "+ keys[1]+ " "+ keys[2]+"******");
 		
 		
 		//**********************************************
