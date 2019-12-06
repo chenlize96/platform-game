@@ -85,7 +85,7 @@ public class MainCharacterController {
 		int handleY= handleYCoordinate(curr_x, curr_y, after_x, after_y, char_height);
 		after_y = handleY;
 		
-		int handleX = handleXCoordinate(curr_x, after_x, after_y, char_width, char_height);
+		int handleX = handleXCoordinate(curr_x, curr_y, after_x, after_y, char_width, char_height);
 		after_x = handleX;
 		
 		CharacterMoveMessage msg;
@@ -131,21 +131,22 @@ public class MainCharacterController {
 	 * @return integer, x position
 	 * @author Eujin Ko
 	 */
-	public int handleXCoordinate(int curr_x, int after_x, int after_y, int char_width, int char_height) {
+	public int handleXCoordinate(int curr_x, int curr_y, int after_x, int after_y, int char_width, int char_height) {
 		int x_pos = after_x;
 		for(Node child:stage_grid.getChildren()) {
 			double x = child.getLayoutX();
 			double y = child.getLayoutY();
 //			System.out.println("Child  (r,c) :"+r+","+c+"  (x,y) : "+x+"."+y);
 
-			if(x < after_x && after_x < x+unit_size) {
+			if((x < after_x && after_x < x+unit_size)
+					||(x < after_x+char_width && after_x+char_width < x+unit_size)) {
 
 				if(y <= after_y && after_y <= y+unit_size) {
 					if(!(x < curr_x && curr_x < x+unit_size) && after_y <= y) {
 						x_pos = after_x;
-					}else if(curr_x >= after_x) {
+					}else if(curr_x >= after_x && x <= curr_x) {
 						x_pos = (int) (x+unit_size);
-					}else if(curr_x <= after_x){
+					}else if(curr_x <= after_x && x >= curr_x){
 						System.out.println("ESCAPE");
 						x_pos = (int) (after_x-char_width/2);
 					}
