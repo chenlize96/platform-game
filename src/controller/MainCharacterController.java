@@ -80,6 +80,16 @@ public class MainCharacterController {
 
 //		System.out.println("CURR LOCATION("+curr_x+","+curr_y+")");
 		
+
+		
+		int handleY= handleYCoordinate(curr_x, curr_y, after_x, after_y, char_width, char_height);
+		after_y = handleY;
+		
+		int handleX = handleXCoordinate(curr_x, curr_y, after_x, after_y, char_width, char_height);
+		after_x = handleX;
+		
+		CharacterMoveMessage msg;
+		
 		//1. Checks Collision on Walls
 		if(after_x < 0) {
 			after_x = char_width/2;
@@ -92,8 +102,8 @@ public class MainCharacterController {
 		
 		
 		if(after_y < 0 + char_height) {
-			after_y = char_height/2;
-//			System.out.println("3. COLLISON("+after_x+","+after_y+")");
+			after_y = unit_size;
+			System.out.println("3. COLLISON("+after_x+","+after_y+")");
 			//TODO: DEAD CONDITIONS
 			
 		}else if(after_y > window_height-char_height) {
@@ -101,88 +111,61 @@ public class MainCharacterController {
 			System.out.println("4. COLLISON("+after_x+","+after_y+")");
 			main_controller.returnViewModelController().decreaseHealth();
 			
-			CharacterMoveMessage msg = character_model.returnToStart();
+			msg = character_model.returnToStart();
 			return msg;
 		}
 		
-		int handleY= handleYCoordinate(curr_x, curr_y, after_x, after_y, char_height);
-		after_y = handleY;
-		
-		int handleX = handleXCoordinate(curr_x, after_x, after_y, char_width, char_height);
-		after_x = handleX;
-		
-		CharacterMoveMessage msg = character_model.moveCharacter(after_x, after_y);
+		msg = character_model.moveCharacter(after_x, after_y);
 		
 		return msg;
 		
 	}
 	
-	/**
-	 * 
-	 * @param curr_x
-	 * @param after_x
-	 * @param after_y
-	 * @param char_width
-	 * @param char_height
-	 * @return
-	 * @author Eujin Ko
-	 */
-	public int handleXCoordinate(int curr_x, int after_x, int after_y, int char_width, int char_height) {
+
+	public int handleXCoordinate(int curr_x, int curr_y, int after_x, int after_y, int char_width, int char_height) {
 		int x_pos = after_x;
 		for(Node child:stage_grid.getChildren()) {
 			double x = child.getLayoutX();
 			double y = child.getLayoutY();
 //			System.out.println("Child  (r,c) :"+r+","+c+"  (x,y) : "+x+"."+y);
 
-			if(y+unit_size == after_y+char_height/2) {
-				if(x <= after_x && after_x <= x+unit_size) {
+			if((x <= after_x && after_x < x+unit_size)
+					||(x < after_x+char_width && after_x+char_width < x+unit_size)) {
 
-					if(curr_x >= after_x) {
-//						System.out.println("ESCAPE");
+				if(y <= after_y && after_y <= y+unit_size) {
+					if(curr_x > after_x && x <= curr_x) {
 						x_pos = (int) (x+unit_size);
-					}else {
-						x_pos = (int) (x-char_width);
+					}else if(curr_x <= after_x && x >= curr_x){
+						x_pos = (int) (after_x-char_width/2);
 					}
 				}
-	
-				
 			}
 		}
 
 		return x_pos;
 	}
-	
-	/**
-	 * 
-	 * @param curr_x
-	 * @param curr_y
-	 * @param after_x
-	 * @param after_y
-	 * @param char_height
-	 * @return
-	 * @author Eujin Ko
-	 */
-	public int handleYCoordinate(int curr_x, int curr_y, int after_x, int after_y, int char_height) {
+
+	public int handleYCoordinate(int curr_x, int curr_y, int after_x, int after_y, int char_width, int char_height) {
 		int y_pos = after_y;
 		for(Node child:stage_grid.getChildren()) {
 			double x = child.getLayoutX();
 			double y = child.getLayoutY();
 //			System.out.println("Child  (r,c) :"+r+","+c+"  (x,y) : "+x+"."+y);
-
-		
-		
-			if(y-unit_size <= after_y && after_y <= y) {
+			if(y-unit_size < after_y && after_y <= y) {
 				
-				if(x <= after_x && after_x < x+unit_size) {
-	
+				if((x < after_x && after_x < x+unit_size)
+						||(x < after_x+char_width && after_x+char_width < x+unit_size)) {
 					if(after_y > curr_y) {
 						y_pos = (int)y-char_height/2;
 						if(character_model.returnJumpStatus() == true) {
 							character_model.toggleJump();
 							
 						}
+						return y_pos;
+					}else if(after_y < curr_y) {
+						y_pos = after_y;
+						return y_pos;
 					}
-					
 				}
 	
 				
@@ -215,10 +198,11 @@ public class MainCharacterController {
 	
 	//lize
 	public int checkIfThereIsAKey(int[] keys) {
+		int char_width = character_model.getCharSizeWidth();
 		int curr_x = character_model.getCordX();
 		int curr_y = character_model.getCordY();
 		for (int k = 0; k < keys.length / 2; k++) {
-			if (keys[k * 2] <= curr_x && keys[k * 2] + unit_size >= curr_x) {
+			if (keys[k * 2] <= curr_x+char_width && keys[k * 2] + unit_size >= curr_x) {
 				if (keys[k * 2 + 1] <= curr_y && keys[k * 2 + 1] + unit_size >= curr_y) {
 //					System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y+
 //							"key's num = " + k + "keys'position: ("+keys[k*2]+","+keys[k*2+1]+")****************************");

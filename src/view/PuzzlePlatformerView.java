@@ -57,14 +57,14 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	
 	private int[] startpoint = {0,0};
 	private int[] exitpoint = {0,0};
-	private int[] character_size = {10,10};
+	private int[] character_size = {20,20};
 	private int[] keys = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; // there may be 5 keys in a map
 	private int[] doors = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; // five doors
 	
 	private int keyNum = 0;
 	private int unit_size = 25; // every unit in the map is 25*25    ***ATTENTION***
 	//Character
-	private Rectangle character = new Rectangle(10, 10, Color.RED); //radius = 10
+	private Rectangle character = new Rectangle(character_size[0], character_size[1], Color.RED); //radius = 10
 	private Label itemKeyNum;
 	
 	private boolean UP = false;
@@ -235,7 +235,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 			
 		}
 		
-		System.out.println(keys[0] + " "+ keys[1]+ " "+ keys[2]+"******");
+//		System.out.println(keys[0] + " "+ keys[1]+ " "+ keys[2]+"******");
 		
 		
 		//**********************************************
