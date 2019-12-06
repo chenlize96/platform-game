@@ -121,16 +121,7 @@ public class MainCharacterController {
 		
 	}
 	
-	/**
-	 * Handles the X coordinate collision
-	 * @param curr_x
-	 * @param after_x
-	 * @param after_y
-	 * @param char_width
-	 * @param char_height
-	 * @return integer, x position
-	 * @author Eujin Ko
-	 */
+
 	public int handleXCoordinate(int curr_x, int curr_y, int after_x, int after_y, int char_width, int char_height) {
 		int x_pos = after_x;
 		for(Node child:stage_grid.getChildren()) {
@@ -153,17 +144,7 @@ public class MainCharacterController {
 
 		return x_pos;
 	}
-	
-	/**
-	 * Handles the Y coordinate collision
-	 * @param curr_x
-	 * @param curr_y
-	 * @param after_x
-	 * @param after_y
-	 * @param char_height
-	 * @return integer, y position
-	 * @author Eujin Ko
-	 */
+
 	public int handleYCoordinate(int curr_x, int curr_y, int after_x, int after_y, int char_width, int char_height) {
 		int y_pos = after_y;
 		for(Node child:stage_grid.getChildren()) {
