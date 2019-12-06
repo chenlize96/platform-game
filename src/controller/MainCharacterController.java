@@ -121,7 +121,17 @@ public class MainCharacterController {
 		
 	}
 	
-
+	/**
+	 * Handles X coordinate Collision
+	 * @param curr_x
+	 * @param curr_y
+	 * @param after_x
+	 * @param after_y
+	 * @param char_width
+	 * @param char_height
+	 * @return integer, x coordinate
+	 * @author Eujin Ko
+	 */
 	public int handleXCoordinate(int curr_x, int curr_y, int after_x, int after_y, int char_width, int char_height) {
 		int x_pos = after_x;
 		for(Node child:stage_grid.getChildren()) {
@@ -145,6 +155,17 @@ public class MainCharacterController {
 		return x_pos;
 	}
 
+	/**
+	 * Handles Y coordinate Collision
+	 * @param curr_x
+	 * @param curr_y
+	 * @param after_x
+	 * @param after_y
+	 * @param char_width
+	 * @param char_height
+	 * @return integer, y coordinate
+	 * @author Eujin Ko
+	 */
 	public int handleYCoordinate(int curr_x, int curr_y, int after_x, int after_y, int char_width, int char_height) {
 		int y_pos = after_y;
 		for(Node child:stage_grid.getChildren()) {
@@ -184,11 +205,12 @@ public class MainCharacterController {
 	 * @author Eujin Ko
 	 */
 	public boolean checkIfCharacterIsAtExit(int x, int y) {
+		int char_width = character_model.getCharSizeWidth();
 		int curr_x = character_model.getCordX();
 		int curr_y = character_model.getCordY();
 		
 		//System.out.println("WIN STATUS"+curr_x+","+curr_y+"-"+x+","+y);
-		if(x<= curr_x && curr_x<=x+unit_size) {
+		if(x<= curr_x+char_width && curr_x<=x+unit_size) {
 			if(y <= curr_y && curr_y <= y+unit_size) {
 				return true;
 			}
