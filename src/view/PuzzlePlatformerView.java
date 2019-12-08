@@ -15,8 +15,10 @@ import javafx.animation.PathTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -24,10 +26,14 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
@@ -57,7 +63,8 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	final int WINDOW_HEIGHT = 600;
 	final int ticksPerFrame = 1;
 	final int MOVE_SIZE = 5;
-	final int BASIC = 123;
+	
+	final int EASY = 123;
 	final int MEDIUM = 124;
 	final int HARD = 125;
 	
@@ -67,6 +74,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	private int[] keys = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; // there may be 5 keys in a map
 	private int[] doors = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; // five doors
 	
+	private int level = EASY;
 	private int keyNum = 0;
 	private int unit_size = 25; // every unit in the map is 25*25    ***ATTENTION***
 	//Character
@@ -78,13 +86,13 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	private boolean RIGHT = false;
 	private boolean LEFT = false;
 	private boolean JUMP = false;
-	private int level;
 	
 	ControllerCollections controller;
 	MainCharacterController character_controller;
 	GridPane grid;
 	AnimationTimer animationTimer;
 	Timeline timeline;
+	PuzzlePlatformerView view;
 	
 	Canvas health_box;
 	
@@ -92,10 +100,20 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	
 	private char[][] map;
 	
+	// NO CONSTRUCTOR
+	
+	
 	//Lize
-	public PuzzlePlatformerView() {
-		map = getMap("PublicTestCases/basic.txt");// default
-		level = BASIC;
+
+	public void initializePuzzlePlatformer() {
+		if (level == EASY) {
+			map = getMap("PublicTestCases/basic.txt");// default
+		}else if (level == MEDIUM) {
+			map = getMap("PublicTestCases/medium.txt");
+		}else if (level == HARD) {
+			map = getMap("PublicTestCases/hard.txt");
+		}
+		this.view = this;
 		print2DArray();
 	}
 	
@@ -138,6 +156,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	 */
 	@Override
 	public void start(Stage stage) throws Exception {
+		initializePuzzlePlatformer();
 		Scene scene = setupStage(stage);	//Lize's stage setup
 
 		controller = new ControllerCollections(this,grid);
@@ -170,9 +189,11 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	    //TODO CHARACTER
 
 	}
+
+	
 	
 	public void addMonster() {
-		if (level == BASIC) {
+		if (level == EASY) {
 			character_controller.addMonster(new StaticMonsterModel(445, 315, unit_size));
 		}else if(level == MEDIUM) {
 			
@@ -180,6 +201,63 @@ public class PuzzlePlatformerView extends Application implements Observer {
 			
 		}
 	}
+	
+	// lize
+	public void setUpLevelEditor(Stage editor) {
+		Label label1 = new Label("Level:");
+		// create radiobuttons 
+		RadioButton r1 = new RadioButton("Easy"); 
+		RadioButton r2 = new RadioButton("Medium");
+		RadioButton r3 = new RadioButton("Hard");
+		r1.setSelected(true);
+		ToggleGroup tg1 = new ToggleGroup(); 
+		r1.setToggleGroup(tg1); 
+		r2.setToggleGroup(tg1);
+		r3.setToggleGroup(tg1);
+		HBox hbox1 = new HBox(label1, r1, r2, r3);
+		hbox1.setSpacing(20);
+		// set buttons
+		Button b1 = new Button("OK");
+		b1.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				if(r1.isSelected()) {
+					level = EASY;
+				}else if (r2.isSelected()) {
+					level = MEDIUM;
+				}else if (r3.isSelected()) {
+					level = HARD;
+				}
+				grid.getScene().getWindow().hide();
+				try {
+					System.out.println(level);
+					view.start(new Stage());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				editor.close();
+			}
+		});
+		Button b2 = new Button("Cancel");
+		b2.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				editor.close();
+			}
+		});
+		HBox hbox2 = new HBox(b1, b2);
+		hbox2.setAlignment(Pos.CENTER); hbox2.setSpacing(20);
+		VBox vbox = new VBox(hbox1, hbox2);
+		vbox.setSpacing(30);
+		vbox.setPadding(new Insets(30));
+		BorderPane p2 = new BorderPane();
+		p2.setCenter(vbox);
+		hbox1.setAlignment(Pos.CENTER_LEFT);
+		editor.setTitle("Level Editor");
+		Scene scene = new Scene(p2, 320, 120); // best size
+		editor.setScene(scene);
+	}
+	
 	
 	/**
 	 * <ATTENTION> for now, we directly use number, we would change them to [public final] later 
@@ -192,9 +270,26 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		// make menu
 		Menu menu = new Menu("File"); 
 		MenuItem item1 = new MenuItem("New Game"); // it can handle levels, networking (do later)
+		//******************
+		item1.setOnAction(new EventHandler<ActionEvent>() {
+			//lize
+			@Override
+			public void handle(ActionEvent event) {
+				try {
+					Stage editor = new Stage();
+					setUpLevelEditor(editor);		
+					editor.showAndWait();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		//******************
 		MenuItem item2 = new MenuItem("Save Game"); // save (do later)
+		MenuItem item3 = new MenuItem("Online Game");
 		menu.getItems().add(item1);
 		menu.getItems().add(item2);
+		menu.getItems().add(item3);
 		MenuBar mb = new MenuBar(); mb.setMinHeight(25); 
 		mb.getMenus().add(menu); 
 		// grid holds map
