@@ -121,7 +121,7 @@ public class MainCharacterController {
 		
 		// Collision with the monster
 		for(MonsterModel each: monsters) {
-			System.out.println(each.getX()+ " , " + each.getY()+"|"+after_x + " , " + after_y);
+			//System.out.println(each.getX()+ " , " + each.getY()+"|"+after_x + " , " + after_y);
 			if ((each.getX() + unit_size/2 >=  after_x && each.getX() - unit_size/2 <= after_y) && 
 					(each.getY() + unit_size/2 >= after_y && each.getY()-unit_size/2<=after_y)) {
 				after_y= window_height-char_height/2;
@@ -253,13 +253,29 @@ public class MainCharacterController {
 				}
 			}
 		}
-		
-		
 //		System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y);
-		
 		return -1;
-		
 	}
+	
+	
+	//lize
+	public boolean checkIfThereIsAPortal(int[] portal) {
+		int char_width = character_model.getCharSizeWidth();
+		int curr_x = character_model.getCordX();
+		int curr_y = character_model.getCordY();
+		for (int k = 0; k < portal.length / 2; k++) {
+			if (portal[k * 2] <= curr_x+char_width && portal[k * 2] + unit_size >= curr_x) {
+				if (portal[k * 2 + 1] <= curr_y && portal[k * 2 + 1] + unit_size >= curr_y) {
+//					System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y+
+//							"key's num = " + k + "keys'position: ("+keys[k*2]+","+keys[k*2+1]+")****************************");
+					return true; // which key
+				}
+			}
+		}
+//		System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y);
+		return false;
+	}
+	
 	
 	//lize
 	public MainCharacterModel getPlayerPosition() {

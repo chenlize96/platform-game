@@ -61,6 +61,10 @@ public class ControllerCollections {
 		view_controller = new MainViewModelController(model.returnViewModel());
 	}
 	
+	//lize
+	public void callModelAddPortal(int[] portal) {
+		model.returnViewModel().setPortalPosition(portal);
+	}
 	
 	//lize
 	public void callModelAddKeys(int[] keys) {

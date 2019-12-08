@@ -67,14 +67,16 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	final int EASY = 123;
 	final int MEDIUM = 124;
 	final int HARD = 125;
+	final int HARD_PART2 = 126;
 	
 	private int[] startpoint = {0,0};
 	private int[] exitpoint = {0,0};
+	private int[] portal = {0,0};
 	private int[] character_size = {20,20};
 	private int[] keys = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; // there may be 5 keys in a map
 	private int[] doors = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; // five doors
 	
-	private int level = EASY;
+	private int level = EASY; // default is easy
 	private int keyNum = 0;
 	private int unit_size = 25; // every unit in the map is 25*25    ***ATTENTION***
 	//Character
@@ -86,6 +88,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	private boolean RIGHT = false;
 	private boolean LEFT = false;
 	private boolean JUMP = false;
+	private boolean ifPortal = false;
 	
 	ControllerCollections controller;
 	MainCharacterController character_controller;
@@ -104,7 +107,6 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	
 	
 	//Lize
-
 	public void initializePuzzlePlatformer() {
 		if (level == EASY) {
 			map = getMap("PublicTestCases/basic.txt");// default
@@ -112,6 +114,8 @@ public class PuzzlePlatformerView extends Application implements Observer {
 			map = getMap("PublicTestCases/medium.txt");
 		}else if (level == HARD) {
 			map = getMap("PublicTestCases/hard.txt");
+		}else if (level == HARD_PART2) {
+			map = getMap("PublicTestCases/hardPart2.txt"); 
 		}
 		this.view = this;
 		print2DArray();
@@ -165,6 +169,9 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		controller.callModelAddViewModel(startpoint, exitpoint);
 		
 		controller.callModelAddKeys(keys); 
+		if (ifPortal) {
+			controller.callModelAddPortal(portal);
+		}
 		
 		addMonster();
 		
@@ -349,7 +356,16 @@ public class PuzzlePlatformerView extends Application implements Observer {
 					Image monster = new Image("img/Static.png"); 
 					gc.drawImage(monster, 0, 0, unit_size, unit_size); 
 					grid.add(canvas, j, i);
-				}
+				}else if (map[i][j] == 'P') {
+					Canvas canvas = new Canvas(unit_size, unit_size); 
+					GraphicsContext gc = canvas.getGraphicsContext2D();
+					Image door = new Image("img/portal.png"); 
+					gc.drawImage(door, 0, 0, unit_size, unit_size); 
+					grid.add(canvas, j, i);
+					portal[0] = j*unit_size;
+					portal[1] = i*unit_size;
+					ifPortal = true;
+				}	
 			}
 			
 		}
@@ -532,7 +548,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		int health_status = msg.returnHealthStatus();
 		boolean win_status = msg.returnWinStatus();
 		int keyPos = msg.returnKeyStatus();
-
+		boolean portal_status = msg.returnPortalStatus();
 		
 		Platform.runLater(new Runnable() {
 
@@ -544,6 +560,10 @@ public class PuzzlePlatformerView extends Application implements Observer {
 					if (keyPos != -1) {
 						pickUpKey(keyPos);
 					}
+					if (portal_status) {
+						doTransfer();
+						ifPortal = false;
+					}
 					stageClearedMessage(win_status);
 				}
 			}
@@ -551,11 +571,22 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		});
 	}
 	
+	//lize
+	public void doTransfer() {
+		level = HARD_PART2;
+		grid.getScene().getWindow().hide();
+		try {
+			System.out.println(level);
+			view.start(new Stage());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	//lize (disappear on the map and show in the item bag)
 	@SuppressWarnings("static-access")
 	public void pickUpKey(int keyPos) {
-		boolean flag = false;
+		boolean flag = false;         
 		int gridSize = grid.getChildren().size();
 		int j = keys[keyPos * 2] / unit_size;
 		int i = keys[keyPos * 2 + 1] / unit_size;
