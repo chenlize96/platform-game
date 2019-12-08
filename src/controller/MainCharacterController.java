@@ -1,11 +1,13 @@
 package controller;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 import message.CharacterMoveMessage;
 import model.MainCharacterModel;
+import model.MonsterModel;
 
 /**
  * Controller for the MainCharacterModel
@@ -15,6 +17,7 @@ import model.MainCharacterModel;
 public class MainCharacterController {
 	ControllerCollections main_controller;
 	private MainCharacterModel character_model;
+	private ArrayList<MonsterModel> monsters;
 	GridPane stage_grid;
 	int window_width = 800;
 	int window_height = 600;
@@ -31,6 +34,7 @@ public class MainCharacterController {
 		this.main_controller = main_controller;
 		this.character_model = model;
 		this.stage_grid = stage_grid;
+		this.monsters = new ArrayList<MonsterModel>();
 	}
 	
 	/**
@@ -115,10 +119,27 @@ public class MainCharacterController {
 			return msg;
 		}
 		
+		// Collision with the monster
+		for(MonsterModel each: monsters) {
+			System.out.println(each.getX()+ " , " + each.getY()+"|"+after_x + " , " + after_y);
+			if ((each.getX() + unit_size/2 >=  after_x && each.getX() - unit_size/2 <= after_y) && 
+					(each.getY() + unit_size/2 >= after_y && each.getY()-unit_size/2<=after_y)) {
+				after_y= window_height-char_height/2;
+				System.out.println("Monster COLLISON("+after_x+","+after_y+")");
+				main_controller.returnViewModelController().decreaseHealth();
+				
+				msg = character_model.returnToStart();
+				return msg;
+			}
+		}
 		msg = character_model.moveCharacter(after_x, after_y);
 		
 		return msg;
 		
+	}
+	
+	public void  addMonster(MonsterModel monster) {
+		monsters.add(monster);
 	}
 	
 	/**

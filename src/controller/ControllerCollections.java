@@ -3,6 +3,7 @@ package controller;
 import java.util.Observer;
 
 import javafx.scene.layout.GridPane;
+import model.HorizontalMonsterModel;
 import model.ModelCollections;
 
 /**

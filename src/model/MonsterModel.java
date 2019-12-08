@@ -8,7 +8,6 @@ public class MonsterModel {
 	private int x;
 	private int y;
 	private int size;
-	private int height;
 	
 	public MonsterModel(int x, int y, int size) {
 		this.x = x;

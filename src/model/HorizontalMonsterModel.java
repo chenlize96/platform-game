@@ -28,6 +28,7 @@ public class HorizontalMonsterModel extends Application {
 	    private final int offsetY;
 	    private final int width;
 	    private final int height;
+	    private int size = 25;
 
 	    private int lastIndex;
 
@@ -61,12 +62,12 @@ public class HorizontalMonsterModel extends Application {
 
     private static final Image IMAGE = new Image("img/Run.png");
 
-    private static final int COLUMNS  =   4;
-    private static final int COUNT    =  10;
-    private static final int OFFSET_X =  18;
-    private static final int OFFSET_Y =  25;
-    private static final int WIDTH    = 374;
-    private static final int HEIGHT   = 243;
+    private static final int COLUMNS  =   3;
+    private static final int COUNT    =  8;
+    private static final int OFFSET_X =  0;
+    private static final int OFFSET_Y =  0;
+    private static final int WIDTH    = 34;
+    private static final int HEIGHT   = 24;
 
     public static void main(String[] args) {
         launch(args);

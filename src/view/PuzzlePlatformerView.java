@@ -7,6 +7,7 @@ import java.util.Observer;
 import java.util.Scanner;
 
 import controller.ControllerCollections;
+import controller.HorizonatalMonsterController;
 import controller.MainCharacterController;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
@@ -46,6 +47,8 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import message.CharacterMoveMessage;
 import message.CollectionsMessage;
+import model.StaticMonsterModel;
+import model.HorizontalMonsterModel;
 
 public class PuzzlePlatformerView extends Application implements Observer {
     
@@ -54,6 +57,9 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	final int WINDOW_HEIGHT = 600;
 	final int ticksPerFrame = 1;
 	final int MOVE_SIZE = 5;
+	final int BASIC = 123;
+	final int MEDIUM = 124;
+	final int HARD = 125;
 	
 	private int[] startpoint = {0,0};
 	private int[] exitpoint = {0,0};
@@ -72,6 +78,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	private boolean RIGHT = false;
 	private boolean LEFT = false;
 	private boolean JUMP = false;
+	private int level;
 	
 	ControllerCollections controller;
 	MainCharacterController character_controller;
@@ -88,6 +95,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	//Lize
 	public PuzzlePlatformerView() {
 		map = getMap("PublicTestCases/basic.txt");// default
+		level = BASIC;
 		print2DArray();
 	}
 	
@@ -139,6 +147,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		
 		controller.callModelAddKeys(keys); 
 		
+		addMonster();
 		
 		animationTimer = new AnimationTimer() {
 			@Override
@@ -161,7 +170,16 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	    //TODO CHARACTER
 
 	}
-
+	
+	public void addMonster() {
+		if (level == BASIC) {
+			character_controller.addMonster(new StaticMonsterModel(445, 315, unit_size));
+		}else if(level == MEDIUM) {
+			
+		}else {
+			
+		}
+	}
 	
 	/**
 	 * <ATTENTION> for now, we directly use number, we would change them to [public final] later 
@@ -230,6 +248,12 @@ public class PuzzlePlatformerView extends Application implements Observer {
 							break;
 						}
 					}
+				}else if (map[i][j] == 'M') {
+					Canvas canvas = new Canvas(unit_size, unit_size); 
+					GraphicsContext gc = canvas.getGraphicsContext2D();
+					Image monster = new Image("img/Static.png"); 
+					gc.drawImage(monster, 0, 0, unit_size, unit_size); 
+					grid.add(canvas, j, i);
 				}
 			}
 			
@@ -409,6 +433,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		
 		CollectionsMessage msg = (CollectionsMessage) arg;
 		CharacterMoveMessage char_msg = msg.getCharacterMoveMessage();
+		//System.out.println(character_controller.getPlayerPosition().getCordX()+" , "+ character_controller.getPlayerPosition().getCordY());
 		int health_status = msg.returnHealthStatus();
 		boolean win_status = msg.returnWinStatus();
 		int keyPos = msg.returnKeyStatus();
