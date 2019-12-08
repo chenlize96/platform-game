@@ -349,6 +349,12 @@ public class PuzzlePlatformerView extends Application implements Observer {
 					Image monster = new Image("img/Static.png"); 
 					gc.drawImage(monster, 0, 0, unit_size, unit_size); 
 					grid.add(canvas, j, i);
+				}else if (map[i][j] == 'O') {
+					Canvas canvas = new Canvas(unit_size, unit_size); 
+					GraphicsContext gc = canvas.getGraphicsContext2D();
+					Image monster = new Image("img/moving_obstacle.png"); 
+					gc.drawImage(monster, 0, 0, unit_size, unit_size); 
+					grid.add(canvas, j, i);
 				}
 			}
 			

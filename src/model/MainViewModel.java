@@ -1,5 +1,8 @@
 package model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * View Model which contains information how many health left and the coordinate of exit, starting position of character
  * @author Eujin Ko
@@ -11,6 +14,7 @@ public class MainViewModel {
 	int[] keys = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; // there may be 5 keys in a map
 	//int[] doors = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; 
 	int health_left;
+	List<int[]> movingBox;
 	
 	/**
 	 * Constructor for MainViewModel, initializes the values
@@ -24,6 +28,7 @@ public class MainViewModel {
 		this.exit[1] = exit[1];
 		this.start[0] = start[0];
 		this.start[1] = start[1];
+		this.movingBox = new ArrayList<>();
 	}
 	
 	
@@ -33,7 +38,9 @@ public class MainViewModel {
 	}
 	
 
-	
+	public void addMovingBox() {
+		
+	}
 	
 	//lize
 	public int[] returnKeysPosition() {

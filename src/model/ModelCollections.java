@@ -158,7 +158,6 @@ public class ModelCollections  extends Observable {
 		return controllerCollections.returnViewModelController().healthStatus();
 	}
 
-
 	private void moveProjectiles() {
 		// TODO
 		

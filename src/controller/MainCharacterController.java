@@ -121,7 +121,7 @@ public class MainCharacterController {
 		
 		// Collision with the monster
 		for(MonsterModel each: monsters) {
-			System.out.println(each.getX()+ " , " + each.getY()+"|"+after_x + " , " + after_y);
+//			System.out.println(each.getX()+ " , " + each.getY()+"|"+after_x + " , " + after_y);
 			if ((each.getX() + unit_size/2 >=  after_x && each.getX() - unit_size/2 <= after_y) && 
 					(each.getY() + unit_size/2 >= after_y && each.getY()-unit_size/2<=after_y)) {
 				after_y= window_height-char_height/2;
