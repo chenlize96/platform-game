@@ -9,10 +9,13 @@ import java.util.Scanner;
 import controller.ControllerCollections;
 import controller.HorizonatalMonsterController;
 import controller.MainCharacterController;
+import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
+import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.PathTransition;
 import javafx.animation.Timeline;
+import javafx.animation.Transition;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -20,6 +23,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -36,6 +40,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -44,6 +49,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
@@ -89,6 +95,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	private boolean LEFT = false;
 	private boolean JUMP = false;
 	private boolean ifPortal = false;
+	private Group root;
 	
 	ControllerCollections controller;
 	MainCharacterController character_controller;
@@ -203,7 +210,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		if (level == EASY) {
 			character_controller.addMonster(new StaticMonsterModel(445, 315, unit_size));
 		}else if(level == MEDIUM) {
-			
+			character_controller.addMonster(new HorizontalMonsterModel(445, 315, unit_size));
 		}else {
 			
 		}
@@ -263,6 +270,48 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		editor.setTitle("Level Editor");
 		Scene scene = new Scene(p2, 320, 120); // best size
 		editor.setScene(scene);
+	}
+	
+	
+	public class SpriteAnimation extends Transition {
+
+	    private final ImageView imageView;
+	    private final int count;
+	    private final int columns;
+	    private final int offsetX;
+	    private final int offsetY;
+	    private final int width;
+	    private final int height;
+	    private int size = 25;
+
+	    private int lastIndex;
+
+	    public SpriteAnimation(
+	            ImageView imageView, 
+	            Duration duration, 
+	            int count,   int columns,
+	            int offsetX, int offsetY,
+	            int width,   int height) {
+	        this.imageView = imageView;
+	        this.count     = count;
+	        this.columns   = columns;
+	        this.offsetX   = offsetX;
+	        this.offsetY   = offsetY;
+	        this.width     = width;
+	        this.height    = height;
+	        setCycleDuration(duration);
+	        setInterpolator(Interpolator.LINEAR);
+	    }
+
+	    protected void interpolate(double k) {
+	        final int index = Math.min((int) Math.floor(k * count), count - 1);
+	        if (index != lastIndex) {
+	            final int x = (index % columns) * width  + offsetX;
+	            final int y = (index / columns) * height + offsetY;
+	            imageView.setViewport(new Rectangle2D(x, y, width, height));
+	            lastIndex = index;
+	        }
+	    }
 	}
 	
 	
@@ -351,11 +400,53 @@ public class PuzzlePlatformerView extends Application implements Observer {
 						}
 					}
 				}else if (map[i][j] == 'M') {
+					
 					Canvas canvas = new Canvas(unit_size, unit_size); 
 					GraphicsContext gc = canvas.getGraphicsContext2D();
 					Image monster = new Image("img/Static.png"); 
 					gc.drawImage(monster, 0, 0, unit_size, unit_size); 
 					grid.add(canvas, j, i);
+					
+				}else if (map[i][j] == 'H') {
+						
+						final Image IMAGE = new Image("img/Run.png");
+
+					    final int COLUMNS  =   3;
+					    final int COUNT    =  8;
+					    final int OFFSET_X =  3;
+					    final int OFFSET_Y =  2;
+					    final int WIDTH    = 108;
+					    final int HEIGHT   = 72;
+						
+				        final ImageView imageView = new ImageView(IMAGE);
+				        imageView.setViewport(new Rectangle2D(OFFSET_X, OFFSET_Y, WIDTH, HEIGHT));
+
+				        final Animation animation = new SpriteAnimation(
+				                imageView,
+				                Duration.millis(1000),
+				                COUNT, COLUMNS,
+				                OFFSET_X, OFFSET_Y,
+				                WIDTH, HEIGHT
+				        );
+				        animation.setCycleCount(Animation.INDEFINITE);
+				        animation.play();
+				        
+				        Line line = new Line(100, 100, 1000, 100);
+				        PathTransition trasition = new PathTransition();
+				        trasition.setNode(imageView);
+				        trasition.setDuration(Duration.seconds(3));
+				        trasition.setPath(line);
+				        trasition.setCycleCount(PathTransition.INDEFINITE);
+				        trasition.play();
+				        
+				    root.getChildren().add(imageView);
+				    //stage.setScene(new Scene(new Group(imageView)));
+				    //stage.show();
+					//Canvas canvas = new Canvas(unit_size, unit_size); 
+					//GraphicsContext gc = canvas.getGraphicsContext2D();
+					//Image monster = new Image("img/Run.png"); 
+					//gc.drawImage(IMAGE, 0, 0, unit_size, unit_size, OFFSET_X, OFFSET_Y, WIDTH, HEIGHT); 
+					//grid.add(canvas, j, i);
 				}else if (map[i][j] == 'P') {
 					Canvas canvas = new Canvas(unit_size, unit_size); 
 					GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -365,7 +456,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 					portal[0] = j*unit_size;
 					portal[1] = i*unit_size;
 					ifPortal = true;
-				}	
+				}
 			}
 			
 		}
@@ -443,7 +534,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		// there should be someway to zoom up automatically without influencing coordinates (do later or ignore)
 		
 		
-		Group root = new Group();
+		root = new Group();
 		root.getChildren().add(p);
 		root.getChildren().add(character);
 		Scene scene = new Scene(root, 1000, 625); 
