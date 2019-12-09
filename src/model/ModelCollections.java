@@ -40,12 +40,16 @@ public class ModelCollections  extends Observable {
 	public void tick() {
 		CharacterMoveMessage char_msg = movePlayer();
 		moveEnemies();
-		moveProjectiles();
+		
+		String box_direction = controllerCollections.returnViewModelController().returnMovingBoxStackDirection();
+		int[] box_coordinate = controllerCollections.returnViewModelController().returnMovingBoxStackCoordinate();
+		controllerCollections.returnViewModelController().clearMovingBoxStack();
+		
 		
 		int keyPos = checkForKey();//get key postion, if -1 then not found
 		int health_status = checkForDeath();
 		boolean win = checkForWin();
-		CollectionsMessage msg = new CollectionsMessage(char_msg, health_status,win,keyPos);
+		CollectionsMessage msg = new CollectionsMessage(char_msg, health_status,win,keyPos,box_direction,box_coordinate);
 		setChanged();
 		notifyObservers(msg);
 		
@@ -89,6 +93,24 @@ public class ModelCollections  extends Observable {
 	 */
 	public void addPlayer(int[] startpoint, int[] character_size) {
 		this.player = new MainCharacterModel(startpoint[0], startpoint[1], character_size[0], character_size[1]);
+	}
+	
+	/**
+	 * Add list(coordinates) of moving boxes to the view model
+	 * @param movingBoxes
+	 * @author Eujin Ko
+	 */
+	public void addMovingBoxes(List<int[]> movingBoxes) {
+		this.view_model.addMovingBox(movingBoxes);
+	}
+	
+	/**
+	 * Return list of moving boxes
+	 * @return List<int[]>
+	 * @author Eujin Ko
+	 */
+	public List<int[]> returnMovingBoxes() {
+		return this.view_model.returnMovingBoxes();
 	}
 
 	
@@ -158,7 +180,13 @@ public class ModelCollections  extends Observable {
 		return controllerCollections.returnViewModelController().healthStatus();
 	}
 
+	/**
+	 * 
+	 * @author Eujin Ko
+	 */
 	private void moveProjectiles() {
+		
+		
 		// TODO
 		
 	}

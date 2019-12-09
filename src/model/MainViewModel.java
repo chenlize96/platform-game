@@ -1,7 +1,9 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * View Model which contains information how many health left and the coordinate of exit, starting position of character
@@ -14,7 +16,8 @@ public class MainViewModel {
 	int[] keys = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; // there may be 5 keys in a map
 	//int[] doors = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; 
 	int health_left;
-	List<int[]> movingBox;
+	List<int[]> movingBoxes;
+	Map<int[],String> movingBox_stack;
 	
 	/**
 	 * Constructor for MainViewModel, initializes the values
@@ -28,7 +31,7 @@ public class MainViewModel {
 		this.exit[1] = exit[1];
 		this.start[0] = start[0];
 		this.start[1] = start[1];
-		this.movingBox = new ArrayList<>();
+		this.movingBox_stack = new HashMap<>();
 	}
 	
 	
@@ -36,10 +39,63 @@ public class MainViewModel {
 	public void setKeyPosition(int[] keys) {
 		this.keys = keys; 
 	}
+	/**
+	 * 
+	 * @param coordinate
+	 * @param direction 
+	 * @author Eujin Ko
+	 */
+	public void movingBoxPopAndAddToStack(String direction, int[] coordinate) {
+		System.out.print(movingBoxes.remove(coordinate));
+		this.movingBox_stack.put(coordinate, direction);
+	}
+	/**
+	 * 
+	 * @return
+	 * @author Eujin Ko
+	 */
+	public String returnMovingBoxStackDirection() {
+		for(int[] key: movingBox_stack.keySet()) {
+			String direction = movingBox_stack.get(key);
+			return direction;
+			
+		}
+		return null;
+	}
 	
+	/**
+	 * 
+	 * @return
+	 * @author Eujin Ko
+	 */
+	public int[] returnMovingBoxStackCoordinate() {
+		for(int[] key: movingBox_stack.keySet()) {
+			String direction = movingBox_stack.get(key);
+			return key;
+			
+		}
+		return null;
+	}
+	public void clearMovingBoxStack() {
+		this.movingBox_stack.clear();
+	}
 
-	public void addMovingBox() {
+	/**
+	 * Add the list of Moving boxes
+	 * @param movingBoxes
+	 * @author Eujin Ko
+	 */
+	public void addMovingBox(List<int[]> movingBoxes) {
+		this.movingBoxes = movingBoxes;
 		
+	}
+	/**
+	 * Return list of moving boxes
+	 * @return List<int[]>
+	 * @author Eujin Ko
+	 */
+	public List<int[]> returnMovingBoxes(){
+		return this.movingBoxes;
 	}
 	
 	//lize

@@ -2,6 +2,7 @@ package controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
@@ -86,13 +87,17 @@ public class MainCharacterController {
 		
 
 		
+		
 		int handleY= handleYCoordinate(curr_x, curr_y, after_x, after_y, char_width, char_height);
 		after_y = handleY;
-		
+
 		int handleX = handleXCoordinate(curr_x, curr_y, after_x, after_y, char_width, char_height);
 		after_x = handleX;
 		
 		CharacterMoveMessage msg;
+		
+		
+		checkIfCollisionWithMovingBox(after_x);
 		
 		//1. Checks Collision on Walls
 		if(after_x < 0) {
@@ -118,6 +123,9 @@ public class MainCharacterController {
 			msg = character_model.returnToStart();
 			return msg;
 		}
+
+		
+		
 		
 		// Collision with the monster
 		for(MonsterModel each: monsters) {
@@ -132,6 +140,9 @@ public class MainCharacterController {
 				return msg;
 			}
 		}
+		
+
+		
 		msg = character_model.moveCharacter(after_x, after_y);
 		
 		return msg;
@@ -141,6 +152,7 @@ public class MainCharacterController {
 	public void  addMonster(MonsterModel monster) {
 		monsters.add(monster);
 	}
+	
 	
 	/**
 	 * Handles X coordinate Collision
@@ -216,7 +228,38 @@ public class MainCharacterController {
 		return y_pos;
 		
 	}
-	
+	/**
+	 * 
+	 * @author Eujin Ko
+	 * @param after_y 
+	 * @param after_x 
+	 */
+	public void checkIfCollisionWithMovingBox(int after_x) {
+		int char_width = character_model.getCharSizeWidth();
+		int curr_x = character_model.getCordX();
+		int curr_y = character_model.getCordY();
+		//Collision with moving boxes
+		for(int[] coord: main_controller.returnMovingBoxes()) {
+			int x = coord[0]*unit_size;
+			int y = coord[1]*unit_size;
+			if(x<= curr_x+char_width && curr_x<=x+unit_size) {
+				if(y <= curr_y && curr_y <= y+unit_size) {
+					if(after_x>curr_x) {
+//						if(stage_grid.contains(x, y)) {
+//							System.out.println("MOVING BOX: "+Arrays.toString(coord));
+//						}
+						main_controller.returnViewModelController()
+						.movingBoxPopAndAddToStack("right",coord);
+					}else {
+						main_controller.returnViewModelController()
+						.movingBoxPopAndAddToStack("left",coord);
+						
+					}
+					
+				}
+			}
+		}
+	}
 	
 	/**
 	 * Checks if the Character reaches the exit

@@ -1,7 +1,9 @@
 package view;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Scanner;
@@ -73,6 +75,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	private int[] character_size = {20,20};
 	private int[] keys = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; // there may be 5 keys in a map
 	private int[] doors = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; // five doors
+	private List<int[]> movingBoxes = new ArrayList<>();
 	
 	private int level = EASY;
 	private int keyNum = 0;
@@ -165,6 +168,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		controller.callModelAddViewModel(startpoint, exitpoint);
 		
 		controller.callModelAddKeys(keys); 
+		controller.callModelAddMovingBoxes(movingBoxes);
 		
 		addMonster();
 		
@@ -355,6 +359,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 					Image monster = new Image("img/moving_obstacle.png"); 
 					gc.drawImage(monster, 0, 0, unit_size, unit_size); 
 					grid.add(canvas, j, i);
+					movingBoxes.add(new int[] {j,i});
 				}
 			}
 			

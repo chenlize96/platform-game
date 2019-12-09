@@ -1,5 +1,6 @@
 package controller;
 
+import java.util.List;
 import java.util.Observer;
 
 import javafx.scene.layout.GridPane;
@@ -67,7 +68,23 @@ public class ControllerCollections {
 		model.returnViewModel().setKeyPosition(keys);
 	}
 	
+	/**
+	 * Adds list(coordinates) of moving Boxes to the mainViewModel
+	 * @param movingBoxes List<int[]>, coordinate of moving boxes
+	 * @author Eujin Ko
+	 */
+	public void callModelAddMovingBoxes(List<int[]> movingBoxes) {
+		model.addMovingBoxes(movingBoxes);
+	}
 	
+	/**
+	 * Return list of moving boxes
+	 * @return List<int[]>
+	 * @author Eujin Ko
+	 */
+	public List<int[]> returnMovingBoxes(){
+		return model.returnMovingBoxes();
+	}
 	
 	
 	/**

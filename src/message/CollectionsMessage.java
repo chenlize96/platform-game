@@ -5,6 +5,8 @@ public class CollectionsMessage {
 	int health_status;
 	boolean win_status;
 	int key_status;
+	String box_direction;
+	int[] box_coordinate;
 	
 //	MonsterMoveMessage monster_msg;
 	
@@ -13,17 +15,36 @@ public class CollectionsMessage {
 	 * @param char_msg CharacterMoveMessage which contains the movement of the character
 	 * @param health_status int, remaining health
 	 * @param win boolean, indicates whether player has reached the exit
+	 * @param box_coordinate 
+	 * @param box_direction 
 	 * @author Eujin Ko
 	 * @author Lize Chen
 	 */
 	public CollectionsMessage(CharacterMoveMessage char_msg, int health_status, boolean win,
-			int key_status) {
+			int key_status, String box_direction, int[] box_coordinate) {
 		this.char_msg = char_msg;
 		this.health_status = health_status;
 		this.win_status = win;
 		this.key_status = key_status;
+		this.box_direction = box_direction;
+		this.box_coordinate = box_coordinate;
 	}
-	
+	/**
+	 * 
+	 * @return
+	 * @author Eujin Ko
+	 */
+	public String returnBoxDirection() {
+		return this.box_direction;
+	}
+	/**
+	 * 
+	 * @return
+	 * @author Eujin Ko
+	 */
+	public int[] returnBoxCoordinate() {
+		return this.box_coordinate;
+	}
 	
 	//lize
 	public int returnKeyStatus() {
