@@ -311,5 +311,11 @@ public class MainCharacterController {
 		// TODO Auto-generated method stub
 		monsters.addMonster(MonsterModel);
 	}
+	
+	public void updateMonster() {
+		for (MonsterModel each: monsters.getMonster()) {
+			each.moveRight();
+		}
+	}
 }
 

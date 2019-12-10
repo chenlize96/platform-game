@@ -219,9 +219,9 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	
 	public void addMonster() {
 		if (level == EASY) {
-			character_controller.addMonster(new StaticMonsterModel(445, 315, unit_size));
+			character_controller.addMonster(new StaticMonsterModel(445, 315, unit_size, 0));
 		}else if(level == MEDIUM) {
-			character_controller.addMonster(new HorizontalMonsterModel(445, 315, unit_size));
+			character_controller.addMonster(new HorizontalMonsterModel(445, 315, 100, 3));
 		}else {
 			
 		}
