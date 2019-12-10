@@ -45,7 +45,8 @@ public class ModelCollections  extends Observable {
 		int keyPos = checkForKey();//get key postion, if -1 then not found
 		int health_status = checkForDeath();
 		boolean win = checkForWin();
-		CollectionsMessage msg = new CollectionsMessage(char_msg, health_status,win,keyPos);
+		boolean ifPortal = checkForPortal();
+		CollectionsMessage msg = new CollectionsMessage(char_msg, health_status,win,keyPos,ifPortal);
 		setChanged();
 		notifyObservers(msg);
 		
@@ -147,8 +148,15 @@ public class ModelCollections  extends Observable {
 		return k;
 	}
 	
-	
+	//lize
+	private boolean checkForPortal() {
+		boolean ifPortal = false;
+		int[] portal = controllerCollections.returnViewModelController().returnPortalPosition();
+		ifPortal = controllerCollections.returnMainCharacterController().checkIfThereIsAPortal(portal);
+		return ifPortal;
+	}
 
+	
 	/**
 	 * Checks the health status of the model
 	 * @return int remaining health

@@ -8,6 +8,7 @@ package model;
 public class MainViewModel {
 	int[] start = {0,0};
 	int[] exit = {0,0};
+	int[] portal = {0,0};
 	int[] keys = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; // there may be 5 keys in a map
 	//int[] doors = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; 
 	int health_left;
@@ -32,8 +33,15 @@ public class MainViewModel {
 		this.keys = keys; 
 	}
 	
-
+	//lize
+	public void setPortalPosition(int[] portal) {
+		this.portal = portal;
+	}
 	
+	//lize 
+	public int[] returnPortalPosition() {
+		return portal;
+	}
 	
 	//lize
 	public int[] returnKeysPosition() {

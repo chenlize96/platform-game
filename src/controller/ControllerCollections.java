@@ -3,6 +3,7 @@ package controller;
 import java.util.Observer;
 
 import javafx.scene.layout.GridPane;
+import model.HorizontalMonsterModel;
 import model.ModelCollections;
 import view.PuzzlePlatformerView;
 
@@ -61,6 +62,10 @@ public class ControllerCollections {
 		view_controller = new MainViewModelController(model.returnViewModel());
 	}
 	
+	//lize
+	public void callModelAddPortal(int[] portal) {
+		model.returnViewModel().setPortalPosition(portal);
+	}
 	
 	//lize
 	public void callModelAddKeys(int[] keys) {

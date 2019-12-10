@@ -1,5 +1,6 @@
 package controller;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import javafx.scene.Node;
@@ -7,6 +8,9 @@ import javafx.scene.layout.GridPane;
 import message.CharacterMoveMessage;
 import model.MainCharacterModel;
 import view.PuzzlePlatformerView;
+import model.MonsterModel;
+import model.StaticMonsterModel;
+import controller.MonsterController;
 
 /**
  * Controller for the MainCharacterModel
@@ -15,6 +19,7 @@ import view.PuzzlePlatformerView;
  */
 public class MainCharacterController {
 	ControllerCollections main_controller;
+	MonsterController monsters;
 	private MainCharacterModel character_model;
 	GridPane stage_grid;
 	PuzzlePlatformerView view;
@@ -33,6 +38,8 @@ public class MainCharacterController {
 		this.character_model = model;
 		this.stage_grid = view.callGrid();
 		this.view = view;
+		this.monsters = new MonsterController();
+
 	}
 	
 	/**
@@ -117,13 +124,26 @@ public class MainCharacterController {
 			return msg;
 		}
 		
-		
-		
+		// Collision with the monster
+		for(MonsterModel each: monsters.getMonster()) {
+//			System.out.println(each.getX()+ " , " + each.getY()+"|"+after_x + " , " + after_y);
+			if ((each.getX() + 30 >=  after_x && each.getX() - 15 <= after_x && each.getY()==after_y) || 
+					(each.getX() == after_x && each.getY() - 25 == after_y)) {
+				after_y= window_height-char_height/2;
+//				System.out.println("Monster COLLISON("+after_x+","+after_y+")");
+				main_controller.returnViewModelController().decreaseHealth();
+				
+				msg = character_model.returnToStart();
+				return msg;
+			}
+		}
+
 		msg = character_model.moveCharacter(after_x, after_y);
 		
 		return msg;
 		
 	}
+
 	/**
 	 * Calculates the position of the obstacles in the stage and returns how much x coordinate to move
 	 * @param moveX how much X moves according to the velocity set
@@ -265,13 +285,29 @@ public class MainCharacterController {
 				}
 			}
 		}
-		
-		
 //		System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y);
-		
 		return -1;
-		
 	}
+	
+	
+	//lize
+	public boolean checkIfThereIsAPortal(int[] portal) {
+		int char_width = character_model.getCharSizeWidth();
+		int curr_x = character_model.getCordX();
+		int curr_y = character_model.getCordY();
+		for (int k = 0; k < portal.length / 2; k++) {
+			if (portal[k * 2] <= curr_x+char_width && portal[k * 2] + unit_size >= curr_x) {
+				if (portal[k * 2 + 1] <= curr_y && portal[k * 2 + 1] + unit_size >= curr_y) {
+//					System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y+
+//							"key's num = " + k + "keys'position: ("+keys[k*2]+","+keys[k*2+1]+")****************************");
+					return true; // which key
+				}
+			}
+		}
+//		System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y);
+		return false;
+	}
+	
 	
 	//lize
 	public MainCharacterModel getPlayerPosition() {
@@ -303,6 +339,17 @@ public class MainCharacterController {
 	 */
 	public void toggleJumpStatus() {
 		character_model.toggleJump();
+	}
+
+	public void addMonster(MonsterModel MonsterModel) {
+		// TODO Auto-generated method stub
+		monsters.addMonster(MonsterModel);
+	}
+	
+	public void updateMonster() {
+		for (MonsterModel each: monsters.getMonster()) {
+			each.moveRight();
+		}
 	}
 }
 
