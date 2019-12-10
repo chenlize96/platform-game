@@ -59,25 +59,16 @@ public class MainCharacterController {
 				dx -= MOVE_SIZE;
 			}
 		}
-		if(dy!=0) {
-			if(dy<0) {
-				moveY = -MOVE_SIZE;
-				dy += MOVE_SIZE;
-			}else {
-				moveY = MOVE_SIZE;
-				dy -= MOVE_SIZE;
-			}
-		}
 		
-//		if(dy == 0) {
-//			moveY = MOVE_SIZE;
-//		}else if(dy<0) {
-//			moveY = -MOVE_SIZE;
-//			dy += MOVE_SIZE;
-//		}else {
-//			moveY = MOVE_SIZE;
-//			dy += MOVE_SIZE;
-//		}
+		if(dy == 0) {
+			moveY = MOVE_SIZE;
+		}else if(dy<0) {
+			moveY = -MOVE_SIZE;
+			dy += MOVE_SIZE;
+		}else {
+			moveY = MOVE_SIZE;
+			dy += MOVE_SIZE;
+		}
 		
 		
 		character_model.setVelocity(dx,dy);
@@ -90,7 +81,6 @@ public class MainCharacterController {
 		int char_height = character_model.getCharSizeHeight();
 
 //		System.out.println("CURR LOCATION("+curr_x+","+curr_y+")");
-		
 
 		
 		int handleY= handleYCoordinate(moveX, moveY);
@@ -102,24 +92,44 @@ public class MainCharacterController {
 		CharacterMoveMessage msg;
 
 		
+		//1. Checks Collision on Walls
+		if(after_x < 0) {
+			after_x = char_width/2;
+//			System.out.println("1. COLLISON("+after_x+","+after_y+")");
+			
+		}else if(after_x +char_width > window_width) {
+			after_x = window_width-char_width;
+//			System.out.println("2. COLLISON("+after_x+","+after_y+")");
+		}
+		
+		
+		if(after_y < 0 + char_height) {
+			after_y = unit_size;
+//			System.out.println("3. COLLISON("+after_x+","+after_y+")");
+			//TODO: DEAD CONDITIONS
+			
+		}else if(after_y > window_height-char_height) {
+			after_y= window_height-char_height/2;
+//			System.out.println("4. COLLISON("+after_x+","+after_y+")");
+			main_controller.returnViewModelController().decreaseHealth();
+			
+			msg = character_model.returnToStart();
+			return msg;
+		}
+		
+		
+		
 		msg = character_model.moveCharacter(after_x, after_y);
 		
 		return msg;
 		
 	}
-	
 	/**
-	 * Handles X coordinate Collision
-	 * @param curr_x
-	 * @param curr_y
-	 * @param after_x
-	 * @param after_y
-	 * @param char_width
-	 * @param char_height
-	 * @return integer, x coordinate
+	 * Calculates the position of the obstacles in the stage and returns how much x coordinate to move
+	 * @param moveX how much X moves according to the velocity set
+	 * @param afterY how much Y moves according to the velocity set
+	 * @return x_pos, indicates how many x coordinate to move
 	 * @author Eujin Ko
-	 * @param moveY 
-	 * @param moveX 
 	 */
 	public int handleXCoordinate(int moveX, int afterY) {
 		Node character = view.callCharacter();
@@ -138,7 +148,7 @@ public class MainCharacterController {
 					
 					if(moveX < 0) {	//LEFT
 						if(char_x+x_pos == x+unit_size) {
-							System.out.println(i+"^ CHILD="+x+" || "+y+" = "+char_x+x_pos+" || "+(int)(afterY));
+//							System.out.println(i+"^ CHILD="+x+" || "+y+" = "+char_x+x_pos+" || "+(int)(afterY));
 							return x_pos+1;
 						}
 //						return x_pos+1;
@@ -165,7 +175,13 @@ public class MainCharacterController {
 //		return x_pos;
 	}
 
-	
+	/**
+	 * Calculates the position of the obstacles in the stage and returns how much y coordinate to move
+	 * @param moveX how much X moves according to the velocity set
+	 * @param afterY how much Y moves according to the velocity set
+	 * @return y_pos, indicates how many y coordinate to move
+	 * @author Eujin Ko
+	 */
 	public int handleYCoordinate(int moveX, int moveY){
 		Node character = view.callCharacter();
 		double char_x = character_model.getCordX();
@@ -179,32 +195,33 @@ public class MainCharacterController {
 				double x = child.getLayoutX();
 				double y = child.getLayoutY();
 				if(child.getBoundsInParent().intersects(char_x,char_y+y_pos,char_w,char_h)) {
-					System.out.println(i+"^ CHILD="+x+" || "+y+" = "+char_x+" || "+char_y+y_pos);
+//					System.out.println(i+"^ CHILD="+child.getBoundsInParent());
 					
 					if(moveY < 0) {	//UP
-						if(char_y+y_pos == y+unit_size) {
-							System.out.println(i+"^ CHILD="+x+" || "+y+" = "+char_x+" || "+(int)(char_y+y_pos));
+						if((int)char_y+y_pos == (int)(y+unit_size)) {
+//							System.out.println(i+"^ CHILD="+x+" || "+(y+unit_size)+" = "+char_x+" || "+(int)(char_y+y_pos));
 							return y_pos+1;
 						}
 						return y_pos-1;
 //						
 					}else {	//DOWN
-//						if(char_x+x_pos+char_w == x) {
-//							return x_pos-1;
-//						}
-////						return x_pos-10;
+						if(char_y+y_pos+char_h == y) {
+							character_model.toggleJump();
+							return y_pos-1;
+						}
+						return y_pos+1;
 					}
 				}
 				
 
 			}
-			if(moveY > 0) {	//RIGHT
-				y_pos += 1;
-			}else {	//LEFT
+			if(moveY < 0) {	//UP
 				y_pos -= 1;
+			}else {	//DOWN
+				y_pos += 1;
 			}
 			
-			System.out.println(y_pos);
+//			System.out.println(y_pos);
 		}
 		return y_pos;
 //		return 300;
@@ -220,12 +237,13 @@ public class MainCharacterController {
 	 */
 	public boolean checkIfCharacterIsAtExit(int x, int y) {
 		int char_width = character_model.getCharSizeWidth();
+		int char_height = character_model.getCharSizeHeight();
 		int curr_x = character_model.getCordX();
 		int curr_y = character_model.getCordY();
 		
 		//System.out.println("WIN STATUS"+curr_x+","+curr_y+"-"+x+","+y);
-		if(x<= curr_x+char_width && curr_x<=x+unit_size) {
-			if(y <= curr_y && curr_y <= y+unit_size) {
+		if(x<= curr_x+char_width+1 && curr_x-1<=x+unit_size) {
+			if(y <= curr_y+char_height+1 && curr_y-1 <= y+unit_size) {
 				return true;
 			}
 		}
@@ -235,11 +253,12 @@ public class MainCharacterController {
 	//lize
 	public int checkIfThereIsAKey(int[] keys) {
 		int char_width = character_model.getCharSizeWidth();
+		int char_height = character_model.getCharSizeHeight();
 		int curr_x = character_model.getCordX();
 		int curr_y = character_model.getCordY();
 		for (int k = 0; k < keys.length / 2; k++) {
-			if (keys[k * 2] <= curr_x+char_width && keys[k * 2] + unit_size >= curr_x) {
-				if (keys[k * 2 + 1] <= curr_y && keys[k * 2 + 1] + unit_size >= curr_y) {
+			if (keys[k * 2] <= curr_x+char_width+1 && keys[k * 2] + unit_size >= curr_x-1) {
+				if (keys[k * 2 + 1] <= curr_y+char_height+1 && keys[k * 2 + 1] + unit_size >= curr_y-1) {
 //					System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y+
 //							"key's num = " + k + "keys'position: ("+keys[k*2]+","+keys[k*2+1]+")****************************");
 					return k; // which key

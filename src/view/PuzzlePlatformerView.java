@@ -67,8 +67,8 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	private Rectangle character = new Rectangle(character_size[0], character_size[1], Color.RED); //radius = 10
 	private Label itemKeyNum;
 	
-	private boolean UP = false;
-	private boolean DOWN = false;
+//	private boolean UP = false;
+//	private boolean DOWN = false;
 	private boolean RIGHT = false;
 	private boolean LEFT = false;
 	private boolean JUMP = false;
@@ -190,12 +190,23 @@ public class PuzzlePlatformerView extends Application implements Observer {
 				if (map[i][j] == '*') {
 					Canvas canvas = new Canvas(unit_size, unit_size); 
 					GraphicsContext gc = canvas.getGraphicsContext2D();
-					Image wall = new Image("img/wall.png"); 
+					Image wall = new Image("img/wall.png");
+					//TEST
+					canvas.setOnMouseClicked(new EventHandler() {
+						@Override
+						public void handle(Event e) {
+							Node node = (Node)e.getSource();
+							System.out.println("GRID: (X,Y) = "+node.getLayoutX()+","+node.getLayoutY()+")");
+							
+						}
+						
+					});
+					//TEST_END
 					gc.drawImage(wall, 0, 0, unit_size, unit_size); 
 					grid.add(canvas, j, i);
 				}else if (map[i][j] == 'S') {// start
-					startpoint[0] = j*unit_size;
-					startpoint[1] = i*unit_size;//jump doesnt work
+					startpoint[0] = j*unit_size+1;
+					startpoint[1] = i*unit_size+1;//jump doesnt work
 				}else if (map[i][j] == 'E') { //exit
 					Canvas canvas = new Canvas(unit_size, unit_size); 
 					GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -378,11 +389,11 @@ public class PuzzlePlatformerView extends Application implements Observer {
 			moveY = -MOVE_SIZE*10;
 			character_controller.toggleJumpStatus();
 		}
-		else if(UP) {
-			moveY = -MOVE_SIZE;
-		}else if(DOWN) {
-			moveY = MOVE_SIZE;
-		}
+//		else if(UP) {
+//			moveY = -MOVE_SIZE;
+//		}else if(DOWN) {
+//			moveY = MOVE_SIZE;
+//		}
 		
 		
 		if(RIGHT) {
@@ -491,8 +502,8 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	    Path path = new Path();
 //	    path.getElements().add(new MoveTo(prevX+character_size[0]/2, prevY+unit_size));
 //	    path.getElements().add(new LineTo(curX+character_size[0]/2, curY+unit_size));
-	    path.getElements().add(new MoveTo(prevX+character_size[0]/2, prevY+unit_size));
-	    path.getElements().add(new LineTo(curX+character_size[0]/2, curY+unit_size));
+	    path.getElements().add(new MoveTo(prevX+character_size[0]/2, prevY+unit_size+character_size[1]/2));
+	    path.getElements().add(new LineTo(curX+character_size[0]/2, curY+unit_size+character_size[1]/2));
 		
 
 	    PathTransition pathTransition = new PathTransition();
@@ -555,14 +566,14 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		    
 			switch(event.getCode()) {
 			
-			case DOWN:
-				System.out.println("DOWN");
-				DOWN = true;
-				break;
-			case UP:
-				System.out.println("UP");
-				UP = true;
-				break;
+//			case DOWN:
+//				System.out.println("DOWN");
+//				DOWN = true;
+//				break;
+//			case UP:
+//				System.out.println("UP");
+//				UP = true;
+//				break;
 			case RIGHT:
 				System.out.println("RIGHT");
 				RIGHT = true;
@@ -597,12 +608,12 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		    
 			switch(event.getCode()) {
 			
-			case DOWN:
-				DOWN = false;
-				break;
-			case UP:
-				UP = false;
-				break;
+//			case DOWN:
+//				DOWN = false;
+//				break;
+//			case UP:
+//				UP = false;
+//				break;
 			case RIGHT:
 				RIGHT = false;
 				break;
