@@ -8,7 +8,8 @@ import javafx.scene.layout.GridPane;
 import message.CharacterMoveMessage;
 import model.MainCharacterModel;
 import model.MonsterModel;
-
+import model.StaticMonsterModel;
+import controller.MonsterController;
 /**
  * Controller for the MainCharacterModel
  * @author Eujin Ko
@@ -16,8 +17,8 @@ import model.MonsterModel;
  */
 public class MainCharacterController {
 	ControllerCollections main_controller;
+	MonsterController monsters;
 	private MainCharacterModel character_model;
-	private ArrayList<MonsterModel> monsters;
 	GridPane stage_grid;
 	int window_width = 800;
 	int window_height = 600;
@@ -34,7 +35,7 @@ public class MainCharacterController {
 		this.main_controller = main_controller;
 		this.character_model = model;
 		this.stage_grid = stage_grid;
-		this.monsters = new ArrayList<MonsterModel>();
+		this.monsters = new MonsterController();
 	}
 	
 	/**
@@ -120,7 +121,7 @@ public class MainCharacterController {
 		}
 		
 		// Collision with the monster
-		for(MonsterModel each: monsters) {
+		for(MonsterModel each: monsters.getMonster()) {
 //			System.out.println(each.getX()+ " , " + each.getY()+"|"+after_x + " , " + after_y);
 			if ((each.getX() + 30 >=  after_x && each.getX() - 15 <= after_x && each.getY()==after_y) || 
 					(each.getX() == after_x && each.getY() - 25 == after_y)) {
@@ -138,9 +139,6 @@ public class MainCharacterController {
 		
 	}
 	
-	public void  addMonster(MonsterModel monster) {
-		monsters.add(monster);
-	}
 	
 	/**
 	 * Handles X coordinate Collision
@@ -307,6 +305,11 @@ public class MainCharacterController {
 	 */
 	public void toggleJumpStatus() {
 		character_model.toggleJump();
+	}
+
+	public void addMonster(MonsterModel MonsterModel) {
+		// TODO Auto-generated method stub
+		monsters.addMonster(MonsterModel);
 	}
 }
 
