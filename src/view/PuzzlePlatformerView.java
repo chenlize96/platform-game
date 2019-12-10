@@ -78,6 +78,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	GridPane grid;
 	AnimationTimer animationTimer;
 	Timeline timeline;
+	PuzzlePlatformerView itself = this;
 	
 	Canvas health_box;
 	
@@ -132,7 +133,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	public void start(Stage stage) throws Exception {
 		Scene scene = setupStage(stage);	//Lize's stage setup
 
-		controller = new ControllerCollections(this,grid);
+		controller = new ControllerCollections(this, itself);
 		controller.callModelAddPlayer(startpoint, character_size);
 		character_controller = controller.returnMainCharacterController();
 		controller.callModelAddViewModel(startpoint, exitpoint);
@@ -391,6 +392,12 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		character_controller.addVelocity(moveX, moveY);
 	}
 
+	public Node callCharacter() {
+		return character;
+	}
+	public GridPane callGrid() {
+		return grid;
+	}
 
 	/**
 	 * Fetches the message received from observable, updates the view
