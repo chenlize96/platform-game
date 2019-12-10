@@ -95,7 +95,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	private boolean RIGHT = false;
 	private boolean LEFT = false;
 	private boolean JUMP = false;
-	//private boolean ifPortal = false;
+	private boolean ifPortal = false;
 	private Group root;
 	ControllerCollections controller;
 	MainCharacterController character_controller;
@@ -105,9 +105,6 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	PuzzlePlatformerView view;
 	
 	Canvas health_box;
-	
-	
-	
 	
 	private char[][] map;
 	
@@ -169,15 +166,13 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	 */
 	@Override
 	public void start(Stage stage) throws Exception {
-		//initializePuzzlePlatformer();
 		Scene scene = setupStage(stage);	//Lize's stage setup
-
-		controller = new ControllerCollections(this,grid);
-		controller.callModelAddPlayer(startpoint, character_size);
-		character_controller = controller.returnMainCharacterController();
-		controller.callModelAddViewModel(startpoint, exitpoint);
+		//controller = new ControllerCollections(this,grid);
+		//controller.callModelAddPlayer(startpoint, character_size);
+		//character_controller = controller.returnMainCharacterController();
+		//controller.callModelAddViewModel(startpoint, exitpoint);
 		
-		controller.callModelAddKeys(keys); 
+		//controller.callModelAddKeys(keys); 
 		//if (ifPortal) {
 		//	controller.callModelAddPortal(portal);
 		//}
@@ -427,17 +422,28 @@ public class PuzzlePlatformerView extends Application implements Observer {
 					grid.add(canvas, j, i);
 					portal[0] = j*unit_size;
 					portal[1] = i*unit_size;
-					controller.callModelAddPortal(portal);
-					//ifPortal = true;
+					//controller.callModelAddPortal(portal);
+					ifPortal = true;
 				}
 			}
-
 		}
-
-		//				System.out.println(keys[0] + " "+ keys[1]+ " "+ keys[2]+"******");
-
+		setUpController();	
+//				System.out.println(keys[0] + " "+ keys[1]+ " "+ keys[2]+"******");
 	}
 
+	//lize
+	public void setUpController() {
+		controller = new ControllerCollections(this,grid);
+		controller.callModelAddPlayer(startpoint, character_size);
+		character_controller = controller.returnMainCharacterController();
+		controller.callModelAddViewModel(startpoint, exitpoint);
+		controller.callModelAddKeys(keys); 
+		if (ifPortal) {
+			controller.callModelAddPortal(portal);
+		}
+	}
+	
+	
 	/**
 	 * <ATTENTION> for now, we directly use number, we would change them to [public final] later 
 	 * @param stage
@@ -654,7 +660,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 					}
 					if (portal_status) {
 						doTransfer();
-						//ifPortal = false;
+						ifPortal = false;
 					}
 					stageClearedMessage(win_status);
 				}
