@@ -96,7 +96,6 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	private boolean JUMP = false;
 	private boolean ifPortal = false;
 	private Group root;
-	
 	ControllerCollections controller;
 	MainCharacterController character_controller;
 	GridPane grid;
@@ -105,6 +104,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	PuzzlePlatformerView view;
 	
 	Canvas health_box;
+	
 	
 	
 	
@@ -126,6 +126,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		}
 		this.view = this;
 		print2DArray();
+		root = new Group();
 	}
 	
 	//Lize
@@ -315,6 +316,127 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	}
 	
 	
+	public void addMap() {
+				for (int i = 0; i < map.length; i++) {
+					for (int j = 0; j < map[0].length; j++) {
+						if (map[i][j] == '*') {
+							Canvas canvas = new Canvas(unit_size, unit_size); 
+							GraphicsContext gc = canvas.getGraphicsContext2D();
+							Image wall = new Image("img/wall.png"); 
+							gc.drawImage(wall, 0, 0, unit_size, unit_size); 
+							grid.add(canvas, j, i);
+						}else if (map[i][j] == 'S') {// start
+							startpoint[0] = j*unit_size;
+							startpoint[1] = i*unit_size;//jump doesnt work
+						}else if (map[i][j] == 'E') { //exit
+							Canvas canvas = new Canvas(unit_size, unit_size); 
+							GraphicsContext gc = canvas.getGraphicsContext2D();
+							Image exit = new Image("img/exit.png"); 
+							gc.drawImage(exit, 0, 0, unit_size, unit_size); 
+							grid.add(canvas, j, i);
+							exitpoint[0] = j*unit_size;
+							exitpoint[1] = i*unit_size;
+						}else if (map[i][j] == 'D') {
+							Canvas canvas = new Canvas(unit_size, unit_size); 
+							GraphicsContext gc = canvas.getGraphicsContext2D();
+							Image door = new Image("img/door.png"); 
+							gc.drawImage(door, 0, 0, unit_size, unit_size); 
+							grid.add(canvas, j, i);
+							for (int k = 0; k < doors.length / 2; k++) {
+								if (doors[k * 2] == -100) {
+									doors[k * 2] = j * unit_size;
+									doors[k * 2 + 1] = i * unit_size;
+									System.out.println(doors[0]+"-"+doors[1]);
+									break;
+								}
+							}
+						}else if (map[i][j] == 'K') {
+							Canvas canvas = new Canvas(unit_size, unit_size); 
+							GraphicsContext gc = canvas.getGraphicsContext2D();
+							Image key = new Image("img/key.png"); 
+							gc.drawImage(key, 0, 0, unit_size, unit_size); 
+							grid.add(canvas, j, i);
+							for (int k = 0; k < keys.length / 2; k++) {
+								if (keys[k * 2] == -100) {
+									keys[k * 2] = j * unit_size;
+									keys[k * 2 + 1] = i * unit_size;
+									break;
+								}
+							}
+						}else if (map[i][j] == 'M') {
+							
+							Canvas canvas = new Canvas(unit_size, unit_size); 
+							GraphicsContext gc = canvas.getGraphicsContext2D();
+							Image monster = new Image("img/Static.png"); 
+							gc.drawImage(monster, 0, 0, unit_size, unit_size); 
+							grid.add(canvas, j, i);
+							
+						}else if (map[i][j] == 'H') {
+							
+							
+							
+					            
+								Image IMAGE = new Image("img/Run.png");
+
+							    final int COLUMNS  =   3;
+							    final int COUNT    =  8;
+							    final int OFFSET_X =  3;
+							    final int OFFSET_Y =  2;
+							    final int WIDTH    = 108;
+							    final int HEIGHT   = 72;
+								
+							    ImageView imageView = new ImageView(IMAGE);
+						        imageView.setViewport(new Rectangle2D(OFFSET_X, OFFSET_Y, WIDTH, HEIGHT));
+						        
+						        
+						        final Animation animation = new SpriteAnimation(
+						                imageView,
+						                Duration.millis(1000),
+						                COUNT, COLUMNS,
+						                OFFSET_X, OFFSET_Y,
+						                WIDTH, HEIGHT
+						        );
+						        animation.setCycleCount(Animation.INDEFINITE);
+						        animation.play();
+						        
+						       
+						        Line line = new Line(445, 375, 545, 375);
+						        PathTransition trasition = new PathTransition();
+						        trasition.setNode(imageView);
+						        trasition.setDuration(Duration.seconds(3));
+						        trasition.setPath(line);
+						        trasition.setCycleCount(PathTransition.INDEFINITE);
+						        trasition.play();
+						        
+						        root.getChildren().add(imageView);
+						        //stage.setOnShowing(new Scene(root, 1000, 625)); 
+						        //stage.show(new Scene(new Group (root)));
+						    
+							//Canvas canvas = new Canvas(103, 72); 
+							//GraphicsContext gc = canvas.getGraphicsContext2D();
+							//Image monster = new Image("img/Run.png"); 
+							//gc.drawImage(IMAGE, 103, HEIGHT, HEIGHT, HEIGHT, HEIGHT, HEIGHT, HEIGHT, HEIGHT); 
+							//grid.add(canvas, j, i);
+						    //grid.add(IMAGE, j, i);
+						    
+						}else if (map[i][j] == 'P') {
+							Canvas canvas = new Canvas(unit_size, unit_size); 
+							GraphicsContext gc = canvas.getGraphicsContext2D();
+							Image door = new Image("img/portal.png"); 
+							gc.drawImage(door, 0, 0, unit_size, unit_size); 
+							grid.add(canvas, j, i);
+							portal[0] = j*unit_size;
+							portal[1] = i*unit_size;
+							ifPortal = true;
+						}
+					}
+					
+				}
+				
+//				System.out.println(keys[0] + " "+ keys[1]+ " "+ keys[2]+"******");
+				
+	}
+	
 	/**
 	 * <ATTENTION> for now, we directly use number, we would change them to [public final] later 
 	 * @param stage
@@ -324,9 +446,11 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	@SuppressWarnings({ "rawtypes", "unchecked" }) // do not modify this line
 	public Scene setupStage(Stage stage) {
 		// make menu
+		
 		Menu menu = new Menu("File"); 
 		MenuItem item1 = new MenuItem("New Game"); // it can handle levels, networking (do later)
 		//******************
+		
 		item1.setOnAction(new EventHandler<ActionEvent>() {
 			//lize
 			@Override
@@ -352,119 +476,9 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		grid = new GridPane();
 		grid.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
 		grid.setPrefSize( WINDOW_WIDTH, WINDOW_HEIGHT ); // not sure its best size
-		//**********************************************
-		for (int i = 0; i < map.length; i++) {
-			for (int j = 0; j < map[0].length; j++) {
-				if (map[i][j] == '*') {
-					Canvas canvas = new Canvas(unit_size, unit_size); 
-					GraphicsContext gc = canvas.getGraphicsContext2D();
-					Image wall = new Image("img/wall.png"); 
-					gc.drawImage(wall, 0, 0, unit_size, unit_size); 
-					grid.add(canvas, j, i);
-				}else if (map[i][j] == 'S') {// start
-					startpoint[0] = j*unit_size;
-					startpoint[1] = i*unit_size;//jump doesnt work
-				}else if (map[i][j] == 'E') { //exit
-					Canvas canvas = new Canvas(unit_size, unit_size); 
-					GraphicsContext gc = canvas.getGraphicsContext2D();
-					Image exit = new Image("img/exit.png"); 
-					gc.drawImage(exit, 0, 0, unit_size, unit_size); 
-					grid.add(canvas, j, i);
-					exitpoint[0] = j*unit_size;
-					exitpoint[1] = i*unit_size;
-				}else if (map[i][j] == 'D') {
-					Canvas canvas = new Canvas(unit_size, unit_size); 
-					GraphicsContext gc = canvas.getGraphicsContext2D();
-					Image door = new Image("img/door.png"); 
-					gc.drawImage(door, 0, 0, unit_size, unit_size); 
-					grid.add(canvas, j, i);
-					for (int k = 0; k < doors.length / 2; k++) {
-						if (doors[k * 2] == -100) {
-							doors[k * 2] = j * unit_size;
-							doors[k * 2 + 1] = i * unit_size;
-							System.out.println(doors[0]+"-"+doors[1]);
-							break;
-						}
-					}
-				}else if (map[i][j] == 'K') {
-					Canvas canvas = new Canvas(unit_size, unit_size); 
-					GraphicsContext gc = canvas.getGraphicsContext2D();
-					Image key = new Image("img/key.png"); 
-					gc.drawImage(key, 0, 0, unit_size, unit_size); 
-					grid.add(canvas, j, i);
-					for (int k = 0; k < keys.length / 2; k++) {
-						if (keys[k * 2] == -100) {
-							keys[k * 2] = j * unit_size;
-							keys[k * 2 + 1] = i * unit_size;
-							break;
-						}
-					}
-				}else if (map[i][j] == 'M') {
-					
-					Canvas canvas = new Canvas(unit_size, unit_size); 
-					GraphicsContext gc = canvas.getGraphicsContext2D();
-					Image monster = new Image("img/Static.png"); 
-					gc.drawImage(monster, 0, 0, unit_size, unit_size); 
-					grid.add(canvas, j, i);
-					
-				}else if (map[i][j] == 'H') {
-						
-						final Image IMAGE = new Image("img/Run.png");
-
-					    final int COLUMNS  =   3;
-					    final int COUNT    =  8;
-					    final int OFFSET_X =  3;
-					    final int OFFSET_Y =  2;
-					    final int WIDTH    = 108;
-					    final int HEIGHT   = 72;
-						
-				        final ImageView imageView = new ImageView(IMAGE);
-				        imageView.setViewport(new Rectangle2D(OFFSET_X, OFFSET_Y, WIDTH, HEIGHT));
-
-				        final Animation animation = new SpriteAnimation(
-				                imageView,
-				                Duration.millis(1000),
-				                COUNT, COLUMNS,
-				                OFFSET_X, OFFSET_Y,
-				                WIDTH, HEIGHT
-				        );
-				        animation.setCycleCount(Animation.INDEFINITE);
-				        animation.play();
-				        
-				        Line line = new Line(100, 100, 1000, 100);
-				        PathTransition trasition = new PathTransition();
-				        trasition.setNode(imageView);
-				        trasition.setDuration(Duration.seconds(3));
-				        trasition.setPath(line);
-				        trasition.setCycleCount(PathTransition.INDEFINITE);
-				        trasition.play();
-				        
-				    root.getChildren().add(imageView);
-				    //stage.setScene(new Scene(new Group(imageView)));
-				    //stage.show();
-					//Canvas canvas = new Canvas(unit_size, unit_size); 
-					//GraphicsContext gc = canvas.getGraphicsContext2D();
-					//Image monster = new Image("img/Run.png"); 
-					//gc.drawImage(IMAGE, 0, 0, unit_size, unit_size, OFFSET_X, OFFSET_Y, WIDTH, HEIGHT); 
-					//grid.add(canvas, j, i);
-				}else if (map[i][j] == 'P') {
-					Canvas canvas = new Canvas(unit_size, unit_size); 
-					GraphicsContext gc = canvas.getGraphicsContext2D();
-					Image door = new Image("img/portal.png"); 
-					gc.drawImage(door, 0, 0, unit_size, unit_size); 
-					grid.add(canvas, j, i);
-					portal[0] = j*unit_size;
-					portal[1] = i*unit_size;
-					ifPortal = true;
-				}
-			}
-			
-		}
-		
-//		System.out.println(keys[0] + " "+ keys[1]+ " "+ keys[2]+"******");
 		
 		
-		//**********************************************
+		
 		// info contains hearts, time, bag (use vbox instead of BorderPane)
 		VBox info = new VBox();
 		info.setBackground(new Background(new BackgroundFill(Color.GREY, null, null)));
@@ -534,9 +548,14 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		// there should be someway to zoom up automatically without influencing coordinates (do later or ignore)
 		
 		
-		root = new Group();
 		root.getChildren().add(p);
 		root.getChildren().add(character);
+		
+		//**********************************************
+				addMap();
+		//**********************************************
+		
+
 		Scene scene = new Scene(root, 1000, 625); 
 		
 		stage.setScene(scene); stage.setTitle("Puzzle Platformer");
