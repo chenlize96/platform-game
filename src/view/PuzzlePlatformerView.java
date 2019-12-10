@@ -84,6 +84,8 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	
 	private int level = EASY; // default is easy
 	private int keyNum = 0;
+	private int healthLeft = -1;
+	
 	private int unit_size = 25; // every unit in the map is 25*25    ***ATTENTION***
 	//Character
 	private Rectangle character = new Rectangle(character_size[0], character_size[1], Color.RED); //radius = 10
@@ -138,7 +140,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 			}
 		}
 	}
-	
+
 	//Lize
 	public void print2DArray() { // helper function
 		for (int i = 0; i < map.length; i++) {
@@ -178,7 +180,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	 */
 	@Override
 	public void start(Stage stage) throws Exception {
-		Scene scene = setupStage(stage);	//Lize's stage setup
+		Scene scene = setUpStage(stage);	//Lize's stage setup
 		//controller = new ControllerCollections(this,grid);
 		//controller.callModelAddPlayer(startpoint, character_size);
 		//character_controller = controller.returnMainCharacterController();
@@ -189,7 +191,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		//	controller.callModelAddPortal(portal);
 		//}
 		
-		addMonster();
+		//addMonster();
 		
 		animationTimer = new AnimationTimer() {
 			@Override
@@ -256,7 +258,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 				readFile(); //get new map
 				drawMap(); // update new map
 				timeSeconds = 300; // reset countdown
-				
+				animationTimer.start();
 			}
 		});
 		Button b2 = new Button("Cancel");
@@ -453,6 +455,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		if (ifPortal) {
 			controller.callModelAddPortal(portal);
 		}
+		addMonster();
 	}
 	
 	
@@ -463,7 +466,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	 * @return 
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" }) // do not modify this line
-	public Scene setupStage(Stage stage) {
+	public Scene setUpStage(Stage stage) {
 		readFile(); ////***********************************************
 		// make menu
 		Menu menu = new Menu("File"); 
@@ -656,6 +659,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		CharacterMoveMessage char_msg = msg.getCharacterMoveMessage();
 		//System.out.println(character_controller.getPlayerPosition().getCordX()+" , "+ character_controller.getPlayerPosition().getCordY());
 		int health_status = msg.returnHealthStatus();
+		healthLeft = health_status;
 		boolean win_status = msg.returnWinStatus();
 		int keyPos = msg.returnKeyStatus();
 		boolean portal_status = msg.returnPortalStatus();
@@ -671,7 +675,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 						pickUpKey(keyPos);
 					}
 					if (portal_status) {
-						doTransfer();
+						setUpPortal();
 						ifPortal = false;
 					}
 					stageClearedMessage(win_status);
@@ -682,10 +686,18 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	}
 
 	//lize
-	public void doTransfer() {
+	public void setUpPortal() {
 		level = HARD_PART2;
 		readFile(); //get new map
 		drawMap(); // update new map
+		System.out.println(healthLeft+"****************");
+		clearCanvas(health_box);
+		//GraphicsContext gc = health_box.getGraphicsContext2D();
+		//Image heart = new Image("img/heart.png"); 
+		//for(int i = 0; i < healthLeft; i++) {
+		//	gc.drawImage(heart, i*50, 0, 50, 50); 
+		//}
+		
 	}
 
 	//lize (disappear on the map and show in the item bag)
