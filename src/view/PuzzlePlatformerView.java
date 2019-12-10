@@ -378,9 +378,11 @@ public class PuzzlePlatformerView extends Application implements Observer {
 			moveY = -MOVE_SIZE*10;
 			character_controller.toggleJumpStatus();
 		}
-//		else if(UP) {
-//			moveY = -MOVE_SIZE;
-//		}
+		else if(UP) {
+			moveY = -MOVE_SIZE;
+		}else if(DOWN) {
+			moveY = MOVE_SIZE;
+		}
 		
 		
 		if(RIGHT) {
@@ -557,10 +559,10 @@ public class PuzzlePlatformerView extends Application implements Observer {
 				System.out.println("DOWN");
 				DOWN = true;
 				break;
-//			case UP:
-//				System.out.println("UP");
-//				UP = true;
-//				break;
+			case UP:
+				System.out.println("UP");
+				UP = true;
+				break;
 			case RIGHT:
 				System.out.println("RIGHT");
 				RIGHT = true;
@@ -598,9 +600,9 @@ public class PuzzlePlatformerView extends Application implements Observer {
 			case DOWN:
 				DOWN = false;
 				break;
-//			case UP:
-//				UP = false;
-//				break;
+			case UP:
+				UP = false;
+				break;
 			case RIGHT:
 				RIGHT = false;
 				break;

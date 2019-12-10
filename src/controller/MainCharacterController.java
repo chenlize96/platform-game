@@ -59,16 +59,25 @@ public class MainCharacterController {
 				dx -= MOVE_SIZE;
 			}
 		}
-		
-		if(dy == 0) {
-			moveY = MOVE_SIZE;
-		}else if(dy<0) {
-			moveY = -MOVE_SIZE;
-			dy += MOVE_SIZE;
-		}else {
-			moveY = MOVE_SIZE;
-			dy += MOVE_SIZE;
+		if(dy!=0) {
+			if(dy<0) {
+				moveY = -MOVE_SIZE;
+				dy += MOVE_SIZE;
+			}else {
+				moveY = MOVE_SIZE;
+				dy -= MOVE_SIZE;
+			}
 		}
+		
+//		if(dy == 0) {
+//			moveY = MOVE_SIZE;
+//		}else if(dy<0) {
+//			moveY = -MOVE_SIZE;
+//			dy += MOVE_SIZE;
+//		}else {
+//			moveY = MOVE_SIZE;
+//			dy += MOVE_SIZE;
+//		}
 		
 		
 		character_model.setVelocity(dx,dy);
@@ -84,11 +93,11 @@ public class MainCharacterController {
 		
 
 		
-		int handleY= handleYCoordinate(curr_x, curr_y, after_x, after_y, char_width, char_height);
-//		after_y = handleY;
-		after_y = 565;
-		int handleX = handleXCoordinate(moveX, moveY);
-		after_x = curr_x+ handleX;
+		int handleY= handleYCoordinate(moveX, moveY);
+		after_y = curr_y + handleY;
+//		after_y = 565;
+		int handleX = handleXCoordinate(moveX, after_y);
+		after_x = curr_x + handleX;
 		
 		CharacterMoveMessage msg;
 
@@ -112,7 +121,7 @@ public class MainCharacterController {
 	 * @param moveY 
 	 * @param moveX 
 	 */
-	public int handleXCoordinate(int moveX, int moveY) {
+	public int handleXCoordinate(int moveX, int afterY) {
 		Node character = view.callCharacter();
 		double char_x = character_model.getCordX();
 		double char_y = character_model.getCordY();
@@ -124,12 +133,12 @@ public class MainCharacterController {
 			for(Node child:stage_grid.getChildren()) {
 				double x = child.getLayoutX();
 				double y = child.getLayoutY();
-				if(child.getBoundsInParent().intersects(char_x+x_pos,char_y,char_w,char_h)) {
+				if(child.getBoundsInParent().intersects(char_x+x_pos,afterY,char_w,char_h)) {
 //					System.out.println(i+"^ CHILD="+x+" || "+y+" = "+char_x+x_pos+" || "+char_y);
 					
 					if(moveX < 0) {	//LEFT
 						if(char_x+x_pos == x+unit_size) {
-							System.out.println(i+"^ CHILD="+x+" || "+y+" = "+char_x+x_pos+" || "+(int)(char_y+char_h));
+							System.out.println(i+"^ CHILD="+x+" || "+y+" = "+char_x+x_pos+" || "+(int)(afterY));
 							return x_pos+1;
 						}
 //						return x_pos+1;
@@ -157,31 +166,45 @@ public class MainCharacterController {
 	}
 
 	
-	public int handleYCoordinate(int curr_x, int curr_y, int after_x, int after_y, int char_width, int char_height){
+	public int handleYCoordinate(int moveX, int moveY){
 		Node character = view.callCharacter();
-		int y_pos = after_y;
+		double char_x = character_model.getCordX();
+		double char_y = character_model.getCordY();
+		int char_w = character_model.getCharSizeWidth();
+		int char_h = character_model.getCharSizeHeight();
 		
-		for(Node child:stage_grid.getChildren()) {
-			double x = child.getLayoutX();
-			double y = child.getLayoutY();
-			if(y-unit_size < after_y && after_y <= y) {
-				
-				if((x < after_x && after_x < x+unit_size)
-						||(x < after_x+char_width && after_x+char_width < x+unit_size)) {
-					if(after_y > curr_y) {
-						y_pos = (int)y-char_height/2;
-						if(character_model.returnJumpStatus() == true) {
-							character_model.toggleJump();
-							
+		int y_pos = 0;
+		for(int i = 0; i< Math.abs(moveY); i++) {
+			for(Node child:stage_grid.getChildren()) {
+				double x = child.getLayoutX();
+				double y = child.getLayoutY();
+				if(child.getBoundsInParent().intersects(char_x,char_y+y_pos,char_w,char_h)) {
+					System.out.println(i+"^ CHILD="+x+" || "+y+" = "+char_x+" || "+char_y+y_pos);
+					
+					if(moveY < 0) {	//UP
+						if(char_y+y_pos == y+unit_size) {
+							System.out.println(i+"^ CHILD="+x+" || "+y+" = "+char_x+" || "+(int)(char_y+y_pos));
+							return y_pos+1;
 						}
-						return y_pos;
-					}else if(after_y < curr_y) {
-						y_pos = after_y;
-						return y_pos;
+						return y_pos-1;
+//						
+					}else {	//DOWN
+//						if(char_x+x_pos+char_w == x) {
+//							return x_pos-1;
+//						}
+////						return x_pos-10;
 					}
 				}
-			}
+				
 
+			}
+			if(moveY > 0) {	//RIGHT
+				y_pos += 1;
+			}else {	//LEFT
+				y_pos -= 1;
+			}
+			
+			System.out.println(y_pos);
 		}
 		return y_pos;
 //		return 300;
