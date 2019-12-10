@@ -85,10 +85,10 @@ public class MainCharacterController {
 
 		
 		int handleY= handleYCoordinate(curr_x, curr_y, after_x, after_y, char_width, char_height);
-		after_y = handleY;
-		
+//		after_y = handleY;
+		after_y = 565;
 		int handleX = handleXCoordinate(moveX, moveY);
-		after_x = handleX;
+		after_x = curr_x+ handleX;
 		
 		CharacterMoveMessage msg;
 
@@ -114,24 +114,46 @@ public class MainCharacterController {
 	 */
 	public int handleXCoordinate(int moveX, int moveY) {
 		Node character = view.callCharacter();
+		double char_x = character_model.getCordX();
+		double char_y = character_model.getCordY();
+		int char_w = character_model.getCharSizeWidth();
+		int char_h = character_model.getCharSizeHeight();
+		
 		int x_pos = 0;
 		for(int i = 0; i< Math.abs(moveX); i++) {
 			for(Node child:stage_grid.getChildren()) {
 				double x = child.getLayoutX();
 				double y = child.getLayoutY();
-//				System.out.println("Child  (r,c) :"+r+","+c+"  (x,y) : "+x+"."+y);
-				if(!character.getBoundsInParent().intersects(child.getBoundsInParent())) {
-					if(moveX > 0) {
-						x_pos += 1;
-					}else {
-						x_pos -= 1;
+				if(child.getBoundsInParent().intersects(char_x+x_pos,char_y,char_w,char_h)) {
+//					System.out.println(i+"^ CHILD="+x+" || "+y+" = "+char_x+x_pos+" || "+char_y);
+					
+					if(moveX < 0) {	//LEFT
+						if(char_x+x_pos == x+unit_size) {
+							System.out.println(i+"^ CHILD="+x+" || "+y+" = "+char_x+x_pos+" || "+(int)(char_y+char_h));
+							return x_pos+1;
+						}
+//						return x_pos+1;
+						
+					}else {	//RIGHT
+						if(char_x+x_pos+char_w == x) {
+							return x_pos-1;
+						}
+//						return x_pos-10;
 					}
 				}
 				
-			}
-		}
 
+			}
+			if(moveX > 0) {	//RIGHT
+				x_pos += 1;
+			}else {	//LEFT
+				x_pos -= 1;
+			}
+			
+			System.out.println(x_pos);
+		}
 		return x_pos;
+//		return x_pos;
 	}
 
 	
@@ -162,7 +184,7 @@ public class MainCharacterController {
 
 		}
 		return y_pos;
-		
+//		return 300;
 	}
 	
 	
