@@ -27,7 +27,7 @@ public class HorizontalMonsterModel extends MonsterModel {
 	public HorizontalMonsterModel(int i, int j, int unit_size) {
 		// TODO Auto-generated constructor stub
 		super(i, j, unit_size);
-		velocity = 5;
+		velocity = 3;
 	}
 	
 }

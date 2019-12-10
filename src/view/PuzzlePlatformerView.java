@@ -274,6 +274,10 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	}
 	
 	
+	private void updateMonster() {
+		
+	}
+	
 	public class SpriteAnimation extends Transition {
 
 	    private final ImageView imageView;
@@ -311,10 +315,10 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	            final int y = (index / columns) * height + offsetY;
 	            imageView.setViewport(new Rectangle2D(x, y, width, height));
 	            lastIndex = index;
+	            updateMonster();
 	        }
 	    }
 	}
-	
 	
 	public void addMap() {
 				for (int i = 0; i < map.length; i++) {
@@ -381,9 +385,9 @@ public class PuzzlePlatformerView extends Application implements Observer {
 							    final int COLUMNS  =   3;
 							    final int COUNT    =  8;
 							    final int OFFSET_X =  3;
-							    final int OFFSET_Y =  2;
-							    final int WIDTH    = 108;
-							    final int HEIGHT   = 72;
+							    final int OFFSET_Y =  0;
+							    final int WIDTH    = unit_size;
+							    final int HEIGHT   = unit_size;
 								
 							    ImageView imageView = new ImageView(IMAGE);
 						        imageView.setViewport(new Rectangle2D(OFFSET_X, OFFSET_Y, WIDTH, HEIGHT));
@@ -395,12 +399,13 @@ public class PuzzlePlatformerView extends Application implements Observer {
 						                COUNT, COLUMNS,
 						                OFFSET_X, OFFSET_Y,
 						                WIDTH, HEIGHT
+						                
 						        );
 						        animation.setCycleCount(Animation.INDEFINITE);
 						        animation.play();
 						        
 						       
-						        Line line = new Line(445, 375, 545, 375);
+						        Line line = new Line(500, 395, 630, 395);
 						        PathTransition trasition = new PathTransition();
 						        trasition.setNode(imageView);
 						        trasition.setDuration(Duration.seconds(3));
