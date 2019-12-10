@@ -107,12 +107,12 @@ public class MainCharacterController {
 		
 		if(after_y < 0 + char_height) {
 			after_y = unit_size;
-			System.out.println("3. COLLISON("+after_x+","+after_y+")");
+//			System.out.println("3. COLLISON("+after_x+","+after_y+")");
 			//TODO: DEAD CONDITIONS
 			
 		}else if(after_y > window_height-char_height) {
 			after_y= window_height-char_height/2;
-			System.out.println("4. COLLISON("+after_x+","+after_y+")");
+//			System.out.println("4. COLLISON("+after_x+","+after_y+")");
 			main_controller.returnViewModelController().decreaseHealth();
 			
 			msg = character_model.returnToStart();
@@ -121,11 +121,11 @@ public class MainCharacterController {
 		
 		// Collision with the monster
 		for(MonsterModel each: monsters) {
-			System.out.println(each.getX()+ " , " + each.getY()+"|"+after_x + " , " + after_y);
+//			System.out.println(each.getX()+ " , " + each.getY()+"|"+after_x + " , " + after_y);
 			if ((each.getX() + 30 >=  after_x && each.getX() - 15 <= after_x && each.getY()==after_y) || 
 					(each.getX() == after_x && each.getY() - 25 == after_y)) {
 				after_y= window_height-char_height/2;
-				System.out.println("Monster COLLISON("+after_x+","+after_y+")");
+//				System.out.println("Monster COLLISON("+after_x+","+after_y+")");
 				main_controller.returnViewModelController().decreaseHealth();
 				
 				msg = character_model.returnToStart();

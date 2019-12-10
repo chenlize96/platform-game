@@ -88,13 +88,14 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	//Character
 	private Rectangle character = new Rectangle(character_size[0], character_size[1], Color.RED); //radius = 10
 	private Label itemKeyNum;
+	private int timeSeconds = 300;
 	
-	private boolean UP = false;
-	private boolean DOWN = false;
+	//private boolean UP = false;
+	//private boolean DOWN = false;
 	private boolean RIGHT = false;
 	private boolean LEFT = false;
 	private boolean JUMP = false;
-	private boolean ifPortal = false;
+	//private boolean ifPortal = false;
 	private Group root;
 	ControllerCollections controller;
 	MainCharacterController character_controller;
@@ -114,7 +115,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	
 	
 	//Lize
-	public void initializePuzzlePlatformer() {
+	public void readFile() {
 		if (level == EASY) {
 			map = getMap("PublicTestCases/basic.txt");// default
 		}else if (level == MEDIUM) {
@@ -168,7 +169,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	 */
 	@Override
 	public void start(Stage stage) throws Exception {
-		initializePuzzlePlatformer();
+		//initializePuzzlePlatformer();
 		Scene scene = setupStage(stage);	//Lize's stage setup
 
 		controller = new ControllerCollections(this,grid);
@@ -177,9 +178,9 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		controller.callModelAddViewModel(startpoint, exitpoint);
 		
 		controller.callModelAddKeys(keys); 
-		if (ifPortal) {
-			controller.callModelAddPortal(portal);
-		}
+		//if (ifPortal) {
+		//	controller.callModelAddPortal(portal);
+		//}
 		
 		addMonster();
 		
@@ -218,7 +219,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	}
 	
 	// lize
-	public void setUpLevelEditor(Stage editor) {
+	public void setUpLevelSelection(Stage selection) {
 		Label label1 = new Label("Level:");
 		// create radiobuttons 
 		RadioButton r1 = new RadioButton("Easy"); 
@@ -243,21 +244,19 @@ public class PuzzlePlatformerView extends Application implements Observer {
 				}else if (r3.isSelected()) {
 					level = HARD;
 				}
-				grid.getScene().getWindow().hide();
-				try {
-					System.out.println(level);
-					view.start(new Stage());
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				editor.close();
+				System.out.println(level);
+				selection.close();
+				readFile(); //get new map
+				drawMap(); // update new map
+				timeSeconds = 300; // reset countdown
+				
 			}
 		});
 		Button b2 = new Button("Cancel");
 		b2.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
-				editor.close();
+				selection.close();
 			}
 		});
 		HBox hbox2 = new HBox(b1, b2);
@@ -268,180 +267,177 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		BorderPane p2 = new BorderPane();
 		p2.setCenter(vbox);
 		hbox1.setAlignment(Pos.CENTER_LEFT);
-		editor.setTitle("Level Editor");
+		selection.setTitle("Level Selection");
 		Scene scene = new Scene(p2, 320, 120); // best size
-		editor.setScene(scene);
+		selection.setScene(scene);
 	}
 	
 	
 	private void updateMonster() {
-		
+
 	}
-	
+
 	public class SpriteAnimation extends Transition {
 
-	    private final ImageView imageView;
-	    private final int count;
-	    private final int columns;
-	    private final int offsetX;
-	    private final int offsetY;
-	    private final int width;
-	    private final int height;
-	    private int size = 25;
+		private final ImageView imageView;
+		private final int count;
+		private final int columns;
+		private final int offsetX;
+		private final int offsetY;
+		private final int width;
+		private final int height;
+		private int size = 25;
 
-	    private int lastIndex;
+		private int lastIndex;
 
-	    public SpriteAnimation(
-	            ImageView imageView, 
-	            Duration duration, 
-	            int count,   int columns,
-	            int offsetX, int offsetY,
-	            int width,   int height) {
-	        this.imageView = imageView;
-	        this.count     = count;
-	        this.columns   = columns;
-	        this.offsetX   = offsetX;
-	        this.offsetY   = offsetY;
-	        this.width     = width;
-	        this.height    = height;
-	        setCycleDuration(duration);
-	        setInterpolator(Interpolator.LINEAR);
-	    }
+		public SpriteAnimation(
+				ImageView imageView, 
+				Duration duration, 
+				int count,   int columns,
+				int offsetX, int offsetY,
+				int width,   int height) {
+			this.imageView = imageView;
+			this.count     = count;
+			this.columns   = columns;
+			this.offsetX   = offsetX;
+			this.offsetY   = offsetY;
+			this.width     = width;
+			this.height    = height;
+			setCycleDuration(duration);
+			setInterpolator(Interpolator.LINEAR);
+		}
 
-	    protected void interpolate(double k) {
-	        final int index = Math.min((int) Math.floor(k * count), count - 1);
-	        if (index != lastIndex) {
-	            final int x = (index % columns) * width  + offsetX;
-	            final int y = (index / columns) * height + offsetY;
-	            imageView.setViewport(new Rectangle2D(x, y, width, height));
-	            lastIndex = index;
-	            updateMonster();
-	        }
-	    }
+		protected void interpolate(double k) {
+			final int index = Math.min((int) Math.floor(k * count), count - 1);
+			if (index != lastIndex) {
+				final int x = (index % columns) * width  + offsetX;
+				final int y = (index / columns) * height + offsetY;
+				imageView.setViewport(new Rectangle2D(x, y, width, height));
+				lastIndex = index;
+				updateMonster();
+			}
+		}
 	}
-	
-	public void addMap() {
-				for (int i = 0; i < map.length; i++) {
-					for (int j = 0; j < map[0].length; j++) {
-						if (map[i][j] == '*') {
-							Canvas canvas = new Canvas(unit_size, unit_size); 
-							GraphicsContext gc = canvas.getGraphicsContext2D();
-							Image wall = new Image("img/wall.png"); 
-							gc.drawImage(wall, 0, 0, unit_size, unit_size); 
-							grid.add(canvas, j, i);
-						}else if (map[i][j] == 'S') {// start
-							startpoint[0] = j*unit_size;
-							startpoint[1] = i*unit_size;//jump doesnt work
-						}else if (map[i][j] == 'E') { //exit
-							Canvas canvas = new Canvas(unit_size, unit_size); 
-							GraphicsContext gc = canvas.getGraphicsContext2D();
-							Image exit = new Image("img/exit.png"); 
-							gc.drawImage(exit, 0, 0, unit_size, unit_size); 
-							grid.add(canvas, j, i);
-							exitpoint[0] = j*unit_size;
-							exitpoint[1] = i*unit_size;
-						}else if (map[i][j] == 'D') {
-							Canvas canvas = new Canvas(unit_size, unit_size); 
-							GraphicsContext gc = canvas.getGraphicsContext2D();
-							Image door = new Image("img/door.png"); 
-							gc.drawImage(door, 0, 0, unit_size, unit_size); 
-							grid.add(canvas, j, i);
-							for (int k = 0; k < doors.length / 2; k++) {
-								if (doors[k * 2] == -100) {
-									doors[k * 2] = j * unit_size;
-									doors[k * 2 + 1] = i * unit_size;
-									System.out.println(doors[0]+"-"+doors[1]);
-									break;
-								}
-							}
-						}else if (map[i][j] == 'K') {
-							Canvas canvas = new Canvas(unit_size, unit_size); 
-							GraphicsContext gc = canvas.getGraphicsContext2D();
-							Image key = new Image("img/key.png"); 
-							gc.drawImage(key, 0, 0, unit_size, unit_size); 
-							grid.add(canvas, j, i);
-							for (int k = 0; k < keys.length / 2; k++) {
-								if (keys[k * 2] == -100) {
-									keys[k * 2] = j * unit_size;
-									keys[k * 2 + 1] = i * unit_size;
-									break;
-								}
-							}
-						}else if (map[i][j] == 'M') {
-							
-							Canvas canvas = new Canvas(unit_size, unit_size); 
-							GraphicsContext gc = canvas.getGraphicsContext2D();
-							Image monster = new Image("img/Static.png"); 
-							gc.drawImage(monster, 0, 0, unit_size, unit_size); 
-							grid.add(canvas, j, i);
-							
-						}else if (map[i][j] == 'H') {
-							
-							
-							
-					            
-								Image IMAGE = new Image("img/Run.png");
 
-							    final int COLUMNS  =   3;
-							    final int COUNT    =  8;
-							    final int OFFSET_X =  3;
-							    final int OFFSET_Y =  0;
-							    final int WIDTH    = unit_size;
-							    final int HEIGHT   = unit_size;
-								
-							    ImageView imageView = new ImageView(IMAGE);
-						        imageView.setViewport(new Rectangle2D(OFFSET_X, OFFSET_Y, WIDTH, HEIGHT));
-						        
-						        
-						        final Animation animation = new SpriteAnimation(
-						                imageView,
-						                Duration.millis(1000),
-						                COUNT, COLUMNS,
-						                OFFSET_X, OFFSET_Y,
-						                WIDTH, HEIGHT
-						                
-						        );
-						        animation.setCycleCount(Animation.INDEFINITE);
-						        animation.play();
-						        
-						       
-						        Line line = new Line(500, 395, 630, 395);
-						        PathTransition trasition = new PathTransition();
-						        trasition.setNode(imageView);
-						        trasition.setDuration(Duration.seconds(3));
-						        trasition.setPath(line);
-						        trasition.setCycleCount(PathTransition.INDEFINITE);
-						        trasition.play();
-						        
-						        root.getChildren().add(imageView);
-						        //stage.setOnShowing(new Scene(root, 1000, 625)); 
-						        //stage.show(new Scene(new Group (root)));
-						    
-							//Canvas canvas = new Canvas(103, 72); 
-							//GraphicsContext gc = canvas.getGraphicsContext2D();
-							//Image monster = new Image("img/Run.png"); 
-							//gc.drawImage(IMAGE, 103, HEIGHT, HEIGHT, HEIGHT, HEIGHT, HEIGHT, HEIGHT, HEIGHT); 
-							//grid.add(canvas, j, i);
-						    //grid.add(IMAGE, j, i);
-						    
-						}else if (map[i][j] == 'P') {
-							Canvas canvas = new Canvas(unit_size, unit_size); 
-							GraphicsContext gc = canvas.getGraphicsContext2D();
-							Image door = new Image("img/portal.png"); 
-							gc.drawImage(door, 0, 0, unit_size, unit_size); 
-							grid.add(canvas, j, i);
-							portal[0] = j*unit_size;
-							portal[1] = i*unit_size;
-							ifPortal = true;
+	//lize
+	public void drawMap() {
+		// clear all things on grid
+		grid.getChildren().clear();
+		for (int i = 0; i < map.length; i++) {
+			for (int j = 0; j < map[0].length; j++) {
+				if (map[i][j] == '*') {
+					Canvas canvas = new Canvas(unit_size, unit_size); 
+					GraphicsContext gc = canvas.getGraphicsContext2D();
+					Image wall = new Image("img/wall.png"); 
+					gc.drawImage(wall, 0, 0, unit_size, unit_size); 
+					grid.add(canvas, j, i);
+				}else if (map[i][j] == 'S') {// start
+					startpoint[0] = j*unit_size;
+					startpoint[1] = i*unit_size;//jump doesnt work
+				}else if (map[i][j] == 'E') { //exit
+					Canvas canvas = new Canvas(unit_size, unit_size); 
+					GraphicsContext gc = canvas.getGraphicsContext2D();
+					Image exit = new Image("img/exit.png"); 
+					gc.drawImage(exit, 0, 0, unit_size, unit_size); 
+					grid.add(canvas, j, i);
+					exitpoint[0] = j*unit_size;
+					exitpoint[1] = i*unit_size;
+				}else if (map[i][j] == 'D') {
+					Canvas canvas = new Canvas(unit_size, unit_size); 
+					GraphicsContext gc = canvas.getGraphicsContext2D();
+					Image door = new Image("img/door.png"); 
+					gc.drawImage(door, 0, 0, unit_size, unit_size); 
+					grid.add(canvas, j, i);
+					for (int k = 0; k < doors.length / 2; k++) {
+						if (doors[k * 2] == -100) {
+							doors[k * 2] = j * unit_size;
+							doors[k * 2 + 1] = i * unit_size;
+//									System.out.println(doors[0]+"-"+doors[1]);
+							break;
 						}
 					}
-					
+				}else if (map[i][j] == 'K') {
+					Canvas canvas = new Canvas(unit_size, unit_size); 
+					GraphicsContext gc = canvas.getGraphicsContext2D();
+					Image key = new Image("img/key.png"); 
+					gc.drawImage(key, 0, 0, unit_size, unit_size); 
+					grid.add(canvas, j, i);
+					for (int k = 0; k < keys.length / 2; k++) {
+						if (keys[k * 2] == -100) {
+							keys[k * 2] = j * unit_size;
+							keys[k * 2 + 1] = i * unit_size;
+							break;
+						}
+					}
+				}else if (map[i][j] == 'M') {
+
+					Canvas canvas = new Canvas(unit_size, unit_size); 
+					GraphicsContext gc = canvas.getGraphicsContext2D();
+					Image monster = new Image("img/Static.png"); 
+					gc.drawImage(monster, 0, 0, unit_size, unit_size); 
+					grid.add(canvas, j, i);
+				}else if (map[i][j] == 'H') {
+					Image IMAGE = new Image("img/Run.png");
+					final int COLUMNS  =   3;
+					final int COUNT    =  8;
+					final int OFFSET_X =  3;
+					final int OFFSET_Y =  0;
+					final int WIDTH    = unit_size;
+					final int HEIGHT   = unit_size;
+
+					ImageView imageView = new ImageView(IMAGE);
+					imageView.setViewport(new Rectangle2D(OFFSET_X, OFFSET_Y, WIDTH, HEIGHT));
+
+					final Animation animation = new SpriteAnimation(
+							imageView,
+							Duration.millis(1000),
+							COUNT, COLUMNS,
+							OFFSET_X, OFFSET_Y,
+							WIDTH, HEIGHT
+
+							);
+					animation.setCycleCount(Animation.INDEFINITE);
+					animation.play();
+
+
+					Line line = new Line(500, 395, 630, 395);
+					PathTransition trasition = new PathTransition();
+					trasition.setNode(imageView);
+					trasition.setDuration(Duration.seconds(3));
+					trasition.setPath(line);
+					trasition.setCycleCount(PathTransition.INDEFINITE);
+					trasition.play();
+
+					root.getChildren().add(imageView);
+					//stage.setOnShowing(new Scene(root, 1000, 625)); 
+					//stage.show(new Scene(new Group (root)));
+
+					//Canvas canvas = new Canvas(103, 72); 
+					//GraphicsContext gc = canvas.getGraphicsContext2D();
+					//Image monster = new Image("img/Run.png"); 
+					//gc.drawImage(IMAGE, 103, HEIGHT, HEIGHT, HEIGHT, HEIGHT, HEIGHT, HEIGHT, HEIGHT); 
+					//grid.add(canvas, j, i);
+					//grid.add(IMAGE, j, i);
+
+				}else if (map[i][j] == 'P') {
+					Canvas canvas = new Canvas(unit_size, unit_size); 
+					GraphicsContext gc = canvas.getGraphicsContext2D();
+					Image door = new Image("img/portal.png"); 
+					gc.drawImage(door, 0, 0, unit_size, unit_size); 
+					grid.add(canvas, j, i);
+					portal[0] = j*unit_size;
+					portal[1] = i*unit_size;
+					controller.callModelAddPortal(portal);
+					//ifPortal = true;
 				}
-				
-//				System.out.println(keys[0] + " "+ keys[1]+ " "+ keys[2]+"******");
-				
+			}
+
+		}
+
+		//				System.out.println(keys[0] + " "+ keys[1]+ " "+ keys[2]+"******");
+
 	}
-	
+
 	/**
 	 * <ATTENTION> for now, we directly use number, we would change them to [public final] later 
 	 * @param stage
@@ -450,20 +446,19 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" }) // do not modify this line
 	public Scene setupStage(Stage stage) {
+		readFile(); ////***********************************************
 		// make menu
-		
 		Menu menu = new Menu("File"); 
 		MenuItem item1 = new MenuItem("New Game"); // it can handle levels, networking (do later)
 		//******************
-		
 		item1.setOnAction(new EventHandler<ActionEvent>() {
 			//lize
 			@Override
 			public void handle(ActionEvent event) {
 				try {
-					Stage editor = new Stage();
-					setUpLevelEditor(editor);		
-					editor.showAndWait();
+					Stage selection = new Stage();
+					setUpLevelSelection(selection);		
+					selection.showAndWait();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -481,9 +476,6 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		grid = new GridPane();
 		grid.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
 		grid.setPrefSize( WINDOW_WIDTH, WINDOW_HEIGHT ); // not sure its best size
-		
-		
-		
 		// info contains hearts, time, bag (use vbox instead of BorderPane)
 		VBox info = new VBox();
 		info.setBackground(new Background(new BackgroundFill(Color.GREY, null, null)));
@@ -491,7 +483,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		Label health = new Label("Health");	
 		health.setFont(new Font("Arial", 30));
 		health_box = new Canvas(150, 50); // label.setGraphic(new ImageView()) doesnot work, so use canvas
-//		updateHealth();
+		//		updateHealth();
 		Label countdown = new Label("Countdown"); // (become red when less than 1 min)
 		countdown.setFont(new Font("Arial", 30));
 		Label timer = new Label("300 seconds"); // create timer
@@ -500,7 +492,8 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		timeline.setCycleCount(Timeline.INDEFINITE);
 		timeline.getKeyFrames().add(
 				new KeyFrame(Duration.seconds(1), new EventHandler() {
-					public int timeSeconds = 300; // make it 300 later, now for test
+					//public int timeSeconds = 300; // make it 300 later, now for test
+					
 					@Override
 					public void handle(Event event) {
 						timeSeconds--;
@@ -516,7 +509,6 @@ public class PuzzlePlatformerView extends Application implements Observer {
 					}
 				}));
 		timeline.playFromStart();
-
 		Label items = new Label("Items"); //
 		items.setFont(new Font("Arial", 30));
 		// there should be a gridPane holding various images which represent items 
@@ -542,33 +534,21 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		hbox2.setSpacing(10);
 		VBox list = new VBox();
 		list.getChildren().addAll(hbox1, hbox2);
-	
-		// Lize will do it later, since I am trying to find the best way to handle items (do later)
 		info.getChildren().addAll(health, health_box, countdown, timer, items, list); 
 		info.setAlignment(Pos.BASELINE_CENTER);
-		info.setSpacing(20); // POSSIBLE optimize: add separate line for readablity (do later)
+		info.setSpacing(20); 
 		// p holds everything
 		BorderPane p = new BorderPane();
 		p.setCenter(grid); p.setTop(mb); p.setRight(info);
 		// there should be someway to zoom up automatically without influencing coordinates (do later or ignore)
-		
-		
 		root.getChildren().add(p);
 		root.getChildren().add(character);
-		
 		//**********************************************
-				addMap();
+		drawMap();
 		//**********************************************
-		
-
 		Scene scene = new Scene(root, 1000, 625); 
-		
 		stage.setScene(scene); stage.setTitle("Puzzle Platformer");
-		
-		
-		
 		stage.show();
-		
 		return scene;
 	}
 	/**
@@ -581,21 +561,17 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		// the size of canvas bases on the number of hearts (modify later)
 		clearCanvas(health_box);
 		GraphicsContext gc = health_box.getGraphicsContext2D();
-		
+
 		Image heart = new Image("img/heart.png"); 
-		
+
 		for(int i = 0; i< health_status; i++) {
 			gc.drawImage(heart, i*50, 0, 50, 50); 
 		}
-//		gc.drawImage(heart, 50, 0, 50, 50); // easy to update hearts by covering a 50*50 grey square (do later)
-//		gc.drawImage(heart, 100, 0, 50, 50); 
-		
 		if(health_status == 0) {
 			gameOverMessage();
 		}
-		
 	}
-	
+
 	/**
 	 * This function clears canvas
 	 * @param canvas to be cleared
@@ -605,8 +581,8 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 	}
-	
-	
+
+
 	/**
 	 * Calls tick using ControllerCollections & set up current velocity
 	 * @author Eujin Ko
@@ -614,12 +590,13 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	private void tick() {
 		handleCharacterVelocity();
 		controller.callModelTick();
-			
-		
+
+
 	}
 	/**
 	 * Setup current Velocity according to the key pressed
 	 * @author Eujin Ko
+	 * @author Lize Chen
 	 */
 	private void handleCharacterVelocity() {
 		int moveX=0; int moveY=0;
@@ -627,11 +604,11 @@ public class PuzzlePlatformerView extends Application implements Observer {
 			moveY = -MOVE_SIZE*10;
 			character_controller.toggleJumpStatus();
 		}
-//		else if(UP) {
-//			moveY = -MOVE_SIZE;
-//		}
-		
-		
+		//		else if(UP) {
+		//			moveY = -MOVE_SIZE;
+		//		}
+
+
 		if(RIGHT) {
 			moveX = MOVE_SIZE;
 		}
@@ -649,14 +626,14 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	 */
 	@Override
 	public void update(Observable o, Object arg) {
-		
-//		try {
-//			Thread.sleep(1000);
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
+
+		//		try {
+		//			Thread.sleep(1000);
+		//		} catch (InterruptedException e) {
+		//			// TODO Auto-generated catch block
+		//			e.printStackTrace();
+		//		}
+
 		CollectionsMessage msg = (CollectionsMessage) arg;
 		CharacterMoveMessage char_msg = msg.getCharacterMoveMessage();
 		//System.out.println(character_controller.getPlayerPosition().getCordX()+" , "+ character_controller.getPlayerPosition().getCordY());
@@ -664,7 +641,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		boolean win_status = msg.returnWinStatus();
 		int keyPos = msg.returnKeyStatus();
 		boolean portal_status = msg.returnPortalStatus();
-		
+
 		Platform.runLater(new Runnable() {
 
 			@Override
@@ -677,27 +654,22 @@ public class PuzzlePlatformerView extends Application implements Observer {
 					}
 					if (portal_status) {
 						doTransfer();
-						ifPortal = false;
+						//ifPortal = false;
 					}
 					stageClearedMessage(win_status);
 				}
 			}
-			
+
 		});
 	}
-	
+
 	//lize
 	public void doTransfer() {
 		level = HARD_PART2;
-		grid.getScene().getWindow().hide();
-		try {
-			System.out.println(level);
-			view.start(new Stage());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		readFile(); //get new map
+		drawMap(); // update new map
 	}
-	
+
 	//lize (disappear on the map and show in the item bag)
 	@SuppressWarnings("static-access")
 	public void pickUpKey(int keyPos) {
@@ -724,10 +696,10 @@ public class PuzzlePlatformerView extends Application implements Observer {
 			keyNum += 1;
 			itemKeyNum.setText(" x " + keyNum);
 		}
-	
-}
 
-	
+	}
+
+
 	/**
 	 * Parses CharacterMoveMessage and moves the character object from the scene
 	 * TODO: Need to setup Gravity
@@ -738,27 +710,27 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		if(msg == null) {
 			return;
 		}
-		
+
 		int prevX = msg.getXMoveFrom();
 		int prevY = msg.getYMoveFrom();
 		int curX = msg.getXMoveTo();
 		int curY = msg.getYMoveTo();
-//		System.out.println(prevX+","+prevY+"->"+curX+","+curY);
-		
-	    Path path = new Path();
-//	    path.getElements().add(new MoveTo(prevX+character_size[0]/2, prevY+unit_size));
-//	    path.getElements().add(new LineTo(curX+character_size[0]/2, curY+unit_size));
-	    path.getElements().add(new MoveTo(prevX+character_size[0]/2, prevY+unit_size));
-	    path.getElements().add(new LineTo(curX+character_size[0]/2, curY+unit_size));
-		
+		//		System.out.println(prevX+","+prevY+"->"+curX+","+curY);
 
-	    PathTransition pathTransition = new PathTransition();
-	    pathTransition.setDuration(Duration.millis(100));
-	    pathTransition.setNode(character); // Circle is built above
-	    pathTransition.setPath(path);
-	    pathTransition.play();		
+		Path path = new Path();
+		//	    path.getElements().add(new MoveTo(prevX+character_size[0]/2, prevY+unit_size));
+		//	    path.getElements().add(new LineTo(curX+character_size[0]/2, curY+unit_size));
+		path.getElements().add(new MoveTo(prevX+character_size[0]/2, prevY+unit_size));
+		path.getElements().add(new LineTo(curX+character_size[0]/2, curY+unit_size));
+
+
+		PathTransition pathTransition = new PathTransition();
+		pathTransition.setDuration(Duration.millis(100));
+		pathTransition.setNode(character); // Circle is built above
+		pathTransition.setPath(path);
+		pathTransition.play();		
 	}
-	
+
 	/**
 	 * Sends a Stage cleared message, stops the view, stops the timer
 	 * @param win_status indicates whether player has won the stage or not
@@ -770,6 +742,9 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		if(win_status == false) {
 			return;
 		}
+		RIGHT = false;
+		LEFT = false;
+		JUMP = false;
         Alert alert = new Alert(AlertType.INFORMATION); 
         alert.setTitle("Message");
         alert.setHeaderText("Message");
@@ -786,6 +761,9 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	 */
 	public void gameOverMessage() 
 	{
+		RIGHT = false;
+		LEFT = false;
+		JUMP = false;
         Alert alert = new Alert(AlertType.INFORMATION);  
         alert.setTitle("Message");
         alert.setHeaderText("Message");
@@ -812,10 +790,10 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		    
 			switch(event.getCode()) {
 			
-			case DOWN:
-				System.out.println("DOWN");
-				DOWN = true;
-				break;
+//			case DOWN:
+//				System.out.println("DOWN");
+//				DOWN = true;
+//				break;
 //			case UP:
 //				System.out.println("UP");
 //				UP = true;
@@ -854,9 +832,9 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		    
 			switch(event.getCode()) {
 			
-			case DOWN:
-				DOWN = false;
-				break;
+//			case DOWN:
+//				DOWN = false;
+//				break;
 //			case UP:
 //				UP = false;
 //				break;
@@ -870,7 +848,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 				JUMP = false;
 				break;
     		case K:
-    			System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!********************************************!!!!!!!!!!!!!!!!");
+    			System.out.println("Pressed K!");
     			// get player's current coordinate
     			int curr_x = character_controller.getPlayerPosition().getCordX();
     			int curr_y = character_controller.getPlayerPosition().getCordY();
@@ -920,7 +898,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 
 		//lize
 		public int[] returnSurroundingDoors(int x, int y) {
-			System.out.println("x= "+x+" y= "+y);
+//			System.out.println("x= "+x+" y= "+y);
 			int[] temp = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100};
 			for (int k = 0; k < doors.length / 2; k++) {
 				if (doors[k * 2] <= x + unit_size && doors[k * 2] + unit_size * 2 >= x) {
@@ -932,13 +910,13 @@ public class PuzzlePlatformerView extends Application implements Observer {
 				}
 			}
 			//check
-			for (int k = 0; k < temp.length /2;k++) {
+/*			for (int k = 0; k < temp.length /2;k++) {
 				System.out.println(doors[2*k]+", "+doors[2*k+1]);
 			}
 			//check
 			for (int k = 0; k < temp.length /2;k++) {
 				System.out.println(temp[2*k]+", "+temp[2*k+1]);
-			}
+			}*/
 			
 			return temp;
 		}
