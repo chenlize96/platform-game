@@ -481,7 +481,7 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 //				System.out.println(keys[0] + " "+ keys[1]+ " "+ keys[2]+"******");
 	}
 
-	//lize
+	//lize eujin
 	public void setUpController() {
 		controller = new ControllerCollections(this,itself);
 		controller.callModelAddPlayer(startpoint, character_size);
