@@ -20,9 +20,14 @@ import javafx.util.Duration;
 
 
 public class HorizontalMonsterModel extends MonsterModel {
-	public HorizontalMonsterModel(int i, int j, int unit_size, int velocity) {
+	private int x;
+	private int y;
+	private int size;
+	private int velocity;
+	public HorizontalMonsterModel(int i, int j, int unit_size) {
 		// TODO Auto-generated constructor stub
-		super(i, j, unit_size, velocity);
+		super(i, j, unit_size);
+		velocity = 3;
 	}
 	
 }

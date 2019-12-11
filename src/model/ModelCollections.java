@@ -36,17 +36,19 @@ public class ModelCollections  extends Observable {
 	 * performs one tick for all models inside the MOdelCollections
 	 * @author Eujin Ko
 	 * @author Lize Chen
+	 * @author perry wang (modifier)
 	 */
 	public void tick() {
 		CharacterMoveMessage char_msg = movePlayer();
 		moveEnemies();
 		moveProjectiles();
 		
+		int attackPos = checkForattack();
 		int keyPos = checkForKey();//get key postion, if -1 then not found
 		int health_status = checkForDeath();
 		boolean win = checkForWin();
 		boolean ifPortal = checkForPortal();
-		CollectionsMessage msg = new CollectionsMessage(char_msg, health_status,win,keyPos,ifPortal);
+		CollectionsMessage msg = new CollectionsMessage(char_msg, health_status,win,keyPos,ifPortal, attackPos);
 		setChanged();
 		notifyObservers(msg);
 		
@@ -146,6 +148,13 @@ public class ModelCollections  extends Observable {
 		int[] keys = controllerCollections.returnViewModelController().returnKeyPosition();
 		int k = controllerCollections.returnMainCharacterController().checkIfThereIsAKey(keys);
 		return k;
+	}
+	
+	//perry
+	private int checkForattack() {
+		int[] attack = controllerCollections.returnViewModelController().returnAttackPosition();
+		int a = controllerCollections.returnMainCharacterController().checkIfThereIsAattack(attack);
+		return a;
 	}
 	
 	//lize

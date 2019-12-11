@@ -2,8 +2,8 @@ package model;
 
 public class VerticalMonsterModel extends MonsterModel{
 
-	public VerticalMonsterModel(int x, int y, int size, int velocity) {
-		super(x, y, size, velocity);
+	public VerticalMonsterModel(int x, int y, int size) {
+		super(x, y, size);
 		// TODO Auto-generated constructor stub
 	}
 	
