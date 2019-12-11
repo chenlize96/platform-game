@@ -106,7 +106,7 @@ public class GameMenuView extends Application{
 						}else if (r3.isSelected()) {
 							view.level = view.HARD;
 						}
-						System.out.println(view.level);
+						System.out.println("Current level: "+ view.level);
 						selection.close();
 						view.readFile(); //get new map
 						view.drawMap(); // update new map

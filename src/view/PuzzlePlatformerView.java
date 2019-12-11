@@ -265,10 +265,12 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 				}else if (r3.isSelected()) {
 					level = HARD;
 				}
-				System.out.println(level);
+				System.out.println("Current Level: " + level);
 				selection.close();
 				readFile(); //get new map
 				drawMap(); // update new map
+				keyNum = 0; // reset keys
+				itemKeyNum.setText(" x " + keyNum);
 				timeSeconds = 300; // reset countdown
 				animationTimer.start();
 			}
@@ -475,10 +477,8 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 				}
 			}
 		}
-		
 		root.getChildren().addAll(wall1,wall2,wall3,wall4);
 		setUpController();	
-//				System.out.println(keys[0] + " "+ keys[1]+ " "+ keys[2]+"******");
 	}
 
 	//lize eujin
@@ -489,7 +489,6 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 		controller.callModelAddViewModel(startpoint, exitpoint);
 		controller.callModelAddKeys(keys); 
 		if (ifPortal) {
-			System.out.println(portal[0] + "-"+portal[1]);
 			controller.callModelAddPortal(portal);
 		}
 		addMonster();
@@ -619,17 +618,10 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 		// the size of canvas bases on the number of hearts (modify later)
 		clearCanvas(health_box);
 		GraphicsContext gc = health_box.getGraphicsContext2D();
-
 		Image heart = new Image("img/heart.png"); 
-
 		for(int i = 0; i< health_status; i++) {
 			gc.drawImage(heart, i*50, 0, 50, 50); 
 		}
-		///////************************
-		//if (health_status == 2) {
-		System.out.println("health is "+ health_status+" now!!!");
-		//}
-		
 		if(health_status == 0) {
 			gameOverMessage();
 		}
@@ -862,10 +854,7 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 		level = HARD_PART2;
 		readFile(); //get new map
 		drawMap(); // update new map
-		System.out.println(healthLeft+"****************");
 		controller.returnViewModelController().setHealthStatus(old_health);
-
-		
 	}
 
 	//lize (disappear on the map and show in the item bag)
