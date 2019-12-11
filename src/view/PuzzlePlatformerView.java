@@ -198,9 +198,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		controller.callModelAddPlayer(startpoint, character_size);
 		character_controller = controller.returnMainCharacterController();
 		controller.callModelAddViewModel(startpoint, exitpoint);
-
-		
-		//controller.callModelAddKeys(keys); 
+		controller.callModelAddKeys(keys); 
 		//if (ifPortal) {
 		//	controller.callModelAddPortal(portal);
 		//}
