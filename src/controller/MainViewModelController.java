@@ -83,6 +83,11 @@ public class MainViewModelController {
 	public void clearMovingBoxStack() {
 		view_model.clearMovingBoxStack();
 	}
+	//lize
+		
+	public int[] returnPortalPosition() {
+		return view_model.returnPortalPosition();
+	}
 	
 	//lize
 	public int[] returnKeyPosition() {
