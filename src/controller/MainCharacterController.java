@@ -189,7 +189,7 @@ public class MainCharacterController {
 				x_pos -= 1;
 			}
 			
-			System.out.println(x_pos);
+//			System.out.println(x_pos);
 		}
 		return x_pos;
 //		return x_pos;
@@ -277,6 +277,8 @@ public class MainCharacterController {
 		int curr_x = character_model.getCordX();
 		int curr_y = character_model.getCordY();
 		for (int k = 0; k < keys.length / 2; k++) {
+			System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y+
+			"key's num = " + k + "keys'position: ("+keys[k*2]+","+keys[k*2+1]+")****************************");
 			if (keys[k * 2] <= curr_x+char_width+1 && keys[k * 2] + unit_size >= curr_x-1) {
 				if (keys[k * 2 + 1] <= curr_y+char_height+1 && keys[k * 2 + 1] + unit_size >= curr_y-1) {
 //					System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y+

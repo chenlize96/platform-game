@@ -184,8 +184,16 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	@Override
 	public void start(Stage stage) throws Exception {
 
-		Scene scene = setupStage(stage);	//Lize's stage setup
-
+		Scene scene = setUpStage(stage);	//Lize's stage setup
+		character.setOnMouseClicked(new EventHandler() {
+			@Override
+			public void handle(Event e) {
+				Node node = (Node)e.getSource();
+				System.out.println("GRID: (X,Y) = "+node.getBoundsInParent().getMaxX()+","+node.getBoundsInParent().getMaxY()+")");
+				
+			}
+			
+		});
 		controller = new ControllerCollections(this, itself);
 		controller.callModelAddPlayer(startpoint, character_size);
 		character_controller = controller.returnMainCharacterController();
@@ -464,7 +472,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 
 	//lize
 	public void setUpController() {
-		controller = new ControllerCollections(this,grid);
+		controller = new ControllerCollections(this,itself);
 		controller.callModelAddPlayer(startpoint, character_size);
 		character_controller = controller.returnMainCharacterController();
 		controller.callModelAddViewModel(startpoint, exitpoint);
