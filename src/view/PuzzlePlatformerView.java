@@ -60,10 +60,14 @@ import javafx.util.Duration;
 import message.CharacterMoveMessage;
 import message.CollectionsMessage;
 import model.StaticMonsterModel;
+import model.DenseFogModel;
 import model.HorizontalMonsterModel;
 
 public class PuzzlePlatformerView extends Application implements Observer {
     
+	//perry
+	//eat attack
+	public boolean att = false;
 	// Initialize the window size
 	final int WINDOW_WIDTH = 800;
 	final int WINDOW_HEIGHT = 600;
@@ -79,6 +83,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	private int[] exitpoint = {0,0};
 	private int[] portal = {0,0};
 	private int[] character_size = {20,20};
+    private int[] attack = {-100, -100, -100, -100, -100, -100, -100, -100, -100, -100};
 	private int[] keys = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; // there may be 5 keys in a map
 	private int[] doors = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; // five doors
 	
@@ -91,6 +96,12 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	private Rectangle character = new Rectangle(character_size[0], character_size[1], Color.RED); //radius = 10
 	private Label itemKeyNum;
 	private int timeSeconds = 300;
+	
+	//attack
+    private Rectangle wall1 = new Rectangle(20, 5, Color.PINK); //radius = 10
+    private Rectangle wall2 = new Rectangle(20, 5, Color.PINK); //radius = 10
+    private Rectangle wall3 = new Rectangle(5, 20, Color.PINK); //radius = 10
+    private Rectangle wall4 = new Rectangle(5, 20, Color.PINK); //radius = 10
 	
 	//private boolean UP = false;
 	//private boolean DOWN = false;
@@ -177,6 +188,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	/**
 	 * @author Eujin Ko
 	 * @author Lize 
+	 * @author perrywang (modifier)
 	 */
 	@Override
 	public void start(Stage stage) throws Exception {
@@ -190,7 +202,8 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		//if (ifPortal) {
 		//	controller.callModelAddPortal(portal);
 		//}
-		
+        controller.callModelAddAttack(attack);
+
 		//addMonster();
 		
 		animationTimer = new AnimationTimer() {
@@ -329,6 +342,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	}
 
 	//lize
+	//modifer perry
 	public void drawMap() {
 		// clear all things on grid
 		grid.getChildren().clear();
@@ -439,6 +453,21 @@ public class PuzzlePlatformerView extends Application implements Observer {
 					//controller.callModelAddPortal(portal);
 					ifPortal = true;
 				}
+                else if (map[i][j] == 'A') {
+                	Canvas canvas = new Canvas(unit_size, unit_size);
+                    GraphicsContext gc = canvas.getGraphicsContext2D();
+                    Image attack_ = new Image("img/stone2.png");
+                    gc.drawImage(attack_, 0, 0, unit_size, unit_size);
+                    grid.add(canvas, j, i);
+                    for (int k = 0; k < attack.length / 2; k++) {
+                        if (attack[k * 2] == -100) {
+                            attack[k * 2] = j * unit_size;
+                            attack[k * 2 + 1] = i * unit_size;
+                            System.out.println(attack[0] + "-" + attack[1]);
+                            break;
+                        }
+                    }
+                }
 			}
 		}
 		setUpController();	
@@ -644,6 +673,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	 * Fetches the message received from observable, updates the view
 	 * @author Eujin Ko
 	 * @author Lize Chen
+	 * @author perrywang (modifier)
 	 */
 	@Override
 	public void update(Observable o, Object arg) {
@@ -663,6 +693,8 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		boolean win_status = msg.returnWinStatus();
 		int keyPos = msg.returnKeyStatus();
 		boolean portal_status = msg.returnPortalStatus();
+        int attackPos = msg.returnattack_status();
+
 
 		Platform.runLater(new Runnable() {
 
@@ -674,6 +706,9 @@ public class PuzzlePlatformerView extends Application implements Observer {
 					if (keyPos != -1) {
 						pickUpKey(keyPos);
 					}
+					if (attackPos != -1) {
+                        pickUpAttack(attackPos);
+                    }
 					if (portal_status) {
 						setUpPortal();
 						ifPortal = false;
@@ -729,12 +764,34 @@ public class PuzzlePlatformerView extends Application implements Observer {
 
 	}
 
+    //perry
+    @SuppressWarnings("static-access")
+    public void pickUpAttack(int attackPos) {
+        int gridSize = grid.getChildren().size();
+        int j = attack[attackPos * 2] / unit_size;
+        int i = attack[attackPos * 2 + 1] / unit_size;
+        for (int k = 0; k < gridSize; k++) {
+            Object temp = grid.getChildren().get(k);
+            if (temp instanceof Canvas) {
+                Canvas target = (Canvas) temp;
+                if (grid.getColumnIndex(target) == j && grid.getRowIndex(target) == i) {
+                    grid.getChildren().remove(k);
+                    attack[attackPos * 2] = -100;
+                    attack[attackPos * 2 + 1] = -100;
+                    controller.callModelAddAttack(attack);
+                    break;
+                }
+            }
+        }
+        att = true;
+    }
 
 	/**
 	 * Parses CharacterMoveMessage and moves the character object from the scene
 	 * TODO: Need to setup Gravity
 	 * @param msg CharacterMoveMessage which contains information for the movement of character
 	 * @author Eujin Ko
+	 * @author perrywang (eidit)
 	 */
 	public void characterMoveTransition(CharacterMoveMessage msg) {
 		if(msg == null) {
@@ -752,7 +809,11 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		//	    path.getElements().add(new LineTo(curX+character_size[0]/2, curY+unit_size));
 		path.getElements().add(new MoveTo(prevX+character_size[0]/2, prevY+unit_size));
 		path.getElements().add(new LineTo(curX+character_size[0]/2, curY+unit_size));
-
+		
+        //perry
+        if (att) {
+        	DenseFogModel.set(prevX, curX, prevY, curY, wall3, wall2,wall1, wall4);
+        }
 
 		PathTransition pathTransition = new PathTransition();
 		pathTransition.setDuration(Duration.millis(100));

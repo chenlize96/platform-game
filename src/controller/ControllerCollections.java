@@ -66,6 +66,11 @@ public class ControllerCollections {
 		model.returnViewModel().setPortalPosition(portal);
 	}
 	
+	//perry
+	public void callModelAddAttack(int[] attack) {
+		model.returnViewModel().setAttackPosition(attack);
+	}
+	
 	//lize
 	public void callModelAddKeys(int[] keys) {
 		model.returnViewModel().setKeyPosition(keys);

@@ -50,5 +50,10 @@ public class MainViewModelController {
 	public int[] returnKeyPosition() {
 		return view_model.returnKeysPosition();
 	}
+	
+	//perry
+	public int[] returnAttackPosition() {
+		return view_model.returnAttackPosition();
+	}
 
 }
