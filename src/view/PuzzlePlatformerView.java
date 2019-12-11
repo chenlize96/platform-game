@@ -60,14 +60,10 @@ import javafx.util.Duration;
 import message.CharacterMoveMessage;
 import message.CollectionsMessage;
 import model.StaticMonsterModel;
-import model.DenseFogModel;
 import model.HorizontalMonsterModel;
 
 public class PuzzlePlatformerView extends Application implements Observer {
     
-	//perry
-	//eat attack
-	public boolean att = false;
 	// Initialize the window size
 	final int WINDOW_WIDTH = 800;
 	final int WINDOW_HEIGHT = 600;
@@ -82,43 +78,35 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	private int[] startpoint = {0,0};
 	private int[] exitpoint = {0,0};
 	private int[] portal = {0,0};
-	private int[] character_size = {10,10};
-    private int[] attack = {-100, -100, -100, -100, -100, -100, -100, -100, -100, -100};
+	private int[] character_size = {20,20};
 	private int[] keys = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; // there may be 5 keys in a map
 	private int[] doors = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; // five doors
 	
 	private int level = EASY; // default is easy
 	private int keyNum = 0;
-	private int attackNum = 0;
-
 	private int healthLeft = -1;
 	
 	private int unit_size = 25; // every unit in the map is 25*25    ***ATTENTION***
 	//Character
 	private Rectangle character = new Rectangle(character_size[0], character_size[1], Color.RED); //radius = 10
 	private Label itemKeyNum;
-	private Label itemattackNum;
 	private int timeSeconds = 300;
 	
-	//attack
-    private Rectangle wall1 = new Rectangle(20, 5, Color.PINK); //radius = 10
-    private Rectangle wall2 = new Rectangle(20, 5, Color.PINK); //radius = 10
-    private Rectangle wall3 = new Rectangle(5, 20, Color.PINK); //radius = 10
-    private Rectangle wall4 = new Rectangle(5, 20, Color.PINK); //radius = 10
-	
-	//private boolean UP = false;
-	//private boolean DOWN = false;
+
+//	private boolean UP = false;
+//	private boolean DOWN = false;
+
 	private boolean RIGHT = false;
 	private boolean LEFT = false;
 	private boolean JUMP = false;
 	private boolean ifPortal = false;
 	private Group root;
-	
 	ControllerCollections controller;
 	MainCharacterController character_controller;
 	GridPane grid;
 	AnimationTimer animationTimer;
 	Timeline timeline;
+	PuzzlePlatformerView itself = this;
 	PuzzlePlatformerView view;
 	
 	Canvas health_box;
@@ -192,22 +180,29 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	/**
 	 * @author Eujin Ko
 	 * @author Lize 
-	 * @author perrywang (modifier)
 	 */
 	@Override
 	public void start(Stage stage) throws Exception {
+
 		Scene scene = setUpStage(stage);	//Lize's stage setup
-		//controller = new ControllerCollections(this,grid);
-		//controller.callModelAddPlayer(startpoint, character_size);
-		//character_controller = controller.returnMainCharacterController();
-		//controller.callModelAddViewModel(startpoint, exitpoint);
-		
-		//controller.callModelAddKeys(keys); 
+		character.setOnMouseClicked(new EventHandler() {
+			@Override
+			public void handle(Event e) {
+				Node node = (Node)e.getSource();
+				System.out.println("GRID: (X,Y) = "+node.getBoundsInParent().getMaxX()+","+node.getBoundsInParent().getMaxY()+")");
+				
+			}
+			
+		});
+		controller = new ControllerCollections(this, itself);
+		controller.callModelAddPlayer(startpoint, character_size);
+		character_controller = controller.returnMainCharacterController();
+		controller.callModelAddViewModel(startpoint, exitpoint);
+		controller.callModelAddKeys(keys); 
 		//if (ifPortal) {
 		//	controller.callModelAddPortal(portal);
 		//}
-        //controller.callModelAddAttack(attack);
-
+		
 		//addMonster();
 		
 		animationTimer = new AnimationTimer() {
@@ -236,9 +231,9 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	
 	public void addMonster() {
 		if (level == EASY) {
-			character_controller.addMonster(new StaticMonsterModel(445, 315, unit_size));
+			character_controller.addMonster(new StaticMonsterModel(445, 315, unit_size, 0));
 		}else if(level == MEDIUM) {
-			character_controller.addMonster(new HorizontalMonsterModel(445, 315, unit_size));
+			character_controller.addMonster(new HorizontalMonsterModel(445, 315, 100, 3));
 		}else {
 			
 		}
@@ -346,7 +341,6 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	}
 
 	//lize
-	//modifer perry
 	public void drawMap() {
 		// clear all things on grid
 		grid.getChildren().clear();
@@ -355,12 +349,23 @@ public class PuzzlePlatformerView extends Application implements Observer {
 				if (map[i][j] == '*') {
 					Canvas canvas = new Canvas(unit_size, unit_size); 
 					GraphicsContext gc = canvas.getGraphicsContext2D();
-					Image wall = new Image("img/wall.png"); 
+					Image wall = new Image("img/wall.png");
+					//TEST
+					canvas.setOnMouseClicked(new EventHandler() {
+						@Override
+						public void handle(Event e) {
+							Node node = (Node)e.getSource();
+							System.out.println("GRID: (X,Y) = "+node.getLayoutX()+","+node.getLayoutY()+")");
+							
+						}
+						
+					});
+					//TEST_END
 					gc.drawImage(wall, 0, 0, unit_size, unit_size); 
 					grid.add(canvas, j, i);
 				}else if (map[i][j] == 'S') {// start
-					startpoint[0] = j*unit_size;
-					startpoint[1] = i*unit_size;//jump doesnt work
+					startpoint[0] = j*unit_size+1;
+					startpoint[1] = i*unit_size+1;//jump doesnt work
 				}else if (map[i][j] == 'E') { //exit
 					Canvas canvas = new Canvas(unit_size, unit_size); 
 					GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -457,32 +462,15 @@ public class PuzzlePlatformerView extends Application implements Observer {
 					//controller.callModelAddPortal(portal);
 					ifPortal = true;
 				}
-                else if (map[i][j] == 'A') {
-                	Canvas canvas = new Canvas(unit_size, unit_size);
-                    GraphicsContext gc = canvas.getGraphicsContext2D();
-                    Image attack_ = new Image("img/stone2.png");
-                    gc.drawImage(attack_, 0, 0, unit_size, unit_size);
-                    grid.add(canvas, j, i);
-                    for (int k = 0; k < attack.length / 2; k++) {
-                        if (attack[k * 2] == -100) {
-                            attack[k * 2] = j * unit_size;
-                            attack[k * 2 + 1] = i * unit_size;
-                            System.out.println(attack[0] + "-" + attack[1]);
-                            break;
-                        }
-                    }
-                }
 			}
 		}
-		setUpController();
-		
-		
+		setUpController();	
 //				System.out.println(keys[0] + " "+ keys[1]+ " "+ keys[2]+"******");
 	}
 
 	//lize
 	public void setUpController() {
-		controller = new ControllerCollections(this,grid);
+		controller = new ControllerCollections(this,itself);
 		controller.callModelAddPlayer(startpoint, character_size);
 		character_controller = controller.returnMainCharacterController();
 		controller.callModelAddViewModel(startpoint, exitpoint);
@@ -587,7 +575,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		itemKeyNum.setFont(new Font("Arial", 24));
 		HBox hbox2 = new HBox(itemKey, canvas, itemKeyNum);
 		hbox2.setAlignment(Pos.CENTER);
-		hbox2.setSpacing(20);
+		hbox2.setSpacing(10);
 		VBox list = new VBox();
 		list.getChildren().addAll(hbox1, hbox2);
 		info.getChildren().addAll(health, health_box, countdown, timer, items, list); 
@@ -597,16 +585,8 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		BorderPane p = new BorderPane();
 		p.setCenter(grid); p.setTop(mb); p.setRight(info);
 		// there should be someway to zoom up automatically without influencing coordinates (do later or ignore)
-        Group root = new Group();
-
 		root.getChildren().add(p);
 		root.getChildren().add(character);
-		
-		//add
-		root.getChildren().add(wall1);
-        root.getChildren().add(wall2);
-        root.getChildren().add(wall3);
-        root.getChildren().add(wall4);
 		//**********************************************
 		drawMap();
 		//**********************************************
@@ -668,11 +648,12 @@ public class PuzzlePlatformerView extends Application implements Observer {
 			moveY = -MOVE_SIZE*10;
 			character_controller.toggleJumpStatus();
 		}
-		//		else if(UP) {
-		//			moveY = -MOVE_SIZE;
-		//		}
-
-
+//		else if(UP) {
+//			moveY = -MOVE_SIZE;
+//		}else if(DOWN) {
+//			moveY = MOVE_SIZE;
+//		}
+		
 		if(RIGHT) {
 			moveX = MOVE_SIZE;
 		}
@@ -682,12 +663,17 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		character_controller.addVelocity(moveX, moveY);
 	}
 
+	public Node callCharacter() {
+		return character;
+	}
+	public GridPane callGrid() {
+		return grid;
+	}
 
 	/**
 	 * Fetches the message received from observable, updates the view
 	 * @author Eujin Ko
 	 * @author Lize Chen
-	 * @author perrywang (modifier)
 	 */
 	@Override
 	public void update(Observable o, Object arg) {
@@ -707,8 +693,6 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		boolean win_status = msg.returnWinStatus();
 		int keyPos = msg.returnKeyStatus();
 		boolean portal_status = msg.returnPortalStatus();
-        int attackPos = msg.returnattack_status();
-
 
 		Platform.runLater(new Runnable() {
 
@@ -719,11 +703,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 					updateHealth(health_status);
 					if (keyPos != -1) {
 						pickUpKey(keyPos);
-						pickUpAttack(keyPos);
 					}
-					if (attackPos != -1) {
-                        pickUpAttack(attackPos);
-                    }
 					if (portal_status) {
 						setUpPortal();
 						ifPortal = false;
@@ -779,41 +759,12 @@ public class PuzzlePlatformerView extends Application implements Observer {
 
 	}
 
-    //perry
-    @SuppressWarnings("static-access")
-    public void pickUpAttack(int attackPos) {
-    	boolean flag = false;
-        int gridSize = grid.getChildren().size();
-        int j = attack[attackPos * 2] / unit_size;
-        int i = attack[attackPos * 2 + 1] / unit_size;
-        for (int k = 0; k < gridSize; k++) {
-            Object temp = grid.getChildren().get(k);
-            if (temp instanceof Canvas) {
-                Canvas target = (Canvas) temp;
-                if (grid.getColumnIndex(target) == j && grid.getRowIndex(target) == i) {
-                    grid.getChildren().remove(k);
-                    attack[attackPos * 2] = -100;
-                    attack[attackPos * 2 + 1] = -100;
-                    controller.callModelAddAttack(attack);
-                    flag = true;
-                    break;
-                }
-            }
-        }
-		// show in the item bag
-		if (flag) {
-			attackNum += 1;
-		}
-        att = true;
-        
-    }
 
 	/**
 	 * Parses CharacterMoveMessage and moves the character object from the scene
 	 * TODO: Need to setup Gravity
 	 * @param msg CharacterMoveMessage which contains information for the movement of character
 	 * @author Eujin Ko
-	 * @author perrywang (eidit)
 	 */
 	public void characterMoveTransition(CharacterMoveMessage msg) {
 		if(msg == null) {
@@ -824,19 +775,14 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		int prevY = msg.getYMoveFrom();
 		int curX = msg.getXMoveTo();
 		int curY = msg.getYMoveTo();
-		//		System.out.println(prevX+","+prevY+"->"+curX+","+curY);
+//		System.out.println(prevX+","+prevY+"->"+curX+","+curY);
+		
+	    Path path = new Path();
+//	    path.getElements().add(new MoveTo(prevX+character_size[0]/2, prevY+unit_size));
+//	    path.getElements().add(new LineTo(curX+character_size[0]/2, curY+unit_size));
+	    path.getElements().add(new MoveTo(prevX+character_size[0]/2, prevY+unit_size+character_size[1]/2));
+	    path.getElements().add(new LineTo(curX+character_size[0]/2, curY+unit_size+character_size[1]/2));
 
-		Path path = new Path();
-		//	    path.getElements().add(new MoveTo(prevX+character_size[0]/2, prevY+unit_size));
-		//	    path.getElements().add(new LineTo(curX+character_size[0]/2, curY+unit_size));
-		path.getElements().add(new MoveTo(prevX+character_size[0]/2, prevY+unit_size));
-		path.getElements().add(new LineTo(curX+character_size[0]/2, curY+unit_size));
-		
-		
-        //perry
-        if (att) {
-        	DenseFogModel.set(prevX, curX, prevY, curY, wall3, wall2,wall1, wall4);
-        }
 
 		PathTransition pathTransition = new PathTransition();
 		pathTransition.setDuration(Duration.millis(100));
@@ -904,12 +850,10 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		    
 			switch(event.getCode()) {
 			
-			case DOWN:
+//			case DOWN:
 //				System.out.println("DOWN");
 //				DOWN = true;
-				att = true;
-				break;
-				
+//				break;
 //			case UP:
 //				System.out.println("UP");
 //				UP = true;

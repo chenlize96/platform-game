@@ -3,13 +3,12 @@ package model;
 /**
  * View Model which contains information how many health left and the coordinate of exit, starting position of character
  * @author Eujin Ko
- * @author perrywang (modifier)
+ *
  */
 public class MainViewModel {
 	int[] start = {0,0};
 	int[] exit = {0,0};
 	int[] portal = {0,0};
-	int[] attack = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100};
 	int[] keys = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; // there may be 5 keys in a map
 	//int[] doors = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; 
 	int health_left;
@@ -34,11 +33,6 @@ public class MainViewModel {
 		this.keys = keys; 
 	}
 	
-	//perry
-	public void setAttackPosition(int[] attack) {
-		this.attack = attack; 
-	}
-	
 	//lize
 	public void setPortalPosition(int[] portal) {
 		this.portal = portal;
@@ -47,11 +41,6 @@ public class MainViewModel {
 	//lize 
 	public int[] returnPortalPosition() {
 		return portal;
-	}
-	
-	//perry
-	public int[] returnAttackPosition() {
-		return this.attack;
 	}
 	
 	//lize

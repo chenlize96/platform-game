@@ -5,6 +5,7 @@ import java.util.Observer;
 import javafx.scene.layout.GridPane;
 import model.HorizontalMonsterModel;
 import model.ModelCollections;
+import view.PuzzlePlatformerView;
 
 /**
  * Controller for ModelCollections
@@ -16,7 +17,7 @@ public class ControllerCollections {
 	ModelCollections model;
 	MainCharacterController character_controller;
 	MainViewModelController view_controller;
-	GridPane stage_grid;
+	PuzzlePlatformerView view;
 
 	/**
 	 * Constructor for ControllerCollections, creates ModelCollections and adds the observer(View) passed in as a argument
@@ -24,10 +25,10 @@ public class ControllerCollections {
 	 * @param stage_grid 
 	 * @author Eujin Ko
 	 */
-	public ControllerCollections(Observer observer, GridPane stage_grid) {
+	public ControllerCollections(Observer observer, PuzzlePlatformerView stage_view) {
 		model = new ModelCollections(this);
 		model.addObserver(observer);
-		this.stage_grid = stage_grid;
+		this.view = stage_view;
 	}
 
 	/**
@@ -39,7 +40,7 @@ public class ControllerCollections {
 	 */
 	public void callModelAddPlayer(int[] startpoint, int[] character_size) {
 		model.addPlayer(startpoint, character_size);
-		character_controller = new MainCharacterController(this, model.returnPlayer(), stage_grid);
+		character_controller = new MainCharacterController(this, model.returnPlayer(), view);
 	}
 	/**
 	 * Returns the MainCharacterController
@@ -64,11 +65,6 @@ public class ControllerCollections {
 	//lize
 	public void callModelAddPortal(int[] portal) {
 		model.returnViewModel().setPortalPosition(portal);
-	}
-	
-	//perry
-	public void callModelAddAttack(int[] attack) {
-		model.returnViewModel().setAttackPosition(attack);
 	}
 	
 	//lize

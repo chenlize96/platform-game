@@ -10,16 +10,11 @@ public class MonsterModel {
 	private int size;
 	private int velocity;
 	
-	public MonsterModel(int x, int y, int size) {
+	public MonsterModel(int x, int y, int size, int velocity) {
 		this.x = x;
 		this.y = y;
 		this.size = size;
-		velocity = 0;
-	}
-	
-	public boolean isCollision(int x, int y) {
-		return this.x >= x - size/2 && this.x <= x + size/2
-				&& this.y >= y - size/2 && this.y <= y + size/2;
+		this.velocity = velocity;
 	}
 	
 	public int getX() {
@@ -35,7 +30,7 @@ public class MonsterModel {
 	}
 	
 	public void moveRight() {
-		this.x += velocity;
+		this.x = (this.x + velocity) % size;
 	}
 	
 	public void moveUp() {
