@@ -101,7 +101,7 @@ public class MainCharacterController {
 
 		
 		
-		checkIfCollisionWithMovingBox(after_x);
+		checkIfCollisionWithMovingBox(handleX,after_x,after_y);
 		
 		//1. Checks Collision on Walls
 		if(after_x < 0) {
@@ -255,33 +255,33 @@ public class MainCharacterController {
 //		return 300;
 	}
 	/**
-	 * 
+	 * Checks if there's collision with moving box
+	 * @param handleX x coordinate, which will move by the character in future
+	 * @param after_x x coordinate, where to move the character
+	 * @param after_y y coordinate, where to move the character
 	 * @author Eujin Ko
-	 * @param after_y 
-	 * @param after_x 
 	 */
-	public void checkIfCollisionWithMovingBox(int after_x) {
+	public void checkIfCollisionWithMovingBox(int handleX, int after_x, int after_y) {
 		int char_width = character_model.getCharSizeWidth();
+		int char_height = character_model.getCharSizeHeight();
 		int curr_x = character_model.getCordX();
 		int curr_y = character_model.getCordY();
 		//Collision with moving boxes
 		for(int[] coord: main_controller.returnMovingBoxes()) {
 			int x = coord[0]*unit_size;
 			int y = coord[1]*unit_size;
-			if(x<= curr_x+char_width && curr_x<=x+unit_size) {
-				if(y <= curr_y && curr_y <= y+unit_size) {
-					if(after_x>curr_x) {
-//						if(stage_grid.contains(x, y)) {
-//							System.out.println("MOVING BOX: "+Arrays.toString(coord));
-//						}
-						main_controller.returnViewModelController()
-						.movingBoxPopAndAddToStack("right",coord);
+			if(x<= after_x+char_width+1 && after_x-1<=x+unit_size) {
+				if(y < after_y+char_height+1 && after_y-1 < y+unit_size) {
+					System.out.println("MOVING BOX(after_y): "+after_y+" right"+(curr_y+char_height+1));
+					if(handleX>=0) {
+						main_controller.returnViewModelController().movingBoxPopAndAddToStack("right",coord);
+						return;
 					}else {
-						main_controller.returnViewModelController()
-						.movingBoxPopAndAddToStack("left",coord);
+						main_controller.returnViewModelController().movingBoxPopAndAddToStack("left",coord);
+						return;
 						
 					}
-					
+
 				}
 			}
 		}
@@ -316,8 +316,8 @@ public class MainCharacterController {
 		int curr_x = character_model.getCordX();
 		int curr_y = character_model.getCordY();
 		for (int k = 0; k < keys.length / 2; k++) {
-			System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y+
-			"key's num = " + k + "keys'position: ("+keys[k*2]+","+keys[k*2+1]+")****************************");
+//			System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y+
+//			"key's num = " + k + "keys'position: ("+keys[k*2]+","+keys[k*2+1]+")****************************");
 			if (keys[k * 2] <= curr_x+char_width+1 && keys[k * 2] + unit_size >= curr_x-1) {
 				if (keys[k * 2 + 1] <= curr_y+char_height+1 && keys[k * 2 + 1] + unit_size >= curr_y-1) {
 //					System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y+

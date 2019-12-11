@@ -83,6 +83,15 @@ public class ControllerCollections {
 	}
 	
 	/**
+	 * Adds list(coordinates) of moving Boxes to the mainViewModel
+	 * @param coordinate, int[] coordinate of moving boxe
+	 * @author Eujin Ko
+	 */
+	public void callModelAddMovingBoxes(int[] coordinate) {
+		model.addMovingBoxes(coordinate);
+	}
+	
+	/**
 	 * Return list of moving boxes
 	 * @return List<int[]>
 	 * @author Eujin Ko

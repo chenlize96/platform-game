@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Observable;
 
@@ -42,7 +43,14 @@ public class ModelCollections  extends Observable {
 		moveEnemies();
 		
 		String box_direction = controllerCollections.returnViewModelController().returnMovingBoxStackDirection();
+		if(box_direction!=null) {
+			box_direction = String.valueOf(box_direction);
+		}
 		int[] box_coordinate = controllerCollections.returnViewModelController().returnMovingBoxStackCoordinate();
+		if(box_coordinate!=null) {
+			box_coordinate = box_coordinate.clone();
+		}
+//		System.out.println("TICK: "+box_direction+":"+Arrays.toString(box_coordinate));
 		controllerCollections.returnViewModelController().clearMovingBoxStack();
 		
 		
@@ -114,6 +122,17 @@ public class ModelCollections  extends Observable {
 		return this.view_model.returnMovingBoxes();
 	}
 
+	/**
+	 * Adds list(coordinates) of moving Boxes to the mainViewModel
+	 * @param coordinate, int[] coordinate of moving boxe
+	 * @author Eujin Ko
+	 */
+	public void addMovingBoxes(int[] coordinate) {
+		this.view_model.addMovingBox(coordinate);
+		
+	}
+	
+	
 	
 	/**
 	 * Returns the player model
@@ -198,4 +217,6 @@ public class ModelCollections  extends Observable {
 		// TODO
 		
 	}
+
+
 }

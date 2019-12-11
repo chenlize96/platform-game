@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,18 +42,19 @@ public class MainViewModel {
 		this.keys = keys; 
 	}
 	/**
-	 * 
+	 * This removes the box in the coordinate
 	 * @param coordinate
 	 * @param direction 
 	 * @author Eujin Ko
 	 */
 	public void movingBoxPopAndAddToStack(String direction, int[] coordinate) {
-		System.out.print(movingBoxes.remove(coordinate));
+		System.out.println("BOX(remove+model)= "+movingBoxes.remove(coordinate)+" = "+direction+" = "+Arrays.toString(coordinate) );
 		this.movingBox_stack.put(coordinate, direction);
+		System.out.println(this.movingBox_stack.get(coordinate)+":"+Arrays.toString(coordinate));
 	}
 	/**
-	 * 
-	 * @return
+	 * Returns the Direction of moving box in the stack
+	 * @return String, direction(right or left)
 	 * @author Eujin Ko
 	 */
 	public String returnMovingBoxStackDirection() {
@@ -65,18 +67,21 @@ public class MainViewModel {
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * Returns the coordinate of moving box in the stack
+	 * @return int[], coordinate
 	 * @author Eujin Ko
 	 */
 	public int[] returnMovingBoxStackCoordinate() {
 		for(int[] key: movingBox_stack.keySet()) {
-			String direction = movingBox_stack.get(key);
 			return key;
 			
 		}
 		return null;
 	}
+	/**
+	 * Clears the moveBoxStack
+	 * @author Eujin Ko
+	 */
 	public void clearMovingBoxStack() {
 		this.movingBox_stack.clear();
 	}
@@ -90,6 +95,16 @@ public class MainViewModel {
 		this.movingBoxes = movingBoxes;
 		
 	}
+	/**
+	 * Add the list of Moving boxes
+	 * @param coordinate, coordinate of moving box
+	 * @author Eujin Ko
+	 */
+	public void addMovingBox(int[] coordinate) {
+		this.movingBoxes.add(coordinate);
+		
+	}
+	
 	/**
 	 * Return list of moving boxes
 	 * @return List<int[]>
@@ -139,5 +154,7 @@ public class MainViewModel {
 	public void decreaseHealth() {
 		this.health_left -= 1;
 	}
+
+
 
 }
