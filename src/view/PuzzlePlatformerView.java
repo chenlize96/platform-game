@@ -82,7 +82,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	private int[] startpoint = {0,0};
 	private int[] exitpoint = {0,0};
 	private int[] portal = {0,0};
-	private int[] character_size = {20,20};
+	private int[] character_size = {10,10};
     private int[] attack = {-100, -100, -100, -100, -100, -100, -100, -100, -100, -100};
 	private int[] keys = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; // there may be 5 keys in a map
 	private int[] doors = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; // five doors
@@ -110,6 +110,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	private boolean JUMP = false;
 	private boolean ifPortal = false;
 	private Group root;
+	
 	ControllerCollections controller;
 	MainCharacterController character_controller;
 	GridPane grid;
@@ -202,7 +203,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		//if (ifPortal) {
 		//	controller.callModelAddPortal(portal);
 		//}
-        controller.callModelAddAttack(attack);
+        //controller.callModelAddAttack(attack);
 
 		//addMonster();
 		
@@ -470,7 +471,9 @@ public class PuzzlePlatformerView extends Application implements Observer {
                 }
 			}
 		}
-		setUpController();	
+		setUpController();
+		
+		
 //				System.out.println(keys[0] + " "+ keys[1]+ " "+ keys[2]+"******");
 	}
 
@@ -809,6 +812,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		//	    path.getElements().add(new LineTo(curX+character_size[0]/2, curY+unit_size));
 		path.getElements().add(new MoveTo(prevX+character_size[0]/2, prevY+unit_size));
 		path.getElements().add(new LineTo(curX+character_size[0]/2, curY+unit_size));
+		
 		
         //perry
         if (att) {
