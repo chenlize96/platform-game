@@ -283,7 +283,10 @@ public class MainCharacterController {
 		int char_height = character_model.getCharSizeHeight();
 		int curr_x = character_model.getCordX();
 		int curr_y = character_model.getCordY();
-
+		
+		if(main_controller.returnMovingBoxes()==null) {
+			return;
+		}
 		//Collision with moving boxes
 		for(int[] coord: main_controller.returnMovingBoxes()) {
 			int x = coord[0]*unit_size;

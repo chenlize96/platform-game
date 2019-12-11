@@ -74,10 +74,10 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 	final int ticksPerFrame = 1;
 	final int MOVE_SIZE = 5;
 	
-	final int EASY = 123;
-	final int MEDIUM = 124;
-	final int HARD = 125;
-	final int HARD_PART2 = 126;
+	public final int EASY = 123;
+	public final int MEDIUM = 124;
+	public final int HARD = 125;
+	public final int HARD_PART2 = 126;
 	
 	private int[] startpoint = {0,0};
 	private int[] exitpoint = {0,0};
@@ -87,7 +87,7 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 	private int[] doors = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; // five doors
 	private List<int[]> movingBoxes = new ArrayList<>();
 	
-	private int level = EASY; // default is easy
+	public int level = EASY; // default is easy
 	private int keyNum = 0;
 	private int healthLeft = -1;
 	
@@ -95,7 +95,7 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 	//Character
 	private Rectangle character = new Rectangle(character_size[0], character_size[1], Color.RED); //radius = 10
 	private Label itemKeyNum;
-	private int timeSeconds = 300;
+	public int timeSeconds = 300;
 	
 
 	
@@ -377,7 +377,7 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 					grid.add(canvas, j, i);
 				}else if (map[i][j] == 'S') {// start
 					startpoint[0] = j*unit_size+1;
-					startpoint[1] = i*unit_size+1;//jump doesnt work
+					startpoint[1] = i*unit_size-MOVE_SIZE;//jump doesnt work
 				}else if (map[i][j] == 'E') { //exit
 					Canvas canvas = new Canvas(unit_size, unit_size); 
 					GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -413,15 +413,17 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 							break;
 						}
 					}
-				}else if (map[i][j] == 'M') {
-
-					Canvas canvas = new Canvas(unit_size, unit_size); 
-					GraphicsContext gc = canvas.getGraphicsContext2D();
-					Image monster = new Image("img/Static.png"); 
-					gc.drawImage(monster, 0, 0, unit_size, unit_size); 
-					grid.add(canvas, j, i);
-
-				}else if (map[i][j] == 'O') {
+				}
+//				else if (map[i][j] == 'M') {
+//
+//					Canvas canvas = new Canvas(unit_size, unit_size); 
+//					GraphicsContext gc = canvas.getGraphicsContext2D();
+//					Image monster = new Image("img/Static.png"); 
+//					gc.drawImage(monster, 0, 0, unit_size, unit_size); 
+//					grid.add(canvas, j, i);
+//
+//				}
+				else if (map[i][j] == 'O') {
 					Canvas canvas = new Canvas(unit_size, unit_size); 
 					GraphicsContext gc = canvas.getGraphicsContext2D();
 					Image monster = new Image("img/moving_obstacle.png"); 
