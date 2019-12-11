@@ -14,9 +14,11 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class GameMenu extends Application{
+public class GameMenuView extends Application{
+	PuzzlePlatformerView puzzle_view;
 	public static void main(String[] args) {
 		launch(args);
 	}
@@ -40,7 +42,15 @@ public class GameMenu extends Application{
 
 			@Override
 			public void handle(Event args) {
-				Application.launch(PuzzlePlatformerView.class, "");
+				puzzle_view = new PuzzlePlatformerView();
+				puzzle_view.initModality(Modality.APPLICATION_MODAL);
+				puzzle_view.setResizable(false);
+				try {
+					puzzle_view.start();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				
 			}
 			

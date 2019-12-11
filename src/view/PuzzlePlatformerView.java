@@ -66,7 +66,7 @@ import model.StaticMonsterModel;
 import model.DenseFogModel;
 import model.HorizontalMonsterModel;
 
-public class PuzzlePlatformerView extends Application implements Observer {
+public class PuzzlePlatformerView extends Stage implements Observer {
     
 	// Initialize the window size
 	final int WINDOW_WIDTH = 800;
@@ -192,9 +192,8 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	 * @author Eujin Ko
 	 * @author Lize 
 	 */
-	@Override
-	public void start(Stage stage) throws Exception {
-
+	public void start() throws Exception {
+		Stage stage = new Stage();
 		Scene scene = setUpStage(stage);	//Lize's stage setup
 		character.setOnMouseClicked(new EventHandler() {
 			@Override
