@@ -60,6 +60,7 @@ import javafx.util.Duration;
 import message.CharacterMoveMessage;
 import message.CollectionsMessage;
 import model.StaticMonsterModel;
+import model.DenseFogModel;
 import model.HorizontalMonsterModel;
 
 public class PuzzlePlatformerView extends Application implements Observer {
@@ -93,6 +94,12 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	private int timeSeconds = 300;
 	
 
+	
+	private Rectangle wall1 = new Rectangle(20, 5, Color.PINK); //radius = 10
+    private Rectangle wall2 = new Rectangle(20, 5, Color.PINK); //radius = 10
+    private Rectangle wall3 = new Rectangle(5, 20, Color.PINK); //radius = 10
+    private Rectangle wall4 = new Rectangle(5, 20, Color.PINK); //radius = 10
+	
 //	private boolean UP = false;
 //	private boolean DOWN = false;
 
@@ -464,6 +471,8 @@ public class PuzzlePlatformerView extends Application implements Observer {
 				}
 			}
 		}
+		
+		root.getChildren().addAll(wall1,wall2,wall3,wall4);
 		setUpController();	
 //				System.out.println(keys[0] + " "+ keys[1]+ " "+ keys[2]+"******");
 	}
@@ -784,6 +793,9 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	    path.getElements().add(new LineTo(curX+character_size[0]/2, curY+unit_size+character_size[1]/2));
 
 
+	    DenseFogModel.set(prevX, curX, prevY, curY, wall3, wall2,wall1, wall4);
+	    
+	    
 		PathTransition pathTransition = new PathTransition();
 		pathTransition.setDuration(Duration.millis(100));
 		pathTransition.setNode(character); // Circle is built above
