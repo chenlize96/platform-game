@@ -10,10 +10,6 @@ import javafx.util.Duration;
 
 //perrywang
 public class DenseFogModel {
-	
-
-	
-	
     static int ran1 = 2;
     public static void setDenseFog(Rectangle wall, Path path) {
         PathTransition pathTransition = new PathTransition();

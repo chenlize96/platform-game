@@ -89,12 +89,15 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	
 	private int level = EASY; // default is easy
 	private int keyNum = 0;
+	private int attackNum = 0;
+
 	private int healthLeft = -1;
 	
 	private int unit_size = 25; // every unit in the map is 25*25    ***ATTENTION***
 	//Character
 	private Rectangle character = new Rectangle(character_size[0], character_size[1], Color.RED); //radius = 10
 	private Label itemKeyNum;
+	private Label itemattackNum;
 	private int timeSeconds = 300;
 	
 	//attack
@@ -584,7 +587,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		itemKeyNum.setFont(new Font("Arial", 24));
 		HBox hbox2 = new HBox(itemKey, canvas, itemKeyNum);
 		hbox2.setAlignment(Pos.CENTER);
-		hbox2.setSpacing(10);
+		hbox2.setSpacing(20);
 		VBox list = new VBox();
 		list.getChildren().addAll(hbox1, hbox2);
 		info.getChildren().addAll(health, health_box, countdown, timer, items, list); 
@@ -594,8 +597,16 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		BorderPane p = new BorderPane();
 		p.setCenter(grid); p.setTop(mb); p.setRight(info);
 		// there should be someway to zoom up automatically without influencing coordinates (do later or ignore)
+        //Group root = new Group();
+
 		root.getChildren().add(p);
 		root.getChildren().add(character);
+		
+		//add
+		root.getChildren().add(wall1);
+        root.getChildren().add(wall2);
+        root.getChildren().add(wall3);
+        root.getChildren().add(wall4);
 		//**********************************************
 		drawMap();
 		//**********************************************
@@ -708,6 +719,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 					updateHealth(health_status);
 					if (keyPos != -1) {
 						pickUpKey(keyPos);
+						pickUpAttack(keyPos);
 					}
 					if (attackPos != -1) {
                         pickUpAttack(attackPos);
@@ -770,6 +782,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
     //perry
     @SuppressWarnings("static-access")
     public void pickUpAttack(int attackPos) {
+    	boolean flag = false;
         int gridSize = grid.getChildren().size();
         int j = attack[attackPos * 2] / unit_size;
         int i = attack[attackPos * 2 + 1] / unit_size;
@@ -782,11 +795,17 @@ public class PuzzlePlatformerView extends Application implements Observer {
                     attack[attackPos * 2] = -100;
                     attack[attackPos * 2 + 1] = -100;
                     controller.callModelAddAttack(attack);
+                    flag = true;
                     break;
                 }
             }
         }
+		// show in the item bag
+		if (flag) {
+			attackNum += 1;
+		}
         att = true;
+        
     }
 
 	/**
@@ -885,10 +904,12 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		    
 			switch(event.getCode()) {
 			
-//			case DOWN:
+			case DOWN:
 //				System.out.println("DOWN");
 //				DOWN = true;
+//				att = true;
 //				break;
+				
 //			case UP:
 //				System.out.println("UP");
 //				UP = true;

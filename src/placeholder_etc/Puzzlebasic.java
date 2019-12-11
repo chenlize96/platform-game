@@ -16,7 +16,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-
+//perry
 public class Puzzlebasic extends Application {
 	private static final int MOVE = 0;
 	// 25 x 25 pixel square
