@@ -772,7 +772,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	    	//IF THERE EXITS, THEN PUT BACK WHERE IT WAS
 	    	if(moving_box_direction.equals("right")) {
 	    		if(node.getLayoutX() == x+unit_size && node.getLayoutY() == y) {
-		    		System.out.println("!!!!!!!!!!!!!1");
+//		    		System.out.println("!!!!!!!!!!!!!1");
 		            grid.add(curr,moving_box_coordinate[0],moving_box_coordinate[1]);
 		    	    path.getElements().add(new LineTo(x, y));
 		    	    movingBoxTransition(path,curr);
@@ -782,7 +782,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	    	}
 	    	if(moving_box_direction.equals("left")) {
 	    		if(node.getLayoutX() == x-unit_size && node.getLayoutY() == y) {
-		    		System.out.println("!!!!!!!!!!!!!1");
+//		    		System.out.println("!!!!!!!!!!!!!1");
 		            grid.add(curr,moving_box_coordinate[0],moving_box_coordinate[1]);
 		    	    path.getElements().add(new LineTo(x, y));
 		    	    movingBoxTransition(path,curr);
@@ -801,7 +801,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 				movingBoxes.add(new int[] {moving_box_coordinate[0],moving_box_coordinate[1]});
 	    	    return;
     		}
-    		System.out.println("MOVE BOX(MOVE_DIR)-right: "+(moving_box_coordinate[0]+1)+","+(moving_box_coordinate[1]));
+//    		System.out.println("MOVE BOX(MOVE_DIR)-right: "+(moving_box_coordinate[0]+1)+","+(moving_box_coordinate[1]));
     	    path.getElements().add(new MoveTo(x+unit_size, y));
     	    movingBoxTransition(path,curr);	
 			movingBoxes.add(new int[] {moving_box_coordinate[0]+1,moving_box_coordinate[1]});
@@ -815,7 +815,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 				movingBoxes.add(new int[] {moving_box_coordinate[0],moving_box_coordinate[1]});
 	    	    return;
     		}
-    		System.out.println("MOVE BOX(MOVE_DIR)-left: "+(moving_box_coordinate[0]-1)+","+(moving_box_coordinate[1]));
+//    		System.out.println("MOVE BOX(MOVE_DIR)-left: "+(moving_box_coordinate[0]-1)+","+(moving_box_coordinate[1]));
     	    path.getElements().add(new MoveTo(x-unit_size, y));
     	    movingBoxTransition(path,curr);	
 			movingBoxes.add(new int[] {moving_box_coordinate[0]-1,moving_box_coordinate[1]});
@@ -828,8 +828,8 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	 * Remove the box in the coordinate
 	 * @param moving_box_direction
 	 * @param moving_box_coordinate
-	 * @author Eujin Ko
 	 * @return returns the node removed from the gridpane
+	 * @author Eujin Ko
 	 */
 	public Node removeBox(String moving_box_direction, int[] moving_box_coordinate) {
 		if(moving_box_direction==null || moving_box_coordinate==null) {
@@ -852,6 +852,12 @@ public class PuzzlePlatformerView extends Application implements Observer {
 
 		
 	}
+	/**
+	 * Performs animation for moving box
+	 * @param path path where the box will move
+	 * @param node moving box node
+	 * @author Eujin Ko
+	 */
 	public void movingBoxTransition(Path path, Node node) {
 		PathTransition pathTransition = new PathTransition();
 		pathTransition.setDuration(Duration.millis(10000));
