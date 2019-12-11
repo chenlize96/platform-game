@@ -254,19 +254,9 @@ public class MainCharacterController {
 		return y_pos;
 //		return 300;
 	}
-	/**
-	 * Returns the character height
-	 * @return int, character height
-	 * @author Eujin Ko
-	 */
 	public int returnCharacterHeight() {
 		return character_model.getCharSizeHeight();
 	}
-	/**
-	 * Returns the character width
-	 * @return int, character width
-	 * @author Eujin Ko
-	 */
 	public int returnCharacterWidth() {
 		return character_model.getCharSizeWidth();
 	}
