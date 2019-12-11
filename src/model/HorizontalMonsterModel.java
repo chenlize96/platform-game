@@ -26,4 +26,3 @@ public class HorizontalMonsterModel extends MonsterModel {
 	}
 	
 }
-

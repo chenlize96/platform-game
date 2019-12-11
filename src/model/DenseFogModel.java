@@ -78,7 +78,7 @@ public class DenseFogModel {
 
         ran1 = (int) (Math.random() * 2 + 1 );
 
-        System.out.println(ran1);
+//        System.out.println(ran1);
         if (ran1 == 1) {
             Path path = new Path();
             path.getElements().add(new MoveTo(-100, -100));
