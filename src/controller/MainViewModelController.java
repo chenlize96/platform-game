@@ -27,6 +27,14 @@ public class MainViewModelController {
 	public int healthStatus() {
 		return view_model.returnHealthLeft();
 	}
+	
+	
+	//lize
+	public void setHealthStatus(int left) {
+		view_model.setHealthLeft(left);
+	}
+	
+	
 	/**
 	 * Decreases the health by 1
 	 * @author Eujin Ko

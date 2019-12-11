@@ -28,7 +28,7 @@ public class MainViewModel {
 	 * @author Eujin Ko
 	 */
 	public MainViewModel(int[] start, int[] exit) {
-		this.health_left = 2;
+		this.health_left = 3;
 		this.exit[0] = exit[0];
 		this.exit[1] = exit[1];
 		this.start[0] = start[0];

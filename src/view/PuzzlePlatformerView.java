@@ -204,19 +204,7 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 			}
 			
 		});
-		controller = new ControllerCollections(this, itself);
-		controller.callModelAddPlayer(startpoint, character_size);
-		character_controller = controller.returnMainCharacterController();
-		controller.callModelAddViewModel(startpoint, exitpoint);
-		controller.callModelAddKeys(keys); 
-		controller.callModelAddMovingBoxes(movingBoxes);
 
-		//if (ifPortal) {
-		//	controller.callModelAddPortal(portal);
-		//}
-		
-		//addMonster();
-		
 		animationTimer = new AnimationTimer() {
 			@Override
 			public void handle(long now) {
@@ -501,6 +489,7 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 		controller.callModelAddViewModel(startpoint, exitpoint);
 		controller.callModelAddKeys(keys); 
 		if (ifPortal) {
+			System.out.println(portal[0] + "-"+portal[1]);
 			controller.callModelAddPortal(portal);
 		}
 		addMonster();
@@ -869,18 +858,13 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 	
 	//lize
 	public void setUpPortal() {
+		int old_health = controller.returnViewModelController().healthStatus();
 		level = HARD_PART2;
 		readFile(); //get new map
 		drawMap(); // update new map
 		System.out.println(healthLeft+"****************");
-		//controller.returnViewModelController().decreaseHealth();
-		
-		//clearCanvas(health_box);
-		//GraphicsContext gc = health_box.getGraphicsContext2D();
-		//Image heart = new Image("img/heart.png"); 
-		//for(int i = 0; i < healthLeft; i++) {
-		//	gc.drawImage(heart, i*50, 0, 50, 50); 
-		//}
+		controller.returnViewModelController().setHealthStatus(old_health);
+
 		
 	}
 

@@ -350,11 +350,14 @@ public class MainCharacterController {
 		int char_width = character_model.getCharSizeWidth();
 		int curr_x = character_model.getCordX();
 		int curr_y = character_model.getCordY();
+		System.out.println(portal[0]+"-"+portal[1]);
 		for (int k = 0; k < portal.length / 2; k++) {
 			if (portal[k * 2] <= curr_x+char_width+1 && portal[k * 2] + unit_size >= curr_x-1) {
+			//	System.out.println("portal STATUS: x = "+curr_x+", y = "+curr_y+
+			//			"key's num = " + k + "keys'position: ("+portal[k*2]+","+portal[k*2+1]+")****************************");
 				if (portal[k * 2 + 1] <= curr_y+1 && portal[k * 2 + 1] + unit_size >= curr_y-1) {
-//					System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y+
-//							"key's num = " + k + "keys'position: ("+keys[k*2]+","+keys[k*2+1]+")****************************");
+					System.out.println("portal STATUS: x = "+curr_x+", y = "+curr_y+
+							"key's num = " + k + "keys'position: ("+portal[k*2]+","+portal[k*2+1]+")****************************");
 					return true; // which key
 				}
 			}
