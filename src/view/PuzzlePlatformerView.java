@@ -466,7 +466,6 @@ public class PuzzlePlatformerView extends Application implements Observer {
 					grid.add(canvas, j, i);
 					portal[0] = j*unit_size;
 					portal[1] = i*unit_size;
-					//controller.callModelAddPortal(portal);
 					ifPortal = true;
 				}
 			}
@@ -620,6 +619,11 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		for(int i = 0; i< health_status; i++) {
 			gc.drawImage(heart, i*50, 0, 50, 50); 
 		}
+		///////************************
+		//if (health_status == 2) {
+		System.out.println("health is "+ health_status+" now!!!");
+		//}
+		
 		if(health_status == 0) {
 			gameOverMessage();
 		}
@@ -698,7 +702,6 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		CharacterMoveMessage char_msg = msg.getCharacterMoveMessage();
 		//System.out.println(character_controller.getPlayerPosition().getCordX()+" , "+ character_controller.getPlayerPosition().getCordY());
 		int health_status = msg.returnHealthStatus();
-		healthLeft = health_status;
 		boolean win_status = msg.returnWinStatus();
 		int keyPos = msg.returnKeyStatus();
 		boolean portal_status = msg.returnPortalStatus();
@@ -730,7 +733,9 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		readFile(); //get new map
 		drawMap(); // update new map
 		System.out.println(healthLeft+"****************");
-		clearCanvas(health_box);
+		//controller.returnViewModelController().decreaseHealth();
+		
+		//clearCanvas(health_box);
 		//GraphicsContext gc = health_box.getGraphicsContext2D();
 		//Image heart = new Image("img/heart.png"); 
 		//for(int i = 0; i < healthLeft; i++) {
