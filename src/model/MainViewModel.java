@@ -1,5 +1,11 @@
 package model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * View Model which contains information how many health left and the coordinate of exit, starting position of character
  * @author Eujin Ko
@@ -12,6 +18,8 @@ public class MainViewModel {
 	int[] keys = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; // there may be 5 keys in a map
 	//int[] doors = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; 
 	int health_left;
+	List<int[]> movingBoxes;
+	Map<int[],String> movingBox_stack;
 	
 	/**
 	 * Constructor for MainViewModel, initializes the values
@@ -25,6 +33,7 @@ public class MainViewModel {
 		this.exit[1] = exit[1];
 		this.start[0] = start[0];
 		this.start[1] = start[1];
+		this.movingBox_stack = new HashMap<>();
 	}
 	
 	
@@ -32,7 +41,78 @@ public class MainViewModel {
 	public void setKeyPosition(int[] keys) {
 		this.keys = keys; 
 	}
+	/**
+	 * This removes the box in the coordinate
+	 * @param coordinate
+	 * @param direction 
+	 * @author Eujin Ko
+	 */
+	public void movingBoxPopAndAddToStack(String direction, int[] coordinate) {
+		System.out.println("BOX(remove+model)= "+movingBoxes.remove(coordinate)+" = "+direction+" = "+Arrays.toString(coordinate) );
+		this.movingBox_stack.put(coordinate, direction);
+		System.out.println(this.movingBox_stack.get(coordinate)+":"+Arrays.toString(coordinate));
+	}
+	/**
+	 * Returns the Direction of moving box in the stack
+	 * @return String, direction(right or left)
+	 * @author Eujin Ko
+	 */
+	public String returnMovingBoxStackDirection() {
+		for(int[] key: movingBox_stack.keySet()) {
+			String direction = movingBox_stack.get(key);
+			return direction;
+			
+		}
+		return null;
+	}
 	
+	/**
+	 * Returns the coordinate of moving box in the stack
+	 * @return int[], coordinate
+	 * @author Eujin Ko
+	 */
+	public int[] returnMovingBoxStackCoordinate() {
+		for(int[] key: movingBox_stack.keySet()) {
+			return key;
+			
+		}
+		return null;
+	}
+	/**
+	 * Clears the moveBoxStack
+	 * @author Eujin Ko
+	 */
+	public void clearMovingBoxStack() {
+		this.movingBox_stack.clear();
+	}
+
+	/**
+	 * Add the list of Moving boxes
+	 * @param movingBoxes
+	 * @author Eujin Ko
+	 */
+	public void addMovingBox(List<int[]> movingBoxes) {
+		this.movingBoxes = movingBoxes;
+		
+	}
+	/**
+	 * Add the list of Moving boxes
+	 * @param coordinate, coordinate of moving box
+	 * @author Eujin Ko
+	 */
+	public void addMovingBox(int[] coordinate) {
+		this.movingBoxes.add(coordinate);
+		
+	}
+	
+	/**
+	 * Return list of moving boxes
+	 * @return List<int[]>
+	 * @author Eujin Ko
+	 */
+	public List<int[]> returnMovingBoxes(){
+		return this.movingBoxes;
+	}
 	//lize
 	public void setPortalPosition(int[] portal) {
 		this.portal = portal;
@@ -80,3 +160,4 @@ public class MainViewModel {
 	}
 
 }
+

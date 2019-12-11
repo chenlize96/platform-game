@@ -2,6 +2,7 @@ package controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
@@ -89,7 +90,7 @@ public class MainCharacterController {
 
 //		System.out.println("CURR LOCATION("+curr_x+","+curr_y+")");
 
-		
+
 		int handleY= handleYCoordinate(moveX, moveY);
 		after_y = curr_y + handleY;
 //		after_y = 565;
@@ -98,6 +99,9 @@ public class MainCharacterController {
 		
 		CharacterMoveMessage msg;
 
+		
+		
+		checkIfCollisionWithMovingBox(after_x,after_y);
 		
 		//1. Checks Collision on Walls
 		if(after_x < 0) {
@@ -123,6 +127,8 @@ public class MainCharacterController {
 			msg = character_model.returnToStart();
 			return msg;
 		}
+
+		
 		
 		// Collision with the monster
 		for(MonsterModel each: monsters.getMonster()) {
@@ -143,6 +149,8 @@ public class MainCharacterController {
 		return msg;
 		
 	}
+	
+
 
 	/**
 	 * Calculates the position of the obstacles in the stage and returns how much x coordinate to move
@@ -246,7 +254,46 @@ public class MainCharacterController {
 		return y_pos;
 //		return 300;
 	}
+	public int returnCharacterHeight() {
+		return character_model.getCharSizeHeight();
+	}
+	public int returnCharacterWidth() {
+		return character_model.getCharSizeWidth();
+	}
 	
+	/**
+	 * Checks if there's collision with moving box
+	 * @param handleX x coordinate, which will move by the character in future
+	 * @param after_x x coordinate, where to move the character
+	 * @param after_y y coordinate, where to move the character
+	 * @author Eujin Ko
+	 */
+	public void checkIfCollisionWithMovingBox(int after_x, int after_y) {
+		int char_width = character_model.getCharSizeWidth();
+		int char_height = character_model.getCharSizeHeight();
+		int curr_x = character_model.getCordX();
+		int curr_y = character_model.getCordY();
+
+		//Collision with moving boxes
+		for(int[] coord: main_controller.returnMovingBoxes()) {
+			int x = coord[0]*unit_size;
+			int y = coord[1]*unit_size;
+			if(x<= after_x+char_width+1 && after_x-1<=x+unit_size) {
+				if(y < after_y+char_height+1 && after_y-1 < y+unit_size) {
+					System.out.println("MOVING BOX(after_y): "+after_y+" right"+(curr_y+char_height+1));
+					if(x>=after_x) {
+						main_controller.returnViewModelController().movingBoxPopAndAddToStack("right",coord);
+						return;
+					}else {
+						main_controller.returnViewModelController().movingBoxPopAndAddToStack("left",coord);
+						return;
+						
+					}
+
+				}
+			}
+		}
+	}
 	
 	/**
 	 * Checks if the Character reaches the exit

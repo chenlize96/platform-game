@@ -1,7 +1,10 @@
 package view;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Scanner;
@@ -82,6 +85,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	private int[] character_size = {20,20};
 	private int[] keys = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; // there may be 5 keys in a map
 	private int[] doors = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; // five doors
+	private List<int[]> movingBoxes = new ArrayList<>();
 	
 	private int level = EASY; // default is easy
 	private int keyNum = 0;
@@ -206,6 +210,8 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		character_controller = controller.returnMainCharacterController();
 		controller.callModelAddViewModel(startpoint, exitpoint);
 		controller.callModelAddKeys(keys); 
+		controller.callModelAddMovingBoxes(movingBoxes);
+
 		//if (ifPortal) {
 		//	controller.callModelAddPortal(portal);
 		//}
@@ -415,6 +421,15 @@ public class PuzzlePlatformerView extends Application implements Observer {
 					Image monster = new Image("img/Static.png"); 
 					gc.drawImage(monster, 0, 0, unit_size, unit_size); 
 					grid.add(canvas, j, i);
+
+				}else if (map[i][j] == 'O') {
+					Canvas canvas = new Canvas(unit_size, unit_size); 
+					GraphicsContext gc = canvas.getGraphicsContext2D();
+					Image monster = new Image("img/moving_obstacle.png"); 
+					gc.drawImage(monster, 0, 0, unit_size, unit_size); 
+					grid.add(canvas, j, i);
+					movingBoxes.add(new int[] {j,i});
+
 				}else if (map[i][j] == 'H') {
 					Image IMAGE = new Image("img/Run.png");
 					final int COLUMNS  =   3;
@@ -467,6 +482,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 					portal[0] = j*unit_size;
 					portal[1] = i*unit_size;
 					ifPortal = true;
+
 				}
 			}
 		}
@@ -705,6 +721,8 @@ public class PuzzlePlatformerView extends Application implements Observer {
 		boolean win_status = msg.returnWinStatus();
 		int keyPos = msg.returnKeyStatus();
 		boolean portal_status = msg.returnPortalStatus();
+		String moving_box_direction = msg.returnBoxDirection();
+		int[] moving_box_coordinate = msg.returnBoxCoordinate();
 
 		Platform.runLater(new Runnable() {
 
@@ -722,11 +740,126 @@ public class PuzzlePlatformerView extends Application implements Observer {
 					}
 					stageClearedMessage(win_status);
 				}
+
+				Node node = removeBox(moving_box_direction,moving_box_coordinate);
+				moveBoxToDirection(node,moving_box_direction,moving_box_coordinate);
 			}
+
+
 
 		});
 	}
+	/**
+	 * Moves box to the direction, when it hits the wall, then it disappears
+	 * @param curr
+	 * @param moving_box_direction
+	 * @param moving_box_coordinate
+	 * @author Eujin Ko
+	 */
+	public void moveBoxToDirection(Node curr, String moving_box_direction, int[] moving_box_coordinate) {
+		if(moving_box_direction==null || moving_box_coordinate==null) {
+			return;
+		}
+		int x = moving_box_coordinate[0]*unit_size;
+		int y = moving_box_coordinate[1]*unit_size;
+		int char_h = controller.returnMainCharacterController().returnCharacterHeight();
+		int char_w = controller.returnMainCharacterController().returnCharacterWidth();
+//		System.out.println("MOVING BOX: "+x+","+y);
+	    Path path = new Path();
+	    path.getElements().add(new MoveTo(x, y));
+	    //CHECK IF THERE'S A NODE IN THE DIRECTION WHERE TO PUSH THE BOX
+	    for (Node node : grid.getChildren()) {
+	    	//IF THERE EXITS, THEN PUT BACK WHERE IT WAS
+	    	if(moving_box_direction.equals("right")) {
+	    		if(node.getLayoutX() == x+unit_size && node.getLayoutY() == y) {
+		    		System.out.println("!!!!!!!!!!!!!1");
+		            grid.add(curr,moving_box_coordinate[0],moving_box_coordinate[1]);
+		    	    path.getElements().add(new LineTo(x, y));
+		    	    movingBoxTransition(path,curr);
+					movingBoxes.add(new int[] {moving_box_coordinate[0],moving_box_coordinate[1]});
+		    	    return;
+		        }
+	    	}
+	    	if(moving_box_direction.equals("left")) {
+	    		if(node.getLayoutX() == x-unit_size && node.getLayoutY() == y) {
+		    		System.out.println("!!!!!!!!!!!!!1");
+		            grid.add(curr,moving_box_coordinate[0],moving_box_coordinate[1]);
+		    	    path.getElements().add(new LineTo(x, y));
+		    	    movingBoxTransition(path,curr);
+					movingBoxes.add(new int[] {moving_box_coordinate[0],moving_box_coordinate[1]});
+		    	    return;
+		        }
+	    	}
+	        
+	    }
+	    //IF THERE'S NO BOX IN THE DIRECTION WHERE THE CHARACTER PUSHES, THEN PUT THERE
+    	if(moving_box_direction.equals("right")) {
+    		if(x+unit_size>=WINDOW_HEIGHT) {
+	            grid.add(curr,moving_box_coordinate[0],moving_box_coordinate[1]);
+	    	    path.getElements().add(new LineTo(x, y));
+	    	    movingBoxTransition(path,curr);
+				movingBoxes.add(new int[] {moving_box_coordinate[0],moving_box_coordinate[1]});
+	    	    return;
+    		}
+    		System.out.println("MOVE BOX(MOVE_DIR)-right: "+(moving_box_coordinate[0]+1)+","+(moving_box_coordinate[1]));
+    	    path.getElements().add(new MoveTo(x+unit_size, y));
+    	    movingBoxTransition(path,curr);	
+			movingBoxes.add(new int[] {moving_box_coordinate[0]+1,moving_box_coordinate[1]});
+            grid.add(curr,moving_box_coordinate[0]+1,moving_box_coordinate[1]);
+            
+    	}else if(moving_box_direction.equals("left")) {
+    		if(x-unit_size<0) {
+	            grid.add(curr,moving_box_coordinate[0],moving_box_coordinate[1]);
+	    	    path.getElements().add(new LineTo(x, y));
+	    	    movingBoxTransition(path,curr);
+				movingBoxes.add(new int[] {moving_box_coordinate[0],moving_box_coordinate[1]});
+	    	    return;
+    		}
+    		System.out.println("MOVE BOX(MOVE_DIR)-left: "+(moving_box_coordinate[0]-1)+","+(moving_box_coordinate[1]));
+    	    path.getElements().add(new MoveTo(x-unit_size, y));
+    	    movingBoxTransition(path,curr);	
+			movingBoxes.add(new int[] {moving_box_coordinate[0]-1,moving_box_coordinate[1]});
+            grid.add(curr,moving_box_coordinate[0]-1,moving_box_coordinate[1]);
+            
+    	}
+    	
+	}
+	/**
+	 * Remove the box in the coordinate
+	 * @param moving_box_direction
+	 * @param moving_box_coordinate
+	 * @author Eujin Ko
+	 * @return returns the node removed from the gridpane
+	 */
+	public Node removeBox(String moving_box_direction, int[] moving_box_coordinate) {
+		if(moving_box_direction==null || moving_box_coordinate==null) {
+			return null;
+		}
+		int x = moving_box_coordinate[0]*unit_size;
+		int y = moving_box_coordinate[1]*unit_size;
 
+		//FIND THE NODE FROM GRIDPANE
+	    Node curr = null;
+	    for (Node node : grid.getChildren()) {
+//			System.out.println("(VIEW)MOVE BOX: "+moving_box_direction);
+	        if(node.getLayoutX() == x && node.getLayoutY() == y) {
+	        	curr = node;
+	        	grid.getChildren().remove(node);
+	        	return curr;
+	        }
+	    }
+		return curr;
+
+		
+	}
+	public void movingBoxTransition(Path path, Node node) {
+		PathTransition pathTransition = new PathTransition();
+		pathTransition.setDuration(Duration.millis(10000));
+		pathTransition.setNode(node); // Circle is built above
+		pathTransition.setPath(path);
+		pathTransition.play();		
+	}
+	
 	//lize
 	public void setUpPortal() {
 		level = HARD_PART2;

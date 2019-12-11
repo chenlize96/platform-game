@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Observable;
 
@@ -40,13 +41,24 @@ public class ModelCollections  extends Observable {
 	public void tick() {
 		CharacterMoveMessage char_msg = movePlayer();
 		moveEnemies();
-		moveProjectiles();
+		
+		String box_direction = controllerCollections.returnViewModelController().returnMovingBoxStackDirection();
+		if(box_direction!=null) {
+			box_direction = String.valueOf(box_direction);
+		}
+		int[] box_coordinate = controllerCollections.returnViewModelController().returnMovingBoxStackCoordinate();
+		if(box_coordinate!=null) {
+			box_coordinate = box_coordinate.clone();
+		}
+//		System.out.println("TICK: "+box_direction+":"+Arrays.toString(box_coordinate));
+		controllerCollections.returnViewModelController().clearMovingBoxStack();
+		
 		
 		int keyPos = checkForKey();//get key postion, if -1 then not found
 		int health_status = checkForDeath();
 		boolean win = checkForWin();
 		boolean ifPortal = checkForPortal();
-		CollectionsMessage msg = new CollectionsMessage(char_msg, health_status,win,keyPos,ifPortal);
+		CollectionsMessage msg = new CollectionsMessage(char_msg, health_status,win,keyPos,ifPortal, box_direction,box_coordinate);
 		setChanged();
 		notifyObservers(msg);
 		
@@ -91,7 +103,36 @@ public class ModelCollections  extends Observable {
 	public void addPlayer(int[] startpoint, int[] character_size) {
 		this.player = new MainCharacterModel(startpoint[0], startpoint[1], character_size[0], character_size[1]);
 	}
+	
+	/**
+	 * Add list(coordinates) of moving boxes to the view model
+	 * @param movingBoxes
+	 * @author Eujin Ko
+	 */
+	public void addMovingBoxes(List<int[]> movingBoxes) {
+		this.view_model.addMovingBox(movingBoxes);
+	}
+	
+	/**
+	 * Return list of moving boxes
+	 * @return List<int[]>
+	 * @author Eujin Ko
+	 */
+	public List<int[]> returnMovingBoxes() {
+		return this.view_model.returnMovingBoxes();
+	}
 
+	/**
+	 * Adds list(coordinates) of moving Boxes to the mainViewModel
+	 * @param coordinate, int[] coordinate of moving boxe
+	 * @author Eujin Ko
+	 */
+	public void addMovingBoxes(int[] coordinate) {
+		this.view_model.addMovingBox(coordinate);
+		
+	}
+	
+	
 	
 	/**
 	 * Returns the player model
@@ -166,9 +207,16 @@ public class ModelCollections  extends Observable {
 		return controllerCollections.returnViewModelController().healthStatus();
 	}
 
-
+	/**
+	 * 
+	 * @author Eujin Ko
+	 */
 	private void moveProjectiles() {
+		
+		
 		// TODO
 		
 	}
+
 }
+
