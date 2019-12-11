@@ -736,12 +736,21 @@ public class PuzzlePlatformerView extends Application implements Observer {
 
 		});
 	}
+	/**
+	 * Moves box to the direction, when it hits the wall, then it disappears
+	 * @param curr
+	 * @param moving_box_direction
+	 * @param moving_box_coordinate
+	 * @author Eujin Ko
+	 */
 	public void moveBoxToDirection(Node curr, String moving_box_direction, int[] moving_box_coordinate) {
 		if(moving_box_direction==null || moving_box_coordinate==null) {
 			return;
 		}
 		int x = moving_box_coordinate[0]*unit_size;
 		int y = moving_box_coordinate[1]*unit_size;
+		int char_h = controller.returnMainCharacterController().returnCharacterHeight();
+		int char_w = controller.returnMainCharacterController().returnCharacterWidth();
 //		System.out.println("MOVING BOX: "+x+","+y);
 	    Path path = new Path();
 	    path.getElements().add(new MoveTo(x, y));
@@ -750,6 +759,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	    	//IF THERE EXITS, THEN PUT BACK WHERE IT WAS
 	    	if(moving_box_direction.equals("right")) {
 	    		if(node.getLayoutX() == x+unit_size && node.getLayoutY() == y) {
+		    		System.out.println("!!!!!!!!!!!!!1");
 		            grid.add(curr,moving_box_coordinate[0],moving_box_coordinate[1]);
 		    	    path.getElements().add(new LineTo(x, y));
 		    	    movingBoxTransition(path,curr);
@@ -759,9 +769,10 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	    	}
 	    	if(moving_box_direction.equals("left")) {
 	    		if(node.getLayoutX() == x-unit_size && node.getLayoutY() == y) {
+		    		System.out.println("!!!!!!!!!!!!!1");
 		            grid.add(curr,moving_box_coordinate[0],moving_box_coordinate[1]);
-		    	    path.getElements().add(new MoveTo(x, y));
-		    	    movingBoxTransition(path,curr);	
+		    	    path.getElements().add(new LineTo(x, y));
+		    	    movingBoxTransition(path,curr);
 					movingBoxes.add(new int[] {moving_box_coordinate[0],moving_box_coordinate[1]});
 		    	    return;
 		        }
@@ -783,7 +794,7 @@ public class PuzzlePlatformerView extends Application implements Observer {
 			movingBoxes.add(new int[] {moving_box_coordinate[0]+1,moving_box_coordinate[1]});
             grid.add(curr,moving_box_coordinate[0]+1,moving_box_coordinate[1]);
             
-    	}else if (moving_box_direction.equals("left")){
+    	}else if(moving_box_direction.equals("left")) {
     		if(x-unit_size<0) {
 	            grid.add(curr,moving_box_coordinate[0],moving_box_coordinate[1]);
 	    	    path.getElements().add(new LineTo(x, y));
@@ -792,18 +803,20 @@ public class PuzzlePlatformerView extends Application implements Observer {
 	    	    return;
     		}
     		System.out.println("MOVE BOX(MOVE_DIR)-left: "+(moving_box_coordinate[0]-1)+","+(moving_box_coordinate[1]));
-    	    path.getElements().add(new LineTo(x-unit_size, y));
+    	    path.getElements().add(new MoveTo(x-unit_size, y));
     	    movingBoxTransition(path,curr);	
-			movingBoxes.add(new int[] {moving_box_coordinate[0]-1,moving_box_coordinate[0]});
-            grid.add(curr,moving_box_coordinate[0]-1,moving_box_coordinate[0]);
+			movingBoxes.add(new int[] {moving_box_coordinate[0]-1,moving_box_coordinate[1]});
+            grid.add(curr,moving_box_coordinate[0]-1,moving_box_coordinate[1]);
+            
     	}
+    	
 	}
 	/**
-	 * 
+	 * Remove the box in the coordinate
 	 * @param moving_box_direction
 	 * @param moving_box_coordinate
 	 * @author Eujin Ko
-	 * @return 
+	 * @return returns the node removed from the gridpane
 	 */
 	public Node removeBox(String moving_box_direction, int[] moving_box_coordinate) {
 		if(moving_box_direction==null || moving_box_coordinate==null) {

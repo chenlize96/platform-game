@@ -101,7 +101,7 @@ public class MainCharacterController {
 
 		
 		
-		checkIfCollisionWithMovingBox(handleX,after_x,after_y);
+		checkIfCollisionWithMovingBox(after_x,after_y);
 		
 		//1. Checks Collision on Walls
 		if(after_x < 0) {
@@ -254,6 +254,13 @@ public class MainCharacterController {
 		return y_pos;
 //		return 300;
 	}
+	public int returnCharacterHeight() {
+		return character_model.getCharSizeHeight();
+	}
+	public int returnCharacterWidth() {
+		return character_model.getCharSizeWidth();
+	}
+	
 	/**
 	 * Checks if there's collision with moving box
 	 * @param handleX x coordinate, which will move by the character in future
@@ -261,11 +268,12 @@ public class MainCharacterController {
 	 * @param after_y y coordinate, where to move the character
 	 * @author Eujin Ko
 	 */
-	public void checkIfCollisionWithMovingBox(int handleX, int after_x, int after_y) {
+	public void checkIfCollisionWithMovingBox(int after_x, int after_y) {
 		int char_width = character_model.getCharSizeWidth();
 		int char_height = character_model.getCharSizeHeight();
 		int curr_x = character_model.getCordX();
 		int curr_y = character_model.getCordY();
+
 		//Collision with moving boxes
 		for(int[] coord: main_controller.returnMovingBoxes()) {
 			int x = coord[0]*unit_size;
@@ -273,7 +281,7 @@ public class MainCharacterController {
 			if(x<= after_x+char_width+1 && after_x-1<=x+unit_size) {
 				if(y < after_y+char_height+1 && after_y-1 < y+unit_size) {
 					System.out.println("MOVING BOX(after_y): "+after_y+" right"+(curr_y+char_height+1));
-					if(handleX>=0) {
+					if(x>=after_x) {
 						main_controller.returnViewModelController().movingBoxPopAndAddToStack("right",coord);
 						return;
 					}else {
