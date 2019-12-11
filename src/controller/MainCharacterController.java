@@ -275,6 +275,9 @@ public class MainCharacterController {
 		int curr_y = character_model.getCordY();
 
 		//Collision with moving boxes
+		if(main_controller.returnMovingBoxes()==null) {
+			return;
+		}
 		for(int[] coord: main_controller.returnMovingBoxes()) {
 			int x = coord[0]*unit_size;
 			int y = coord[1]*unit_size;
