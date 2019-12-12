@@ -42,6 +42,15 @@ public class MainCharacterController {
 	}
 	
 	/**
+	 * to make monsters empty
+	 * @author Suyang Chen
+	 */
+	
+	public void refreshMonster() {
+		this.monsters = new MonsterController();
+	}
+	
+	/**
 	 * Calls the MainCharacterModel's function to move the position of the character
 	 * @param window_width width size of the window
 	 * @param window_height height size of the window

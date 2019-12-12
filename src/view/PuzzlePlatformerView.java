@@ -269,11 +269,15 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 	
 	public void addMonster() {
 		if (level == EASY) {
+			character_controller.refreshMonster();
 			character_controller.addMonster(new StaticMonsterModel(452, 315, unit_size, 0));
 		}else if(level == MEDIUM) {
+			character_controller.refreshMonster();
 			character_controller.addMonster(new StaticMonsterModel(452, 315, unit_size, 0));
 			character_controller.addMonster(new HorizontalMonsterModel(510, 354, 110, 3));
 		}else {
+			character_controller.refreshMonster();
+			character_controller.addMonster(new HorizontalMonsterModel(510, 354, 110, 3));
 			
 		}
 	}
