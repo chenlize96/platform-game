@@ -1,6 +1,6 @@
 package model;
 
-import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +9,7 @@ import java.util.Map;
 /**
  * View Model which contains information how many health left and the coordinate of exit, starting position of character
  * @author Eujin Ko
+ * @author Lize Chen
  *
  */
 public class MainViewModel {
@@ -37,10 +38,15 @@ public class MainViewModel {
 	}
 	
 	
-	//lize  only handle five keys but i think enough
+	/**
+	 * this function is to handle up to five keys
+	 * @param keys - the coordinates of keys
+	 * @author Lize Chen
+	 */
 	public void setKeyPosition(int[] keys) {
 		this.keys = keys; 
 	}
+	
 	/**
 	 * This removes the box in the coordinate
 	 * @param coordinate
@@ -113,22 +119,39 @@ public class MainViewModel {
 	public List<int[]> returnMovingBoxes(){
 		return this.movingBoxes;
 	}
-	//lize
+
+	/**
+	 * this function is to set the position of portal
+	 * @param portal - the coordinates of portal
+	 * @author Lize Chen
+	 */
 	public void setPortalPosition(int[] portal) {
 		this.portal = portal;
 	}
 	
-	//lize 
+	/**
+	 * this function is to return the position of portal
+	 * @return int[]
+	 * @author Lize Chen
+	 */
 	public int[] returnPortalPosition() {
 		return portal;
 	}
 	
-	//lize
+	/**
+	 * this function is to return the position of key
+	 * @return int[]
+	 * @author Lize Chen
+	 */
 	public int[] returnKeysPosition() {
 		return this.keys;
 	}
 	
-	//lize 
+	/**
+	 * this function is to set the health
+	 * @param left - the health left
+	 * @author Lize Chen
+	 */ 
 	public void setHealthLeft(int left) {
 		this.health_left = left;
 	}
