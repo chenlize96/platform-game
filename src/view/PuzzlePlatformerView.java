@@ -497,6 +497,7 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 			controller.callModelAddPortal(portal);
 		}
 		addMonster();
+		controller.callModelAddMovingBoxes(movingBoxes);
 	}
 	
 	
