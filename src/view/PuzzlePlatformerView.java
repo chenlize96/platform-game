@@ -60,6 +60,7 @@ import javafx.scene.shape.Path;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import message.CharacterMoveMessage;
 import message.CollectionsMessage;
@@ -80,6 +81,12 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 	public final int MEDIUM = 124;
 	public final int HARD = 125;
 	public final int HARD_PART2 = 126;
+	
+	//IMAGES
+	
+	
+	
+	//IMAGES-END
 	
 	private int[] startpoint = {0,0};
 	private int[] exitpoint = {0,0};
@@ -509,6 +516,14 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" }) // do not modify this line
 	public Scene setUpStage(Stage stage) {
+		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+	        @Override
+	        public void handle(WindowEvent e) {
+	        	animationTimer.stop();
+	        	timeline.stop();
+	        	stage.close();
+	        }
+	     });
 		readFile(null); ////***********************************************
 		// make menu
 		Menu menu = new Menu("File"); 
@@ -561,7 +576,7 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 		mb.getMenus().add(menu); 
 		// grid holds map
 		grid = new GridPane();
-		grid.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
+		grid.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, null, null)));
 		grid.setPrefSize( WINDOW_WIDTH, WINDOW_HEIGHT ); // not sure its best size
 		// info contains hearts, time, bag (use vbox instead of BorderPane)
 		VBox info = new VBox();
@@ -628,6 +643,12 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 		BorderPane p = new BorderPane();
 		p.setCenter(grid); p.setTop(mb); p.setRight(info);
 		// there should be someway to zoom up automatically without influencing coordinates (do later or ignore)
+
+		ImageView background = new ImageView("img/desert_background.jpg");
+		background.setFitWidth(WINDOW_WIDTH);
+		background.setFitHeight(WINDOW_HEIGHT+unit_size);
+		root.getChildren().add(background);
+		
 		root.getChildren().add(p);
 		root.getChildren().add(character);
 		//**********************************************
