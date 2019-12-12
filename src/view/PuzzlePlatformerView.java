@@ -77,14 +77,21 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 	final int ticksPerFrame = 1;
 	final int MOVE_SIZE = 5;
 	
+	public final int WORLD1 = 0;
+	public final int WORLD2 = 1;
 	public final int EASY = 123;
 	public final int MEDIUM = 124;
 	public final int HARD = 125;
 	public final int HARD_PART2 = 126;
+	public final int EASY_2 = 127;
+	public final int MEDIUM_2 = 128;
+	public final int HARD_2 = 129;
 	
 	//IMAGES
-	
-	
+	public String[] background_images = {"img/desert_background.jpg","img/sea_background.jpg"};
+	public String[] tile_images = {"img/wall.png","img/square_rock.jpg"};
+	public String[] moving_box_images = {"img/moving_obstacle.png","img/coral.jpg"};
+	public ImageView background;
 	
 	//IMAGES-END
 	
@@ -96,6 +103,7 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 	private int[] doors = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100}; // five doors
 	private List<int[]> movingBoxes = new ArrayList<>();
 	
+	public int world = WORLD1;
 	public int level = EASY; // default is easy
 	private int keyNum = 0;
 	
@@ -150,6 +158,12 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 				map = getMap("PublicTestCases/hard.txt");
 			}else if (level == HARD_PART2) {
 				map = getMap("PublicTestCases/hardPart2.txt"); 
+			}else if (level == EASY_2) {
+				map = getMap("PublicTestCases/world2_basic.txt");// default
+			}else if (level == MEDIUM_2) {
+				map = getMap("PublicTestCases/world2_medium.txt");
+			}else if (level == HARD_2) {
+				map = getMap("PublicTestCases/world2_hard.txt");
 			}
 		}else {
 			map = input;
@@ -264,6 +278,7 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 		}
 	}
 	
+
 	/**
 	 * build level selection
 	 * @param stage
@@ -289,10 +304,13 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 			public void handle(ActionEvent event) {
 				if(r1.isSelected()) {
 					level = EASY;
+					view.world = view.WORLD1;
 				}else if (r2.isSelected()) {
 					level = MEDIUM;
+					view.world = view.WORLD1;
 				}else if (r3.isSelected()) {
 					level = HARD;
+					view.world = view.WORLD1;
 				}
 				System.out.println("Current Level: " + level);
 				selection.close();
@@ -377,13 +395,14 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 	 */
 	public void drawMap() {
 		// clear all things on grid
+//		root.getChildren().remove(background);
 		grid.getChildren().clear();
 		for (int i = 0; i < map.length; i++) {
 			for (int j = 0; j < map[0].length; j++) {
 				if (map[i][j] == '*') {
 					Canvas canvas = new Canvas(unit_size, unit_size); 
 					GraphicsContext gc = canvas.getGraphicsContext2D();
-					Image wall = new Image("img/wall.png");
+					Image wall = new Image(tile_images[world]);
 					//TEST
 					canvas.setOnMouseClicked(new EventHandler() {
 						@Override
@@ -448,7 +467,7 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 				else if (map[i][j] == 'O') {
 					Canvas canvas = new Canvas(unit_size, unit_size); 
 					GraphicsContext gc = canvas.getGraphicsContext2D();
-					Image monster = new Image("img/moving_obstacle.png"); 
+					Image monster = new Image(moving_box_images[world]); 
 					gc.drawImage(monster, 0, 0, unit_size, unit_size); 
 					grid.add(canvas, j, i);
 					movingBoxes.add(new int[] {j,i});
@@ -509,7 +528,9 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 				}
 			}
 		}
+		background = new ImageView(background_images[world]);
 		root.getChildren().addAll(wall1,wall2,wall3,wall4);
+//		root.getChildren().add(background);
 		setUpController();	
 	}
 
@@ -668,7 +689,7 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 		p.setCenter(grid); p.setTop(mb); p.setRight(info);
 		// there should be someway to zoom up automatically without influencing coordinates (do later or ignore)
 
-		ImageView background = new ImageView("img/desert_background.jpg");
+		background = new ImageView(background_images[world]);
 		background.setFitWidth(WINDOW_WIDTH);
 		background.setFitHeight(WINDOW_HEIGHT+unit_size);
 		root.getChildren().add(background);
@@ -732,7 +753,11 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 	private void handleCharacterVelocity() {
 		int moveX=0; int moveY=0;
 		if(JUMP && character_controller.returnJumpStatus() == false) {
-			moveY = -MOVE_SIZE*10;
+			if(world == 1) {
+				moveY = -MOVE_SIZE*20;
+			}else {
+				moveY = -MOVE_SIZE*10;
+			}
 			character_controller.toggleJumpStatus();
 		}
 //		else if(UP) {
@@ -742,10 +767,18 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 //		}
 		
 		if(RIGHT) {
-			moveX = MOVE_SIZE;
+			if(world == 1) {
+				moveX = MOVE_SIZE;
+			}else {
+				moveX = MOVE_SIZE;
+			}
 		}
 		if(LEFT) {
-			moveX = -MOVE_SIZE;
+			if(world == 1) {
+				moveX = -MOVE_SIZE;
+			}else {
+				moveX = -MOVE_SIZE;
+			}
 		}
 		character_controller.addVelocity(moveX, moveY);
 	}

@@ -28,9 +28,11 @@ import javafx.stage.Stage;
 
 public class GameMenuView extends Application{
 	PuzzlePlatformerView puzzle_view;
-	public static void main(String[] args) {
-		launch(args);
-	}
+	/**
+	 * Creates the content of the Game Menu
+	 * @return parent, contains the buttons/background image
+			 * @author Eujin Ko
+	 */
 	@SuppressWarnings("unchecked")
 	private Parent createContent() {
 		Pane root = new Pane();
@@ -74,7 +76,7 @@ public class GameMenuView extends Application{
 			}
 			
 			/**
-			 * 
+			 * Setups level slection stage
 			 * @param selection
 			 * @param view
 			 * @author Eujin Ko
@@ -95,30 +97,42 @@ public class GameMenuView extends Application{
 				HBox hbox1 = new HBox(label1, r1, r2, r3);
 				
 				// create radiobuttons for world 2
-				Label label1_2 = new Label("World1:");
+				Label label1_2 = new Label("World2:");
 				RadioButton r1_2 = new RadioButton("Easy"); 
 				RadioButton r2_2 = new RadioButton("Medium");
 				RadioButton r3_2 = new RadioButton("Hard");
 				r1_2.setSelected(true);
-				ToggleGroup tg1_2 = new ToggleGroup(); 
-				r1_2.setToggleGroup(tg1_2); 
-				r2_2.setToggleGroup(tg1_2);
-				r3_2.setToggleGroup(tg1_2);
+				r1_2.setToggleGroup(tg1); 
+				r2_2.setToggleGroup(tg1);
+				r3_2.setToggleGroup(tg1);
 				HBox hbox1_2 = new HBox(label1_2, r1_2, r2_2, r3_2);
 				
 				hbox1.setSpacing(10);
 				hbox1_2.setSpacing(10);
 				// set buttons
 				Button b1 = new Button("OK");
+				
 				b1.setOnAction(new EventHandler<ActionEvent>() {
 					@Override
 					public void handle(ActionEvent event) {
 						if(r1.isSelected()) {
 							view.level = view.EASY;
+							view.world = view.WORLD1;
 						}else if (r2.isSelected()) {
 							view.level = view.MEDIUM;
+							view.world = view.WORLD1;
 						}else if (r3.isSelected()) {
 							view.level = view.HARD;
+							view.world = view.WORLD1;
+						}else if(r1_2.isSelected()) {
+							view.level = view.EASY_2;
+							view.world = view.WORLD2;
+						}else if (r2_2.isSelected()) {
+							view.level = view.MEDIUM_2;
+							view.world = view.WORLD2;
+						}else if (r3_2.isSelected()) {
+							view.level = view.HARD_2;
+							view.world = view.WORLD2;
 						}
 						System.out.println("Current level: "+ view.level);
 						selection.close();
@@ -134,7 +148,7 @@ public class GameMenuView extends Application{
 				});
 				HBox hbox2 = new HBox(b1, b2);
 				hbox2.setAlignment(Pos.CENTER); hbox2.setSpacing(20);
-				VBox vbox = new VBox(hbox1, hbox2);
+				VBox vbox = new VBox(hbox1,hbox1_2, hbox2);
 				vbox.setSpacing(30);
 				vbox.setPadding(new Insets(30));
 				BorderPane p2 = new BorderPane();
@@ -162,9 +176,10 @@ public class GameMenuView extends Application{
 	}
 
 	
-	
-	
-
+	/**
+	 * starts the stage
+	 * @author Eujin Ko
+	 */
 	@Override
 	public void start(Stage stage) throws Exception {
 		Parent root = createContent();
