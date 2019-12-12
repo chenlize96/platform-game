@@ -4,11 +4,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Observer;
 
-import javafx.scene.Group;
-import javafx.scene.layout.GridPane;
+
 import message.DataMessage;
-//import message.DataMessage;
-import model.HorizontalMonsterModel;
 import model.ModelCollections;
 import view.PuzzlePlatformerView;
 
@@ -16,6 +13,7 @@ import view.PuzzlePlatformerView;
  * Controller for ModelCollections
  * Creates all the controller inside the class and returns the controller if needed
  * @author Eujin Ko
+ * @author Lize Chen
  *
  */
 public class ControllerCollections {
@@ -67,12 +65,20 @@ public class ControllerCollections {
 		view_controller = new MainViewModelController(model.returnViewModel());
 	}
 	
-	//lize
+	/**
+	 * add portal to the MainViewModel
+	 * @author Lize Chen
+	 * @param portal - coordinate of the portal
+	 */
 	public void callModelAddPortal(int[] portal) {
 		model.returnViewModel().setPortalPosition(portal);
 	}
 	
-	//lize
+	/**
+	 * add keys to the MainViewModel
+	 * @author Lize Chen
+	 * @param keys - coordinates of some keys
+	 */
 	public void callModelAddKeys(int[] keys) {
 		model.returnViewModel().setKeyPosition(keys);
 	}
@@ -122,9 +128,15 @@ public class ControllerCollections {
 		model.tick();
 	}
 	
-	//lize
+	/**
+	 * save the data
+	 * @author Lize Chen
+	 * @param map - the map
+	 * @param keyNum - the number of keys
+	 * @param healthLeft - the number of hearts
+	 * @param timeSeconds - countdown
+	 */
 	public void save(char[][] map, int keyNum, int healthLeft, int timeSeconds) {
-		// build new class here
 		DataMessage data = new DataMessage();
 		data.setHealth(healthLeft);data.setKey(keyNum);
 		data.setMap(map);data.setTime(timeSeconds);
@@ -136,13 +148,17 @@ public class ControllerCollections {
 		}
 
 	}
-	//lize
+
+	/**
+	 * load the data
+	 * @author Lize Chen
+	 * @return DataMessage
+	 */
 	public DataMessage load(){
 		ReadAndWrite saveFile = new ReadAndWrite();
 		try {
 			return saveFile.readData();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
