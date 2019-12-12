@@ -108,10 +108,6 @@ public class GameMenuView extends Application{
 						}
 						System.out.println("Current level: "+ view.level);
 						selection.close();
-						view.readFile(null); //get new map
-						view.drawMap(); // update new map
-						view.timeSeconds = 300; // reset countdown
-						view.animationTimer.start();
 					}
 				});
 				Button b2 = new Button("Cancel");
