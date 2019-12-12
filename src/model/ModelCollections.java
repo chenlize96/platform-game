@@ -1,12 +1,10 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+
 import java.util.List;
 import java.util.Observable;
 
 import controller.ControllerCollections;
-import controller.MainCharacterController;
 import message.CharacterMoveMessage;
 import message.CollectionsMessage;
 
@@ -182,14 +180,22 @@ public class ModelCollections  extends Observable {
 		
 	}
 
-	//lize
+	/**
+	 * Checks if there is a key
+	 * @return int
+	 * @author Lize Chen
+	 */
 	private int checkForKey() {
 		int[] keys = controllerCollections.returnViewModelController().returnKeyPosition();
 		int k = controllerCollections.returnMainCharacterController().checkIfThereIsAKey(keys);
 		return k;
 	}
 	
-	//lize
+	/**
+	 * Checks if there is a portal
+	 * @return boolean
+	 * @author Lize Chen
+	 */
 	private boolean checkForPortal() {
 		boolean ifPortal = false;
 		int[] portal = controllerCollections.returnViewModelController().returnPortalPosition();
