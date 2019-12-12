@@ -20,9 +20,21 @@ import javafx.util.Duration;
 
 
 public class HorizontalMonsterModel extends MonsterModel {
+	private int count;
+	private int len;
 	public HorizontalMonsterModel(int i, int j, int unit_size, int velocity) {
 		// TODO Auto-generated constructor stub
 		super(i, j, unit_size, velocity);
+		count = i;
+		len = 0;
+	}
+	
+	@Override
+	public void moveRight() {
+		len  += this.getVelocity();
+		len %= this.size;
+		System.out.println(len);
+		this.setX(count + len);
 	}
 	
 }

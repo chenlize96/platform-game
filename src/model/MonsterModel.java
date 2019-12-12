@@ -5,10 +5,10 @@ package model;
  *
  */
 public class MonsterModel {
-	private int x;
-	private int y;
-	private int size;
-	private int velocity;
+	protected int x;
+	protected int y;
+	protected int size;
+	protected int velocity;
 	
 	public MonsterModel(int x, int y, int size, int velocity) {
 		this.x = x;
@@ -17,12 +17,24 @@ public class MonsterModel {
 		this.velocity = velocity;
 	}
 	
+	public void setX(int x) {
+		this.x = x;
+	}
+	
+	public void sety(int y) {
+		this.y = y;
+	}
+	
 	public int getX() {
 		return this.x;
 	}
 	
 	public int getY() {
 		return this.y;
+	}
+	
+	public int getVelocity() {
+		return this.velocity;
 	}
 	
 	public void moveLeft() {
