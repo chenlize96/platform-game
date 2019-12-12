@@ -132,9 +132,9 @@ public class MainCharacterController {
 		
 		// Collision with the monster
 		for(MonsterModel each: monsters.getMonster()) {
-//			System.out.println(each.getX()+ " , " + each.getY()+"|"+after_x + " , " + after_y);
-			if ((each.getX() + 30 >=  after_x && each.getX() - 15 <= after_x && each.getY()==after_y) || 
-					(each.getX() == after_x && each.getY() - 25 == after_y)) {
+			//System.out.println(each.getX()+ " , " + each.getY()+"|"+after_x + " , " + after_y);
+			if ((each.getX() + 25 >=  after_x && each.getX() - 25 <= after_x && each.getY() - 36 == after_y) || 
+					(each.getX() + 25 >=  after_x && each.getX() - 25 <= after_x && each.getY() == after_y)) {
 				after_y= window_height-char_height/2;
 //				System.out.println("Monster COLLISON("+after_x+","+after_y+")");
 				main_controller.returnViewModelController().decreaseHealth();

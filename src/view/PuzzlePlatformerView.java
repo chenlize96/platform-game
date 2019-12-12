@@ -235,9 +235,9 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 	
 	public void addMonster() {
 		if (level == EASY) {
-			character_controller.addMonster(new StaticMonsterModel(445, 315, unit_size, 0));
+			character_controller.addMonster(new StaticMonsterModel(452, 315, unit_size, 0));
 		}else if(level == MEDIUM) {
-			character_controller.addMonster(new HorizontalMonsterModel(445, 315, 100, 3));
+			character_controller.addMonster(new HorizontalMonsterModel(500, 395, 100, 3));
 		}else {
 			
 		}
@@ -408,15 +408,15 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 						}
 					}
 				}
-//				else if (map[i][j] == 'M') {
-//
-//					Canvas canvas = new Canvas(unit_size, unit_size); 
-//					GraphicsContext gc = canvas.getGraphicsContext2D();
-//					Image monster = new Image("img/Static.png"); 
-//					gc.drawImage(monster, 0, 0, unit_size, unit_size); 
-//					grid.add(canvas, j, i);
-//
-//				}
+				else if (map[i][j] == 'M') {
+
+					Canvas canvas = new Canvas(unit_size, unit_size); 
+					GraphicsContext gc = canvas.getGraphicsContext2D();
+					Image monster = new Image("img/Static.png"); 
+					gc.drawImage(monster, 0, 0, unit_size, unit_size); 
+					grid.add(canvas, j, i);
+
+				}
 				else if (map[i][j] == 'O') {
 					Canvas canvas = new Canvas(unit_size, unit_size); 
 					GraphicsContext gc = canvas.getGraphicsContext2D();
