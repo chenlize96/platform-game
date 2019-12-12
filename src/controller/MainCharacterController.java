@@ -1,8 +1,6 @@
 package controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
 
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
@@ -10,12 +8,12 @@ import message.CharacterMoveMessage;
 import model.MainCharacterModel;
 import view.PuzzlePlatformerView;
 import model.MonsterModel;
-import model.StaticMonsterModel;
 import controller.MonsterController;
 
 /**
  * Controller for the MainCharacterModel
  * @author Eujin Ko
+ * @author Lize Chen
  *
  */
 public class MainCharacterController {
@@ -323,7 +321,12 @@ public class MainCharacterController {
 		return false;
 	}
 	
-	//lize
+	/**
+	 * Checks if there is a key
+	 * @param keys - the coordinates of keys
+	 * @return int
+	 * @author Lize Chen
+	 */
 	public int checkIfThereIsAKey(int[] keys) {
 		int char_width = character_model.getCharSizeWidth();
 		int char_height = character_model.getCharSizeHeight();
@@ -345,7 +348,12 @@ public class MainCharacterController {
 	}
 	
 	
-	//lize
+	/**
+	 * Checks if there is a portal
+	 * @param portal - the coordinate of portal
+	 * @return boolean
+	 * @author Lize Chen
+	 */
 	public boolean checkIfThereIsAPortal(int[] portal) {
 		int char_width = character_model.getCharSizeWidth();
 		int curr_x = character_model.getCordX();
@@ -362,7 +370,11 @@ public class MainCharacterController {
 	}
 	
 	
-	//lize
+	/**
+	 * return the position of player
+	 * @return MainCharacterModel
+	 * @author Lize Chen
+	 */
 	public MainCharacterModel getPlayerPosition() {
 		return character_model;
 	}
@@ -395,7 +407,6 @@ public class MainCharacterController {
 	}
 
 	public void addMonster(MonsterModel MonsterModel) {
-		// TODO Auto-generated method stub
 		monsters.addMonster(MonsterModel);
 	}
 	
