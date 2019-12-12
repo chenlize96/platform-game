@@ -565,7 +565,7 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 				keyNum = temp.returnKey();
 				itemKeyNum.setText(" x " + keyNum);
 				timeSeconds = temp.returnTime();
-				updateHealth(temp.returnHealth());
+				controller.returnViewModelController().setHealthStatus(temp.returnHealth());
 				animationTimer.start();
 			}
 		});
