@@ -392,6 +392,7 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 	 * @author Lize Chen
 	 */
 	public void drawMap() {
+		root.getChildren().add(character);
 		// clear all things on grid
 //		root.getChildren().remove(background);
 		grid.getChildren().clear();
@@ -679,7 +680,7 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 		root.getChildren().add(background);
 		
 		root.getChildren().add(p);
-		root.getChildren().add(character);
+		//root.getChildren().add(character);
 		//**********************************************
 		drawMap();
 		//**********************************************
