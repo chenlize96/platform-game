@@ -38,8 +38,8 @@ public class GameMenuView extends Application{
 		ImageView background = new ImageView(new Image("img/game_background.jpg"));
 		
 
-		background.setFitHeight(700);
-		background.setFitWidth(1200);
+		background.setFitHeight(500);
+		background.setFitWidth(700);
 		
 
 		
@@ -82,8 +82,8 @@ public class GameMenuView extends Application{
 			 */
 			public void setUpLevelSelection(Stage selection, PuzzlePlatformerView view) {
 				Insets insets = new Insets(CHAR_SIZE+5,CHAR_SIZE+5,0,CHAR_SIZE+5);
-				Label label1 = new Label("Level:");
-				// create radiobuttons 
+				// create radiobuttons for world 1
+				Label label1 = new Label("World1:");
 				RadioButton r1 = new RadioButton("Easy"); 
 				RadioButton r2 = new RadioButton("Medium");
 				RadioButton r3 = new RadioButton("Hard");
@@ -93,7 +93,21 @@ public class GameMenuView extends Application{
 				r2.setToggleGroup(tg1);
 				r3.setToggleGroup(tg1);
 				HBox hbox1 = new HBox(label1, r1, r2, r3);
-				hbox1.setSpacing(20);
+				
+				// create radiobuttons for world 2
+				Label label1_2 = new Label("World1:");
+				RadioButton r1_2 = new RadioButton("Easy"); 
+				RadioButton r2_2 = new RadioButton("Medium");
+				RadioButton r3_2 = new RadioButton("Hard");
+				r1_2.setSelected(true);
+				ToggleGroup tg1_2 = new ToggleGroup(); 
+				r1_2.setToggleGroup(tg1_2); 
+				r2_2.setToggleGroup(tg1_2);
+				r3_2.setToggleGroup(tg1_2);
+				HBox hbox1_2 = new HBox(label1_2, r1_2, r2_2, r3_2);
+				
+				hbox1.setSpacing(10);
+				hbox1_2.setSpacing(10);
 				// set buttons
 				Button b1 = new Button("OK");
 				b1.setOnAction(new EventHandler<ActionEvent>() {
@@ -127,7 +141,7 @@ public class GameMenuView extends Application{
 				p2.setCenter(vbox);
 				hbox1.setAlignment(Pos.CENTER_LEFT);
 				selection.setTitle("Level Selection");
-				Scene scene = new Scene(p2, 320, 120); // best size
+				Scene scene = new Scene(p2, 400, 180); // best size
 				selection.setScene(scene);
 				selection.showAndWait();
 			}
@@ -135,21 +149,14 @@ public class GameMenuView extends Application{
 			
 		});
 		
-		ImageView load = new ImageView(new Image("img/game_load.png"));
-		load.setFitHeight(50);
-		load.setFitWidth(300);
-		load.setTranslateX(250);
-		load.setTranslateY(320);
-		
 		ImageView help = new ImageView(new Image("img/game_help.png"));
 		help.setFitHeight(50);
 		help.setFitWidth(300);
 		help.setTranslateX(250);
-		help.setTranslateY(410);
-
+		help.setTranslateY(320);
 
 		
-		root.getChildren().addAll(background,start,load,help);
+		root.getChildren().addAll(background,start,help);
 		
 		return root;
 	}
