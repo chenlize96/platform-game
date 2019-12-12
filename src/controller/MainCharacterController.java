@@ -293,7 +293,7 @@ public class MainCharacterController {
 			int y = coord[1]*unit_size;
 			if(x<= after_x+char_width+1 && after_x-1<=x+unit_size) {
 				if(y < after_y+char_height+1 && after_y-1 < y+unit_size) {
-					System.out.println("MOVING BOX(after_y): "+after_y+" right"+(curr_y+char_height+1));
+//					System.out.println("MOVING BOX(after_y): "+after_y+" right"+(curr_y+char_height+1));
 					if(x>=after_x) {
 						main_controller.returnViewModelController().movingBoxPopAndAddToStack("right",coord);
 						return;
@@ -370,7 +370,7 @@ public class MainCharacterController {
 		for (int k = 0; k < portal.length / 2; k++) {
 			if (portal[k * 2] <= curr_x+char_width+1 && portal[k * 2] + unit_size >= curr_x-1) {
 				if (portal[k * 2 + 1] <= curr_y+1 && portal[k * 2 + 1] + unit_size >= curr_y-1) {
-					System.out.println("portal STATUS: x = "+curr_x+", y = "+curr_y);
+//					System.out.println("portal STATUS: x = "+curr_x+", y = "+curr_y);
 					return true; 
 				}
 			}

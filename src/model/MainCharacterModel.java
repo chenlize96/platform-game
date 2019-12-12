@@ -83,6 +83,27 @@ public class MainCharacterModel{
 		return this.cord_y;
 	}
 	
+	
+	/**
+	 * set x position of the character
+
+	 * @author Lize Chen
+	 */
+	public void setCordX(int x) {
+		this.cord_x = x;
+	}
+
+	/**
+	 * set y position of the character
+	 * @return int
+	 * @author Lize Chen
+	 */
+	public void setCordY(int y) {
+		this.cord_y = y;;
+	}
+	
+	
+	
 	/**
 	 * Returns character width size
 	 * @return int

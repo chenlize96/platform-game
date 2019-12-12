@@ -10,19 +10,14 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuBar;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.effect.SepiaTone;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -33,18 +28,12 @@ public class GameMenuView extends Application{
 	 * @return parent, contains the buttons/background image
 			 * @author Eujin Ko
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private Parent createContent() {
-		Pane root = new Pane();
-		
-		ImageView background = new ImageView(new Image("img/game_background.jpg"));
-		
-
+		Pane root = new Pane();		
+		ImageView background = new ImageView(new Image("img/game_background.jpg"));	
 		background.setFitHeight(500);
 		background.setFitWidth(700);
-		
-
-		
 		ImageView start = new ImageView(new Image("img/game_start.png"));
 		start.setFitHeight(50);
 		start.setFitWidth(300);
@@ -53,23 +42,19 @@ public class GameMenuView extends Application{
 		start.setOnMouseClicked(new EventHandler() {
 			boolean close;
 			int CHAR_SIZE = 25;
-
 			@Override
 			public void handle(Event args) {
 				close = false;
 				puzzle_view = new PuzzlePlatformerView();
 				puzzle_view.initModality(Modality.APPLICATION_MODAL);
 				puzzle_view.setResizable(false);
-				
 				setUpLevelSelection(new Stage(),puzzle_view);
-				
 				if(close) {
 					return;
 				}
 				try {
 					puzzle_view.start();
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					System.out.println("UNABLE TO LOAD THE GAME");
 				}
 				
@@ -83,9 +68,10 @@ public class GameMenuView extends Application{
 			 * @author Lize
 			 */
 			public void setUpLevelSelection(Stage selection, PuzzlePlatformerView view) {
+				@SuppressWarnings("unused")
 				Insets insets = new Insets(CHAR_SIZE+5,CHAR_SIZE+5,0,CHAR_SIZE+5);
 				// create radiobuttons for world 1
-				Label label1 = new Label("World1:");
+				Label label1 = new Label("Desert World:");
 				RadioButton r1 = new RadioButton("Easy"); 
 				RadioButton r2 = new RadioButton("Medium");
 				RadioButton r3 = new RadioButton("Hard");
@@ -95,23 +81,19 @@ public class GameMenuView extends Application{
 				r2.setToggleGroup(tg1);
 				r3.setToggleGroup(tg1);
 				HBox hbox1 = new HBox(label1, r1, r2, r3);
-				
 				// create radiobuttons for world 2
-				Label label1_2 = new Label("World2:");
+				Label label1_2 = new Label("Ocean World:");
 				RadioButton r1_2 = new RadioButton("Easy"); 
 				RadioButton r2_2 = new RadioButton("Medium");
 				RadioButton r3_2 = new RadioButton("Hard");
-				r1_2.setSelected(true);
 				r1_2.setToggleGroup(tg1); 
 				r2_2.setToggleGroup(tg1);
 				r3_2.setToggleGroup(tg1);
-				HBox hbox1_2 = new HBox(label1_2, r1_2, r2_2, r3_2);
-				
+				HBox hbox1_2 = new HBox(label1_2, r1_2, r2_2, r3_2);				
 				hbox1.setSpacing(10);
 				hbox1_2.setSpacing(10);
 				// set buttons
 				Button b1 = new Button("OK");
-				
 				b1.setOnAction(new EventHandler<ActionEvent>() {
 					@Override
 					public void handle(ActionEvent event) {
@@ -134,7 +116,7 @@ public class GameMenuView extends Application{
 							view.level = view.HARD_2;
 							view.world = view.WORLD2;
 						}
-						System.out.println("Current level: "+ view.level);
+//						System.out.println("Current level: "+ view.level);
 						selection.close();
 					}
 				});
@@ -158,20 +140,14 @@ public class GameMenuView extends Application{
 				Scene scene = new Scene(p2, 400, 180); // best size
 				selection.setScene(scene);
 				selection.showAndWait();
-			}
-			
-			
-		});
-		
+			}					
+		});	
 		ImageView help = new ImageView(new Image("img/game_help.png"));
 		help.setFitHeight(50);
 		help.setFitWidth(300);
 		help.setTranslateX(250);
 		help.setTranslateY(320);
-
-		
 		root.getChildren().addAll(background,start,help);
-		
 		return root;
 	}
 

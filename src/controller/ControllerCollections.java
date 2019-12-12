@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Observer;
 
-
+import javafx.scene.shape.Rectangle;
 import message.DataMessage;
 import model.ModelCollections;
 import view.PuzzlePlatformerView;
@@ -136,10 +136,12 @@ public class ControllerCollections {
 	 * @param healthLeft - the number of hearts
 	 * @param timeSeconds - countdown
 	 */
-	public void save(char[][] map, int keyNum, int healthLeft, int timeSeconds) {
+	public void save(char[][] map, int keyNum, int healthLeft, int timeSeconds,
+			int curr_x, int curr_y) {
 		DataMessage data = new DataMessage();
 		data.setHealth(healthLeft);data.setKey(keyNum);
 		data.setMap(map);data.setTime(timeSeconds);
+		data.setX(curr_x); data.setY(curr_y);
 		ReadAndWrite saveFile = new ReadAndWrite();
 		try {
 			saveFile.saveData(data);

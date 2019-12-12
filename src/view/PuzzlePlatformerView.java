@@ -1,6 +1,7 @@
 package view;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -169,7 +170,7 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 			map = input;
 		}
 		this.view = this;
-		print2DArray();
+		//print2DArray();
 		if (root == null) {
 			root = new Group();
 		}else if (root.getChildren().size() > 2) {
@@ -230,19 +231,18 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 	 * @author Eujin Ko
 	 * @author Lize 
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void start() throws Exception {
 		Stage stage = new Stage();
 		Scene scene = setUpStage(stage);	//Lize's stage setup
 		character.setOnMouseClicked(new EventHandler() {
+			@SuppressWarnings("unused")
 			@Override
 			public void handle(Event e) {
 				Node node = (Node)e.getSource();
-				System.out.println("GRID: (X,Y) = "+node.getBoundsInParent().getMaxX()+","+node.getBoundsInParent().getMaxY()+")");
-				
+//				System.out.println("GRID: (X,Y) = "+node.getBoundsInParent().getMaxX()+","+node.getBoundsInParent().getMaxY()+")");
 			}
-			
 		});
-
 		animationTimer = new AnimationTimer() {
 			@Override
 			public void handle(long now) {
@@ -254,15 +254,8 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 			}
 		};
 		animationTimer.start();
-		
-		
 	    scene.setOnKeyPressed(new MovementPressed());
 	    scene.setOnKeyReleased(new MovementReleased());
-
-
-	    // Need to fix the gravity and event handler but added to show the progress
-	    //TODO CHARACTER
-
 	}
 
 	
@@ -316,7 +309,7 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 					level = HARD;
 					view.world = view.WORLD1;
 				}
-				System.out.println("Current Level: " + level);
+//				System.out.println("Current Level: " + level);
 				selection.close();
 				readFile(null); //get new map
 				drawMap(); // update new map
@@ -324,6 +317,7 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 				itemKeyNum.setText(" x " + keyNum);
 				timeSeconds = 300; // reset countdown
 				animationTimer.start();
+				timeline.play();
 			}
 		});
 		Button b2 = new Button("Cancel");
@@ -407,17 +401,6 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 					Canvas canvas = new Canvas(unit_size, unit_size); 
 					GraphicsContext gc = canvas.getGraphicsContext2D();
 					Image wall = new Image(tile_images[world]);
-					//TEST
-					canvas.setOnMouseClicked(new EventHandler() {
-						@Override
-						public void handle(Event e) {
-							Node node = (Node)e.getSource();
-							System.out.println("GRID: (X,Y) = "+node.getLayoutX()+","+node.getLayoutY()+")");
-							
-						}
-						
-					});
-					//TEST_END
 					gc.drawImage(wall, 0, 0, unit_size, unit_size); 
 					grid.add(canvas, j, i);
 				}else if (map[i][j] == 'S') {// start
@@ -509,16 +492,6 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 					trasition.play();
 
 					root.getChildren().add(imageView);
-					//stage.setOnShowing(new Scene(root, 1000, 625)); 
-					//stage.show(new Scene(new Group (root)));
-
-					//Canvas canvas = new Canvas(103, 72); 
-					//GraphicsContext gc = canvas.getGraphicsContext2D();
-					//Image monster = new Image("img/Run.png"); 
-					//gc.drawImage(IMAGE, 103, HEIGHT, HEIGHT, HEIGHT, HEIGHT, HEIGHT, HEIGHT, HEIGHT); 
-					//grid.add(canvas, j, i);
-					//grid.add(IMAGE, j, i);
-
 				}else if (map[i][j] == 'P') {
 					Canvas canvas = new Canvas(unit_size, unit_size); 
 					GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -597,7 +570,9 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 			//lize
 			@Override
 			public void handle(ActionEvent event) { 
-				controller.save(map, keyNum, healthLeft, timeSeconds);
+				int curr_x = character_controller.getPlayerPosition().getCordX();
+    			int curr_y = character_controller.getPlayerPosition().getCordY();
+				controller.save(map, keyNum, healthLeft, timeSeconds, curr_x, curr_y);
 			}
 		});
 		MenuItem item3 = new MenuItem("Load Game");
@@ -615,7 +590,10 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 				itemKeyNum.setText(" x " + keyNum);
 				timeSeconds = temp.returnTime();
 				controller.returnViewModelController().setHealthStatus(temp.returnHealth());
+				character_controller.getPlayerPosition().setCordX(temp.returnX());
+				character_controller.getPlayerPosition().setCordY(temp.returnY() - 50);
 				animationTimer.start();
+				timeline.play();
 			}
 		});
 		menu.getItems().add(item1);
@@ -652,6 +630,8 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 						timer.setText(timeSeconds + " seconds");
 						if (timeSeconds <= 60) { // make it 60 later, now for test
 							timer.setTextFill(Color.RED);
+						}else {
+							timer.setTextFill(Color.BLACK);
 						}
 						if (timeSeconds <= 0) {
 							timeline.stop(); // also show alert, and freeze (do later)
@@ -868,20 +848,27 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 	    	if(moving_box_direction.equals("right")) {
 	    		if(node.getLayoutX() == x+unit_size && node.getLayoutY() == y) {
 //		    		System.out.println("!!!!!!!!!!!!!1");
+	    			try {
 		            grid.add(curr,moving_box_coordinate[0],moving_box_coordinate[1]);
 		    	    path.getElements().add(new LineTo(x, y));
 		    	    movingBoxTransition(path,curr);
 					movingBoxes.add(new int[] {moving_box_coordinate[0],moving_box_coordinate[1]});
+	    			}catch (Exception o) {
+	    				
+	    			}
 		    	    return;
 		        }
 	    	}
 	    	if(moving_box_direction.equals("left")) {
 	    		if(node.getLayoutX() == x-unit_size && node.getLayoutY() == y) {
 //		    		System.out.println("!!!!!!!!!!!!!1");
+	    			try {
 		            grid.add(curr,moving_box_coordinate[0],moving_box_coordinate[1]);
 		    	    path.getElements().add(new LineTo(x, y));
 		    	    movingBoxTransition(path,curr);
 					movingBoxes.add(new int[] {moving_box_coordinate[0],moving_box_coordinate[1]});
+	    			}catch (Exception o) {
+	    			}
 		    	    return;
 		        }
 	    	}
@@ -890,32 +877,44 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 	    //IF THERE'S NO BOX IN THE DIRECTION WHERE THE CHARACTER PUSHES, THEN PUT THERE
     	if(moving_box_direction.equals("right")) {
     		if(x+unit_size>=WINDOW_HEIGHT) {
+    			try {
 	            grid.add(curr,moving_box_coordinate[0],moving_box_coordinate[1]);
 	    	    path.getElements().add(new LineTo(x, y));
 	    	    movingBoxTransition(path,curr);
 				movingBoxes.add(new int[] {moving_box_coordinate[0],moving_box_coordinate[1]});
-	    	    return;
+    			}catch (Exception ex) {
+    				
+    			}
+				return;
     		}
 //    		System.out.println("MOVE BOX(MOVE_DIR)-right: "+(moving_box_coordinate[0]+1)+","+(moving_box_coordinate[1]));
     	    path.getElements().add(new MoveTo(x+unit_size, y));
     	    movingBoxTransition(path,curr);	
-			movingBoxes.add(new int[] {moving_box_coordinate[0]+1,moving_box_coordinate[1]});
-            grid.add(curr,moving_box_coordinate[0]+1,moving_box_coordinate[1]);
-            
+    	    try {
+    	    	movingBoxes.add(new int[] {moving_box_coordinate[0]+1,moving_box_coordinate[1]});
+				grid.add(curr,moving_box_coordinate[0]+1,moving_box_coordinate[1]);
+    	    }catch (Exception o) {
+    	    }
     	}else if(moving_box_direction.equals("left")) {
     		if(x-unit_size<0) {
+    			try {
 	            grid.add(curr,moving_box_coordinate[0],moving_box_coordinate[1]);
 	    	    path.getElements().add(new LineTo(x, y));
 	    	    movingBoxTransition(path,curr);
 				movingBoxes.add(new int[] {moving_box_coordinate[0],moving_box_coordinate[1]});
-	    	    return;
+    			}catch (Exception ex) {
+    				
+    			}
+				return;
     		}
 //    		System.out.println("MOVE BOX(MOVE_DIR)-left: "+(moving_box_coordinate[0]-1)+","+(moving_box_coordinate[1]));
     	    path.getElements().add(new MoveTo(x-unit_size, y));
     	    movingBoxTransition(path,curr);	
+    	    try {
 			movingBoxes.add(new int[] {moving_box_coordinate[0]-1,moving_box_coordinate[1]});
             grid.add(curr,moving_box_coordinate[0]-1,moving_box_coordinate[1]);
-            
+    	    }catch (Exception o) {
+    	    }
     	}
     	
 	}
@@ -1108,15 +1107,15 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 //				UP = true;
 //				break;
 			case RIGHT:
-				System.out.println("RIGHT");
+//				System.out.println("RIGHT");
 				RIGHT = true;
 				break;
 			case LEFT:
-				System.out.println("LEFT");
+//				System.out.println("LEFT");
 				LEFT = true;
 				break;
 			case SPACE:
-				System.out.println("JUMP");
+//				System.out.println("JUMP");
 				JUMP = true;
 				break;
 			default:
@@ -1157,7 +1156,7 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 				JUMP = false;
 				break;
     		case K:
-    			System.out.println("Pressed K!");
+//    			System.out.println("Pressed K!");
     			// get player's current coordinate
     			int curr_x = character_controller.getPlayerPosition().getCordX();
     			int curr_y = character_controller.getPlayerPosition().getCordY();

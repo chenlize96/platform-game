@@ -54,9 +54,10 @@ public class MainViewModel {
 	 * @author Eujin Ko
 	 */
 	public void movingBoxPopAndAddToStack(String direction, int[] coordinate) {
-		System.out.println("BOX(remove+model)= "+movingBoxes.remove(coordinate)+" = "+direction+" = "+Arrays.toString(coordinate) );
+		//System.out.println("BOX(remove+model)= "+movingBoxes.remove(coordinate)+" = "+direction+" = "+Arrays.toString(coordinate) );
+		movingBoxes.remove(coordinate);
 		this.movingBox_stack.put(coordinate, direction);
-		System.out.println(this.movingBox_stack.get(coordinate)+":"+Arrays.toString(coordinate));
+		//System.out.println(this.movingBox_stack.get(coordinate)+":"+Arrays.toString(coordinate));
 	}
 	/**
 	 * Returns the Direction of moving box in the stack
