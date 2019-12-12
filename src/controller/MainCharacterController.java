@@ -405,11 +405,21 @@ public class MainCharacterController {
 	public void toggleJumpStatus() {
 		character_model.toggleJump();
 	}
+	
+	/*
+	 * Add monster to the monster model
+	 * @author Suyang Chen
+	 */
 
 	public void addMonster(MonsterModel MonsterModel) {
 		monsters.addMonster(MonsterModel);
 	}
 	
+	
+	/**
+	 * Update the monster to move all monster move to right
+	 * @author Suyang Chen
+	 */
 	public void updateMonster() {
 		for (MonsterModel each: monsters.getMonster()) {
 			each.moveRight();
