@@ -13,7 +13,7 @@ public class ReadAndWrite {
 	
 	private String dir = "c://Users//Public//";
 
-	public void saveData(char[][] data) throws IOException {
+	public void saveData(DataMessage data) throws IOException {
 		String fileName = "puzzle_platformer.dat";
 		File file = new File(this.dir + fileName);
 		if(!file.createNewFile()) {
@@ -32,12 +32,12 @@ public class ReadAndWrite {
 		}
 	}
 
-	public char[][] readData() throws Exception{
+	public DataMessage readData() throws Exception{
 		File fileName = new File("c://Users//Public//puzzle_platformer.dat");
 		if(fileName.exists()) {
 			FileInputStream unsaved = new FileInputStream(fileName);
 			ObjectInputStream saved = new ObjectInputStream(unsaved);
-			char[][] temp = (char[][]) saved.readObject();
+			DataMessage temp = (DataMessage) saved.readObject();
 			saved.close();
 			return temp;
 		}

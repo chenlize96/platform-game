@@ -62,6 +62,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import message.CharacterMoveMessage;
 import message.CollectionsMessage;
+import message.DataMessage;
 import model.StaticMonsterModel;
 import model.DenseFogModel;
 import model.HorizontalMonsterModel;
@@ -95,7 +96,7 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 	private Rectangle character = new Rectangle(character_size[0], character_size[1], Color.RED); //radius = 10
 	private Label itemKeyNum;
 	public int timeSeconds = 300;
-	
+	public int healthLeft = 3;
 
 	
 	private Rectangle wall1 = new Rectangle(20, 5, Color.PINK); //radius = 10
@@ -529,8 +530,8 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 		item2.setOnAction(new EventHandler<ActionEvent>() {
 			//lize
 			@Override
-			public void handle(ActionEvent event) {
-				controller.save(map);
+			public void handle(ActionEvent event) { 
+				controller.save(map, keyNum, healthLeft, timeSeconds);
 			}
 		});
 		MenuItem item3 = new MenuItem("Load Game");
@@ -538,14 +539,17 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 			//lize
 			@Override
 			public void handle(ActionEvent event) {
-				map = controller.load();
-				System.out.println("*********here is new array******");
-				readFile(map);
+				DataMessage temp = controller.load();
+				if (temp == null) {
+					return;
+				}
+				readFile(temp.returnMap());
 				drawMap(); // update new map
-				//keyNum = 0; // reset keys
-				//itemKeyNum.setText(" x " + keyNum);
-				timeSeconds = 300; // reset countdown
-				//animationTimer.start();
+				keyNum = temp.returnKey();
+				itemKeyNum.setText(" x " + keyNum);
+				timeSeconds = temp.returnTime();
+				updateHealth(temp.returnHealth());
+				animationTimer.start();
 			}
 		});
 		menu.getItems().add(item1);
@@ -640,6 +644,7 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 	 */
 	private void updateHealth(int health_status) {
 		// the size of canvas bases on the number of hearts (modify later)
+		healthLeft = health_status;
 		clearCanvas(health_box);
 		GraphicsContext gc = health_box.getGraphicsContext2D();
 		Image heart = new Image("img/heart.png"); 

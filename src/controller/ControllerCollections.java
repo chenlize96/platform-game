@@ -6,6 +6,7 @@ import java.util.Observer;
 
 import javafx.scene.Group;
 import javafx.scene.layout.GridPane;
+import message.DataMessage;
 //import message.DataMessage;
 import model.HorizontalMonsterModel;
 import model.ModelCollections;
@@ -122,19 +123,21 @@ public class ControllerCollections {
 	}
 	
 	//lize
-	public void save(char[][] map) {
+	public void save(char[][] map, int keyNum, int healthLeft, int timeSeconds) {
 		// build new class here
-		//DataMessage date = new DataMessage();
+		DataMessage data = new DataMessage();
+		data.setHealth(healthLeft);data.setKey(keyNum);
+		data.setMap(map);data.setTime(timeSeconds);
 		ReadAndWrite saveFile = new ReadAndWrite();
 		try {
-			saveFile.saveData(map);
+			saveFile.saveData(data);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 	}
 	//lize
-	public char[][] load(){
+	public DataMessage load(){
 		ReadAndWrite saveFile = new ReadAndWrite();
 		try {
 			return saveFile.readData();
