@@ -17,6 +17,10 @@ public class MonsterModel {
 		this.velocity = velocity;
 	}
 	
+	/**
+	 * set the x position of the monster 
+	 * @param x
+	 */
 	public void setX(int x) {
 		this.x = x;
 	}
