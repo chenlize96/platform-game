@@ -184,7 +184,7 @@ public class GameMenuView extends Application{
 	public void start(Stage stage) throws Exception {
 		Parent root = createContent();
 		Scene scene = new Scene(root);
-		stage.setTitle("GAME MENU");
+		stage.setTitle("Blinking Rectangle Adventure");
 		stage.setScene(scene);
 		stage.show();
 		
