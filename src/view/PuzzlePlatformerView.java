@@ -60,6 +60,7 @@ import javafx.scene.shape.Path;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import message.CharacterMoveMessage;
 import message.CollectionsMessage;
@@ -80,6 +81,7 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 	public final int MEDIUM = 124;
 	public final int HARD = 125;
 	public final int HARD_PART2 = 126;
+	
 	
 	private int[] startpoint = {0,0};
 	private int[] exitpoint = {0,0};
@@ -509,6 +511,14 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" }) // do not modify this line
 	public Scene setUpStage(Stage stage) {
+		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+	        @Override
+	        public void handle(WindowEvent e) {
+	        	animationTimer.stop();
+	        	timeline.stop();
+	        	stage.close();
+	        }
+	     });
 		readFile(null); ////***********************************************
 		// make menu
 		Menu menu = new Menu("File"); 
