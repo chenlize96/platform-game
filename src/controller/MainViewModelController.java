@@ -6,6 +6,7 @@ import model.MainViewModel;
 /**
  * Controller class which handles the MainViewModel
  * @author Eujin Ko
+ * @author Lize Chen
  *
  */
 public class MainViewModelController {
@@ -19,6 +20,7 @@ public class MainViewModelController {
 	public MainViewModelController(MainViewModel view_model) {
 		this.view_model = view_model;
 	}
+	
 	/**
 	 * Returns the health Status
 	 * @return int (0~3) health
@@ -29,7 +31,11 @@ public class MainViewModelController {
 	}
 	
 	
-	//lize
+	/**
+	 * set the status of health
+	 * @param left - the status of health
+	 * @author Lize Chen
+	 */
 	public void setHealthStatus(int left) {
 		view_model.setHealthLeft(left);
 	}
@@ -91,13 +97,21 @@ public class MainViewModelController {
 	public void clearMovingBoxStack() {
 		view_model.clearMovingBoxStack();
 	}
-	//lize
-		
+	
+	/**
+	 * return the position of portal
+	 * @return int[]
+	 * @author Lize Chen
+	 */
 	public int[] returnPortalPosition() {
 		return view_model.returnPortalPosition();
 	}
 	
-	//lize
+	/**
+	 * return the position of key
+	 * @return int[]
+	 * @author Lize Chen
+	 */
 	public int[] returnKeyPosition() {
 		return view_model.returnKeysPosition();
 	}

@@ -48,12 +48,20 @@ public class CollectionsMessage {
 		return this.box_coordinate;
 	}
 	
-	//lize
+	/**
+	 * return the status of key
+	 * @return int
+	 * @author Lize Chen
+	 */
 	public int returnKeyStatus() {
 		return key_status;
 	}
 	
-	//lize
+	/**
+	 * return the status of portal
+	 * @return int
+	 * @author Lize Chen
+	 */
 	public boolean returnPortalStatus() {
 		return portal_status;
 	}

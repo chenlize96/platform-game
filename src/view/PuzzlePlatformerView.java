@@ -143,7 +143,11 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 	// NO CONSTRUCTOR
 	
 	
-	//Lize
+	/**
+	 * read txt file to build 2d list, and build root
+	 * @param input - if null then read file, otherwise use input
+	 * @author Lize Chen
+	 */
 	public void readFile(char[][] input) {		
 		if (input == null) {
 			if (level == EASY) {
@@ -181,7 +185,10 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 		}
 	}
 
-	//Lize
+	/**
+	 * use to check
+	 * @author Lize Chen
+	 */
 	public void print2DArray() { // helper function
 		for (int i = 0; i < map.length; i++) {
 			for (int j = 0; j <map[0].length; j++) {
@@ -191,7 +198,12 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 		}
 	}
 	
-	//Lize
+	/**
+	 * transfer file to 2d list
+	 * @param fileName - nanme of file
+	 * @return char[][]
+	 * @author Lize Chen
+	 */
 	public char[][] getMap(String fileName) {
 		Scanner sc = null;
 		char[][] map = new char[WINDOW_HEIGHT / unit_size][WINDOW_WIDTH / unit_size];  // it should be 32*24 for 2d-array
@@ -265,6 +277,12 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 		}
 	}
 	
+
+	/**
+	 * build level selection
+	 * @param stage
+	 * @author Lize Chen
+	 */
 	public void setUpLevelSelection(Stage selection) {
 		Label label1 = new Label("Level:");
 		// create radiobuttons 
@@ -370,7 +388,10 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 		}
 	}
 
-	//lize
+	/**
+	 * draw map according to 2d list
+	 * @author Lize Chen
+	 */
 	public void drawMap() {
 		// clear all things on grid
 //		root.getChildren().remove(background);
@@ -512,7 +533,11 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 		setUpController();	
 	}
 
-	//lize eujin
+	/**
+	 * set up controller
+	 * @author Lize Chen
+	 * @author Eujin Ko 
+	 */
 	public void setUpController() {
 		controller = new ControllerCollections(this,itself);
 		controller.callModelAddPlayer(startpoint, character_size);
@@ -528,10 +553,10 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 	
 	
 	/**
-	 * <ATTENTION> for now, we directly use number, we would change them to [public final] later 
+	 * set up stage
 	 * @param stage
-	 * @author Lize
-	 * @return 
+	 * @author Lize Chen
+	 * @return Scene
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" }) // do not modify this line
 	public Scene setUpStage(Stage stage) {
@@ -584,7 +609,7 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 				keyNum = temp.returnKey();
 				itemKeyNum.setText(" x " + keyNum);
 				timeSeconds = temp.returnTime();
-				updateHealth(temp.returnHealth());
+				controller.returnViewModelController().setHealthStatus(temp.returnHealth());
 				animationTimer.start();
 			}
 		});
@@ -931,7 +956,10 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 		pathTransition.play();		
 	}
 	
-	//lize
+	/**
+	 * set up portal
+	 * @author Lize Chen
+	 */
 	public void setUpPortal() {
 		int old_health = controller.returnViewModelController().healthStatus();
 		level = HARD_PART2;
@@ -939,8 +967,11 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 		drawMap(); // update new map
 		controller.returnViewModelController().setHealthStatus(old_health);
 	}
-
-	//lize (disappear on the map and show in the item bag)
+	/**
+	 * the key disappear on the map and show in the item bag
+	 * @author Lize Chen
+	 * @param keyPos - the position of key
+	 */
 	@SuppressWarnings("static-access")
 	public void pickUpKey(int keyPos) {
 		boolean flag = false;         
@@ -1138,7 +1169,12 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 
 		}
 
-		//lize
+		/**
+		 * open the doors
+		 * @param surrounding
+		 * @author Lize Chen
+		 *
+		 */
 		@SuppressWarnings("static-access")
 		public void openDoors(int[] surrounding) {
 			boolean flag = false; // indicate if open one or more doors
@@ -1169,7 +1205,12 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 			}
 		}
 
-		//lize
+		/**
+		 * return the surrounding doors
+		 * @author Lize Chen
+		 * @return int[]
+		 *
+		 */
 		public int[] returnSurroundingDoors(int x, int y) {
 //			System.out.println("x= "+x+" y= "+y);
 			int[] temp = {-100,-100,-100,-100,-100,-100,-100,-100,-100,-100};
