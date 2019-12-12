@@ -238,7 +238,7 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 		if (level == EASY) {
 			character_controller.addMonster(new StaticMonsterModel(452, 315, unit_size, 0));
 		}else if(level == MEDIUM) {
-			character_controller.addMonster(new HorizontalMonsterModel(490, 354, 140, 3));
+			character_controller.addMonster(new HorizontalMonsterModel(510, 354, 110, 3));
 		}else {
 			
 		}
@@ -450,7 +450,7 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 					animation.play();
 
 
-					Line line = new Line(500, 395, 630, 395);
+					Line line = new Line(510, 395, 620, 395);
 					PathTransition trasition = new PathTransition();
 					trasition.setNode(imageView);
 					trasition.setDuration(Duration.seconds(3));

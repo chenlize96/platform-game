@@ -5,10 +5,10 @@ package model;
  *
  */
 public class MonsterModel {
-	private int x;
-	private int y;
+	protected int x;
+	protected int y;
 	protected int size;
-	private int velocity;
+	protected int velocity;
 	
 	public MonsterModel(int x, int y, int size, int velocity) {
 		this.x = x;
