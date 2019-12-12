@@ -1,9 +1,12 @@
 package controller;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Observer;
 
+import javafx.scene.Group;
 import javafx.scene.layout.GridPane;
+//import message.DataMessage;
 import model.HorizontalMonsterModel;
 import model.ModelCollections;
 import view.PuzzlePlatformerView;
@@ -117,5 +120,30 @@ public class ControllerCollections {
 	public void callModelTick() {
 		model.tick();
 	}
+	
+	//lize
+	public void save(char[][] map) {
+		// build new class here
+		//DataMessage date = new DataMessage();
+		ReadAndWrite saveFile = new ReadAndWrite();
+		try {
+			saveFile.saveData(map);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+	//lize
+	public char[][] load(){
+		ReadAndWrite saveFile = new ReadAndWrite();
+		try {
+			return saveFile.readData();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	
 }

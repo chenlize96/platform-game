@@ -89,7 +89,6 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 	
 	public int level = EASY; // default is easy
 	private int keyNum = 0;
-	private int healthLeft = -1;
 	
 	private int unit_size = 25; // every unit in the map is 25*25    ***ATTENTION***
 	//Character
@@ -128,15 +127,19 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 	
 	
 	//Lize
-	public void readFile() {
-		if (level == EASY) {
-			map = getMap("PublicTestCases/basic.txt");// default
-		}else if (level == MEDIUM) {
-			map = getMap("PublicTestCases/medium.txt");
-		}else if (level == HARD) {
-			map = getMap("PublicTestCases/hard.txt");
-		}else if (level == HARD_PART2) {
-			map = getMap("PublicTestCases/hardPart2.txt"); 
+	public void readFile(char[][] input) {		
+		if (input == null) {
+			if (level == EASY) {
+				map = getMap("PublicTestCases/basic.txt");// default
+			}else if (level == MEDIUM) {
+				map = getMap("PublicTestCases/medium.txt");
+			}else if (level == HARD) {
+				map = getMap("PublicTestCases/hard.txt");
+			}else if (level == HARD_PART2) {
+				map = getMap("PublicTestCases/hardPart2.txt"); 
+			}
+		}else {
+			map = input;
 		}
 		this.view = this;
 		print2DArray();
@@ -267,7 +270,7 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 				}
 				System.out.println("Current Level: " + level);
 				selection.close();
-				readFile(); //get new map
+				readFile(null); //get new map
 				drawMap(); // update new map
 				keyNum = 0; // reset keys
 				itemKeyNum.setText(" x " + keyNum);
@@ -503,7 +506,7 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" }) // do not modify this line
 	public Scene setUpStage(Stage stage) {
-		readFile(); ////***********************************************
+		readFile(null); ////***********************************************
 		// make menu
 		Menu menu = new Menu("File"); 
 		MenuItem item1 = new MenuItem("New Game"); // it can handle levels, networking (do later)
@@ -523,7 +526,28 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 		});
 		//******************
 		MenuItem item2 = new MenuItem("Save Game"); // save (do later)
-		MenuItem item3 = new MenuItem("Online Game");
+		item2.setOnAction(new EventHandler<ActionEvent>() {
+			//lize
+			@Override
+			public void handle(ActionEvent event) {
+				controller.save(map);
+			}
+		});
+		MenuItem item3 = new MenuItem("Load Game");
+		item3.setOnAction(new EventHandler<ActionEvent>() {
+			//lize
+			@Override
+			public void handle(ActionEvent event) {
+				map = controller.load();
+				System.out.println("*********here is new array******");
+				readFile(map);
+				drawMap(); // update new map
+				//keyNum = 0; // reset keys
+				//itemKeyNum.setText(" x " + keyNum);
+				timeSeconds = 300; // reset countdown
+				//animationTimer.start();
+			}
+		});
 		menu.getItems().add(item1);
 		menu.getItems().add(item2);
 		menu.getItems().add(item3);
@@ -852,7 +876,7 @@ public class PuzzlePlatformerView extends Stage implements Observer {
 	public void setUpPortal() {
 		int old_health = controller.returnViewModelController().healthStatus();
 		level = HARD_PART2;
-		readFile(); //get new map
+		readFile(null); //get new map
 		drawMap(); // update new map
 		controller.returnViewModelController().setHealthStatus(old_health);
 	}

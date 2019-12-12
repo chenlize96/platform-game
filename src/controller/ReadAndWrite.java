@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import message.DataMessage;
+
 public class ReadAndWrite {
 	
 	private String dir = "c://Users//Public//";
