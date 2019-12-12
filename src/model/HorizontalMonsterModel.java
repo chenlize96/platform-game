@@ -33,7 +33,7 @@ public class HorizontalMonsterModel extends MonsterModel {
 	public void moveRight() {
 		len  += this.getVelocity();
 		len %= this.size;
-		System.out.println(len);
+		//System.out.println(len);
 		this.setX(count + len);
 	}
 	
