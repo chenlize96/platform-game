@@ -1,9 +1,9 @@
 package controller;
-import model.HorizontalMonsterModel;
+// import model.HorizontalMonsterModel;
 
 public class HorizonatalMonsterController {
-	private HorizontalMonsterModel model = null;
+	// private HorizontalMonsterModel model = null;
 	public HorizonatalMonsterController() {
-		
+
 	}
 }

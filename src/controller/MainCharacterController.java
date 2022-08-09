@@ -1,17 +1,15 @@
 package controller;
 
-
-
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 import message.CharacterMoveMessage;
 import model.MainCharacterModel;
 import view.PuzzlePlatformerView;
 import model.MonsterModel;
-import controller.MonsterController;
 
 /**
  * Controller for the MainCharacterModel
+ * 
  * @author Eujin Ko
  * @author Lize Chen
  *
@@ -26,13 +24,16 @@ public class MainCharacterController {
 	int window_height = 600;
 	int unit_size = 25;
 	final int MOVE_SIZE = 5;
-	
+
 	/**
-	 * Constructor for MainCharacterController, saves the model object into global variable
+	 * Constructor for MainCharacterController, saves the model object into global
+	 * variable
+	 * 
 	 * @param model
 	 * @author Eujin Ko
 	 */
-	public MainCharacterController(ControllerCollections main_controller, MainCharacterModel model, PuzzlePlatformerView view) {
+	public MainCharacterController(ControllerCollections main_controller, MainCharacterModel model,
+			PuzzlePlatformerView view) {
 		this.main_controller = main_controller;
 		this.character_model = model;
 		this.stage_grid = view.callGrid();
@@ -40,54 +41,55 @@ public class MainCharacterController {
 		this.monsters = new MonsterController();
 
 	}
-	
+
 	/**
 	 * to make monsters empty
+	 * 
 	 * @author Suyang Chen
 	 */
-	
+
 	public void refreshMonster() {
 		this.monsters = new MonsterController();
 	}
-	
+
 	/**
 	 * Calls the MainCharacterModel's function to move the position of the character
-	 * @param window_width width size of the window
+	 * 
+	 * @param window_width  width size of the window
 	 * @param window_height height size of the window
-	 * @param moveX x movement of main character
-	 * @param moveY y movement of main character
+	 * @param moveX         x movement of main character
+	 * @param moveY         y movement of main character
 	 * @author Eujin Ko
 	 */
 	public CharacterMoveMessage moveCharacter() {
 		int moveX = 0;
 		int moveY = 0;
-		
+
 		int dx = character_model.getdx();
 		int dy = character_model.getdy();
-//		System.out.println("velocity: "+dx+","+dy);
-		if(dx!=0) {
-			if(dx<0) {
+		// System.out.println("velocity: "+dx+","+dy);
+		if (dx != 0) {
+			if (dx < 0) {
 				moveX = -MOVE_SIZE;
 				dx += MOVE_SIZE;
-			}else {
+			} else {
 				moveX = MOVE_SIZE;
 				dx -= MOVE_SIZE;
 			}
 		}
-		
-		if(dy == 0) {
+
+		if (dy == 0) {
 			moveY = MOVE_SIZE;
-		}else if(dy<0) {
+		} else if (dy < 0) {
 			moveY = -MOVE_SIZE;
 			dy += MOVE_SIZE;
-		}else {
+		} else {
 			moveY = MOVE_SIZE;
 			dy += MOVE_SIZE;
 		}
-		
-		
-		character_model.setVelocity(dx,dy);
-		
+
+		character_model.setVelocity(dx, dy);
+
 		int curr_x = character_model.getCordX();
 		int curr_y = character_model.getCordY();
 		int after_x = curr_x + moveX;
@@ -95,181 +97,181 @@ public class MainCharacterController {
 		int char_width = character_model.getCharSizeWidth();
 		int char_height = character_model.getCharSizeHeight();
 
-//		System.out.println("CURR LOCATION("+curr_x+","+curr_y+")");
+		// System.out.println("CURR LOCATION("+curr_x+","+curr_y+")");
 
-
-		int handleY= handleYCoordinate(moveX, moveY);
+		int handleY = handleYCoordinate(moveX, moveY);
 		after_y = curr_y + handleY;
-//		after_y = 565;
+		// after_y = 565;
 		int handleX = handleXCoordinate(moveX, after_y);
 		after_x = curr_x + handleX;
-		
+
 		CharacterMoveMessage msg;
 
-		
-		
-		checkIfCollisionWithMovingBox(after_x,after_y);
-		
-		//1. Checks Collision on Walls
-		if(after_x < 0) {
-			after_x = char_width/2;
-//			System.out.println("1. COLLISON("+after_x+","+after_y+")");
-			
-		}else if(after_x +char_width > window_width) {
-			after_x = window_width-char_width;
-//			System.out.println("2. COLLISON("+after_x+","+after_y+")");
+		checkIfCollisionWithMovingBox(after_x, after_y);
+
+		// 1. Checks Collision on Walls
+		if (after_x < 0) {
+			after_x = char_width / 2;
+			// System.out.println("1. COLLISON("+after_x+","+after_y+")");
+
+		} else if (after_x + char_width > window_width) {
+			after_x = window_width - char_width;
+			// System.out.println("2. COLLISON("+after_x+","+after_y+")");
 		}
-		
-		
-		if(after_y < 0 + char_height) {
+
+		if (after_y < 0 + char_height) {
 			after_y = unit_size;
-//			System.out.println("3. COLLISON("+after_x+","+after_y+")");
-			//TODO: DEAD CONDITIONS
-			
-		}else if(after_y > window_height-char_height) {
-			after_y= window_height-char_height/2;
-//			System.out.println("4. COLLISON("+after_x+","+after_y+")");
+			// System.out.println("3. COLLISON("+after_x+","+after_y+")");
+			// DEAD CONDITIONS
+
+		} else if (after_y > window_height - char_height) {
+			after_y = window_height - char_height / 2;
+			// System.out.println("4. COLLISON("+after_x+","+after_y+")");
 			main_controller.returnViewModelController().decreaseHealth();
-			
+
 			msg = character_model.returnToStart();
 			return msg;
 		}
 
-		
-		
 		// Collision with the monster
-		for(MonsterModel each: monsters.getMonster()) {
-			//System.out.println(each.getX()+ " , " + each.getY()+"|"+after_x + " , " + after_y);
-			if ((each.getX() + 25 >=  after_x && each.getX() - 25 <= after_x && each.getY() - 36 == after_y) || 
-					(each.getX() + 25 >=  after_x && each.getX() - 25 <= after_x && each.getY() == after_y)) {
-				after_y= window_height-char_height/2;
-//				System.out.println("Monster COLLISON("+after_x+","+after_y+")");
+		for (MonsterModel each : monsters.getMonster()) {
+			// System.out.println(each.getX()+ " , " + each.getY()+"|"+after_x + " , " +
+			// after_y);
+			if ((each.getX() + 25 >= after_x && each.getX() - 25 <= after_x && each.getY() - 36 == after_y) ||
+					(each.getX() + 25 >= after_x && each.getX() - 25 <= after_x && each.getY() == after_y)) {
+				after_y = window_height - char_height / 2;
+				// System.out.println("Monster COLLISON("+after_x+","+after_y+")");
 				main_controller.returnViewModelController().decreaseHealth();
-				
+
 				msg = character_model.returnToStart();
 				return msg;
 			}
 		}
 
 		msg = character_model.moveCharacter(after_x, after_y);
-		
-		return msg;
-		
-	}
-	
 
+		return msg;
+
+	}
 
 	/**
-	 * Calculates the position of the obstacles in the stage and returns how much x coordinate to move
-	 * @param moveX how much X moves according to the velocity set
+	 * Calculates the position of the obstacles in the stage and returns how much x
+	 * coordinate to move
+	 * 
+	 * @param moveX  how much X moves according to the velocity set
 	 * @param afterY how much Y moves according to the velocity set
 	 * @return x_pos, indicates how many x coordinate to move
 	 * @author Eujin Ko
 	 */
 	public int handleXCoordinate(int moveX, int afterY) {
-		Node character = view.callCharacter();
+		// Node character = view.callCharacter();
 		double char_x = character_model.getCordX();
-		double char_y = character_model.getCordY();
+		// double char_y = character_model.getCordY();
 		int char_w = character_model.getCharSizeWidth();
 		int char_h = character_model.getCharSizeHeight();
-		
+
 		int x_pos = 0;
-		for(int i = 0; i< Math.abs(moveX); i++) {
-			for(Node child:stage_grid.getChildren()) {
+		for (int i = 0; i < Math.abs(moveX); i++) {
+			for (Node child : stage_grid.getChildren()) {
 				double x = child.getLayoutX();
-				double y = child.getLayoutY();
-				if(child.getBoundsInParent().intersects(char_x+x_pos,afterY,char_w,char_h)) {
-//					System.out.println(i+"^ CHILD="+x+" || "+y+" = "+char_x+x_pos+" || "+char_y);
-					
-					if(moveX < 0) {	//LEFT
-						if(char_x+x_pos == x+unit_size) {
-//							System.out.println(i+"^ CHILD="+x+" || "+y+" = "+char_x+x_pos+" || "+(int)(afterY));
-							return x_pos+1;
+				// double y = child.getLayoutY();
+				if (child.getBoundsInParent().intersects(char_x + x_pos, afterY, char_w, char_h)) {
+					// System.out.println(i+"^ CHILD="+x+" || "+y+" = "+char_x+x_pos+" || "+char_y);
+
+					if (moveX < 0) { // LEFT
+						if (char_x + x_pos == x + unit_size) {
+							// System.out.println(i+"^ CHILD="+x+" || "+y+" = "+char_x+x_pos+" ||
+							// "+(int)(afterY));
+							return x_pos + 1;
 						}
-//						return x_pos+1;
-						
-					}else {	//RIGHT
-						if(char_x+x_pos+char_w == x) {
-							return x_pos-1;
+						// return x_pos+1;
+
+					} else { // RIGHT
+						if (char_x + x_pos + char_w == x) {
+							return x_pos - 1;
 						}
-//						return x_pos-10;
+						// return x_pos-10;
 					}
 				}
-				
 
 			}
-			if(moveX > 0) {	//RIGHT
+			if (moveX > 0) { // RIGHT
 				x_pos += 1;
-			}else {	//LEFT
+			} else { // LEFT
 				x_pos -= 1;
 			}
-			
-//			System.out.println(x_pos);
+
+			// System.out.println(x_pos);
 		}
 		return x_pos;
-//		return x_pos;
+		// return x_pos;
 	}
 
 	/**
-	 * Calculates the position of the obstacles in the stage and returns how much y coordinate to move
-	 * @param moveX how much X moves according to the velocity set
+	 * Calculates the position of the obstacles in the stage and returns how much y
+	 * coordinate to move
+	 * 
+	 * @param moveX  how much X moves according to the velocity set
 	 * @param afterY how much Y moves according to the velocity set
 	 * @return y_pos, indicates how many y coordinate to move
 	 * @author Eujin Ko
 	 */
-	public int handleYCoordinate(int moveX, int moveY){
-		Node character = view.callCharacter();
+	public int handleYCoordinate(int moveX, int moveY) {
+		// Node character = view.callCharacter();
 		double char_x = character_model.getCordX();
 		double char_y = character_model.getCordY();
 		int char_w = character_model.getCharSizeWidth();
 		int char_h = character_model.getCharSizeHeight();
-		
+
 		int y_pos = 0;
-		for(int i = 0; i< Math.abs(moveY); i++) {
-			for(Node child:stage_grid.getChildren()) {
-				double x = child.getLayoutX();
+		for (int i = 0; i < Math.abs(moveY); i++) {
+			for (Node child : stage_grid.getChildren()) {
+				// double x = child.getLayoutX();
 				double y = child.getLayoutY();
-				if(child.getBoundsInParent().intersects(char_x,char_y+y_pos,char_w,char_h)) {
-//					System.out.println(i+"^ CHILD="+child.getBoundsInParent());
-					
-					if(moveY < 0) {	//UP
-						if((int)char_y+y_pos == (int)(y+unit_size)) {
-//							System.out.println(i+"^ CHILD="+x+" || "+(y+unit_size)+" = "+char_x+" || "+(int)(char_y+y_pos));
-							return y_pos+1;
+				if (child.getBoundsInParent().intersects(char_x, char_y + y_pos, char_w, char_h)) {
+					// System.out.println(i+"^ CHILD="+child.getBoundsInParent());
+
+					if (moveY < 0) { // UP
+						if ((int) char_y + y_pos == (int) (y + unit_size)) {
+							// System.out.println(i+"^ CHILD="+x+" || "+(y+unit_size)+" = "+char_x+" ||
+							// "+(int)(char_y+y_pos));
+							return y_pos + 1;
 						}
-						return y_pos-1;
-//						
-					}else {	//DOWN
-						if(char_y+y_pos+char_h == y) {
+						return y_pos - 1;
+						//
+					} else { // DOWN
+						if (char_y + y_pos + char_h == y) {
 							character_model.toggleJump();
-							return y_pos-1;
+							return y_pos - 1;
 						}
-						return y_pos+1;
+						return y_pos + 1;
 					}
 				}
-				
 
 			}
-			if(moveY < 0) {	//UP
+			if (moveY < 0) { // UP
 				y_pos -= 1;
-			}else {	//DOWN
+			} else { // DOWN
 				y_pos += 1;
 			}
-			
-//			System.out.println(y_pos);
+
+			// System.out.println(y_pos);
 		}
 		return y_pos;
-//		return 300;
+		// return 300;
 	}
+
 	public int returnCharacterHeight() {
 		return character_model.getCharSizeHeight();
 	}
+
 	public int returnCharacterWidth() {
 		return character_model.getCharSizeWidth();
 	}
-	
+
 	/**
 	 * Checks if there's collision with moving box
+	 * 
 	 * @param handleX x coordinate, which will move by the character in future
 	 * @param after_x x coordinate, where to move the character
 	 * @param after_y y coordinate, where to move the character
@@ -278,38 +280,40 @@ public class MainCharacterController {
 	public void checkIfCollisionWithMovingBox(int after_x, int after_y) {
 		int char_width = character_model.getCharSizeWidth();
 		int char_height = character_model.getCharSizeHeight();
-		int curr_x = character_model.getCordX();
-		int curr_y = character_model.getCordY();
-		
-		if(main_controller.returnMovingBoxes()==null) {
+		// int curr_x = character_model.getCordX();
+		// int curr_y = character_model.getCordY();
+
+		if (main_controller.returnMovingBoxes() == null) {
 			return;
 		}
-		//Collision with moving boxes
-		if(main_controller.returnMovingBoxes()==null) {
+		// Collision with moving boxes
+		if (main_controller.returnMovingBoxes() == null) {
 			return;
 		}
-		for(int[] coord: main_controller.returnMovingBoxes()) {
-			int x = coord[0]*unit_size;
-			int y = coord[1]*unit_size;
-			if(x<= after_x+char_width+1 && after_x-1<=x+unit_size) {
-				if(y < after_y+char_height+1 && after_y-1 < y+unit_size) {
-//					System.out.println("MOVING BOX(after_y): "+after_y+" right"+(curr_y+char_height+1));
-					if(x>=after_x) {
-						main_controller.returnViewModelController().movingBoxPopAndAddToStack("right",coord);
+		for (int[] coord : main_controller.returnMovingBoxes()) {
+			int x = coord[0] * unit_size;
+			int y = coord[1] * unit_size;
+			if (x <= after_x + char_width + 1 && after_x - 1 <= x + unit_size) {
+				if (y < after_y + char_height + 1 && after_y - 1 < y + unit_size) {
+					// System.out.println("MOVING BOX(after_y): "+after_y+"
+					// right"+(curr_y+char_height+1));
+					if (x >= after_x) {
+						main_controller.returnViewModelController().movingBoxPopAndAddToStack("right", coord);
 						return;
-					}else {
-						main_controller.returnViewModelController().movingBoxPopAndAddToStack("left",coord);
+					} else {
+						main_controller.returnViewModelController().movingBoxPopAndAddToStack("left", coord);
 						return;
-						
+
 					}
 
 				}
 			}
 		}
 	}
-	
+
 	/**
 	 * Checks if the Character reaches the exit
+	 * 
 	 * @param x x-cordinate
 	 * @param y y-coordinate
 	 * @return boolean indicates if player has won the stage or not
@@ -320,18 +324,19 @@ public class MainCharacterController {
 		int char_height = character_model.getCharSizeHeight();
 		int curr_x = character_model.getCordX();
 		int curr_y = character_model.getCordY();
-		
-		//System.out.println("WIN STATUS"+curr_x+","+curr_y+"-"+x+","+y);
-		if(x<= curr_x+char_width+1 && curr_x-1<=x+unit_size) {
-			if(y <= curr_y+char_height+1 && curr_y-1 <= y+unit_size) {
+
+		// System.out.println("WIN STATUS"+curr_x+","+curr_y+"-"+x+","+y);
+		if (x <= curr_x + char_width + 1 && curr_x - 1 <= x + unit_size) {
+			if (y <= curr_y + char_height + 1 && curr_y - 1 <= y + unit_size) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Checks if there is a key
+	 * 
 	 * @param keys - the coordinates of keys
 	 * @return int
 	 * @author Lize Chen
@@ -342,23 +347,25 @@ public class MainCharacterController {
 		int curr_x = character_model.getCordX();
 		int curr_y = character_model.getCordY();
 		for (int k = 0; k < keys.length / 2; k++) {
-//			System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y+
-//			"key's num = " + k + "keys'position: ("+keys[k*2]+","+keys[k*2+1]+")****************************");
-			if (keys[k * 2] <= curr_x+char_width+1 && keys[k * 2] + unit_size >= curr_x-1) {
-				if (keys[k * 2 + 1] <= curr_y+char_height+1 && keys[k * 2 + 1] + unit_size >= curr_y-1) {
-//					System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y+
-//							"key's num = " + k + "keys'position: ("+keys[k*2]+","+keys[k*2+1]+")****************************");
+			// System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y+
+			// "key's num = " + k + "keys'position:
+			// ("+keys[k*2]+","+keys[k*2+1]+")****************************");
+			if (keys[k * 2] <= curr_x + char_width + 1 && keys[k * 2] + unit_size >= curr_x - 1) {
+				if (keys[k * 2 + 1] <= curr_y + char_height + 1 && keys[k * 2 + 1] + unit_size >= curr_y - 1) {
+					// System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y+
+					// "key's num = " + k + "keys'position:
+					// ("+keys[k*2]+","+keys[k*2+1]+")****************************");
 					return k; // which key
 				}
 			}
 		}
-//		System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y);
+		// System.out.println("key STATUS: x = "+curr_x+", y = "+curr_y);
 		return -1;
 	}
-	
-	
+
 	/**
 	 * Checks if there is a portal
+	 * 
 	 * @param portal - the coordinate of portal
 	 * @return boolean
 	 * @author Lize Chen
@@ -368,69 +375,73 @@ public class MainCharacterController {
 		int curr_x = character_model.getCordX();
 		int curr_y = character_model.getCordY();
 		for (int k = 0; k < portal.length / 2; k++) {
-			if (portal[k * 2] <= curr_x+char_width+1 && portal[k * 2] + unit_size >= curr_x-1) {
-				if (portal[k * 2 + 1] <= curr_y+1 && portal[k * 2 + 1] + unit_size >= curr_y-1) {
-//					System.out.println("portal STATUS: x = "+curr_x+", y = "+curr_y);
-					return true; 
+			if (portal[k * 2] <= curr_x + char_width + 1 && portal[k * 2] + unit_size >= curr_x - 1) {
+				if (portal[k * 2 + 1] <= curr_y + 1 && portal[k * 2 + 1] + unit_size >= curr_y - 1) {
+					// System.out.println("portal STATUS: x = "+curr_x+", y = "+curr_y);
+					return true;
 				}
 			}
 		}
 		return false;
 	}
-	
-	
+
 	/**
 	 * return the position of player
+	 * 
 	 * @return MainCharacterModel
 	 * @author Lize Chen
 	 */
 	public MainCharacterModel getPlayerPosition() {
 		return character_model;
 	}
-	
-	
+
 	/**
 	 * Addes the velocity to the character model
+	 * 
 	 * @param dx x velocity
 	 * @param dy y velocity
 	 * @author Eujin Ko
 	 */
 	public void addVelocity(int dx, int dy) {
-		character_model.addVelocity(dx,dy);
+		character_model.addVelocity(dx, dy);
 	}
-	
+
 	/**
 	 * Returns the jump status of character model
+	 * 
 	 * @return boolean
 	 * @author Eujin Ko
 	 */
 	public boolean returnJumpStatus() {
 		return character_model.returnJumpStatus();
 	}
+
 	/**
 	 * Toggles the jump status of character model
+	 * 
 	 * @author Eujin Ko
 	 */
 	public void toggleJumpStatus() {
 		character_model.toggleJump();
 	}
-	
+
 	/*
 	 * Add monster to the monster model
+	 * 
 	 * @author Suyang Chen
 	 */
 
 	public void addMonster(MonsterModel MonsterModel) {
 		monsters.addMonster(MonsterModel);
 	}
-	
-	
+
 	/**
 	 * Update the monster to move all monster move to right
+	 * 
 	 * @author Suyang Chen
 	 */
 	public void updateMonster() {
-		for (MonsterModel each: monsters.getMonster()) {
+		for (MonsterModel each : monsters.getMonster()) {
 			each.moveRight();
 		}
 	}

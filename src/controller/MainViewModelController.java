@@ -3,76 +3,87 @@ package controller;
 import java.util.List;
 
 import model.MainViewModel;
+
 /**
  * Controller class which handles the MainViewModel
+ * 
  * @author Eujin Ko
  * @author Lize Chen
  *
  */
 public class MainViewModelController {
-	
+
 	MainViewModel view_model;
+
 	/**
-	 * Constructor which initializes the controller and saves the MainViewModel to control
+	 * Constructor which initializes the controller and saves the MainViewModel to
+	 * control
+	 * 
 	 * @param view_model
 	 * @author Eujin Ko
 	 */
 	public MainViewModelController(MainViewModel view_model) {
 		this.view_model = view_model;
 	}
-	
+
 	/**
 	 * Returns the health Status
+	 * 
 	 * @return int (0~3) health
 	 * @author Eujin Ko
 	 */
 	public int healthStatus() {
 		return view_model.returnHealthLeft();
 	}
-	
-	
+
 	/**
 	 * set the status of health
+	 * 
 	 * @param left - the status of health
 	 * @author Lize Chen
 	 */
 	public void setHealthStatus(int left) {
 		view_model.setHealthLeft(left);
 	}
-	
-	
+
 	/**
 	 * Decreases the health by 1
+	 * 
 	 * @author Eujin Ko
 	 */
 	public void decreaseHealth() {
 		view_model.decreaseHealth();
 	}
+
 	/**
 	 * return the exit position
+	 * 
 	 * @return int[] coordinate of the exit
 	 * @author Eujin Ko
 	 */
 	public int[] returnExitPosition() {
 		return view_model.returnExitPosition();
 	}
+
 	/**
 	 * Return list of moving boxes
+	 * 
 	 * @return List<int[]>
 	 * @author Eujin Ko
 	 */
-	public List<int[]> returnMovingBoxes(){
+	public List<int[]> returnMovingBoxes() {
 		return view_model.returnMovingBoxes();
 	}
-	
+
 	/**
 	 * 
-	 * @param path 
+	 * @param path
 	 * @author Eujin Ko
 	 */
 	public void movingBoxPopAndAddToStack(String direction, int[] coordinate) {
 		view_model.movingBoxPopAndAddToStack(direction, coordinate);
 	}
+
 	/**
 	 * 
 	 * @return
@@ -81,7 +92,7 @@ public class MainViewModelController {
 	public String returnMovingBoxStackDirection() {
 		return view_model.returnMovingBoxStackDirection();
 	}
-	
+
 	/**
 	 * 
 	 * @return
@@ -90,6 +101,7 @@ public class MainViewModelController {
 	public int[] returnMovingBoxStackCoordinate() {
 		return view_model.returnMovingBoxStackCoordinate();
 	}
+
 	/**
 	 * 
 	 * @author Eujin Ko
@@ -97,18 +109,20 @@ public class MainViewModelController {
 	public void clearMovingBoxStack() {
 		view_model.clearMovingBoxStack();
 	}
-	
+
 	/**
 	 * return the position of portal
+	 * 
 	 * @return int[]
 	 * @author Lize Chen
 	 */
 	public int[] returnPortalPosition() {
 		return view_model.returnPortalPosition();
 	}
-	
+
 	/**
 	 * return the position of key
+	 * 
 	 * @return int[]
 	 * @author Lize Chen
 	 */

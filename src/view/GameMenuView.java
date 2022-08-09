@@ -21,17 +21,19 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class GameMenuView extends Application{
+public class GameMenuView extends Application {
 	PuzzlePlatformerView puzzle_view;
+
 	/**
 	 * Creates the content of the Game Menu
+	 * 
 	 * @return parent, contains the buttons/background image
-			 * @author Eujin Ko
+	 * @author Eujin Ko
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private Parent createContent() {
-		Pane root = new Pane();		
-		ImageView background = new ImageView(new Image("img/game_background.jpg"));	
+		Pane root = new Pane();
+		ImageView background = new ImageView(new Image("img/game_background.jpg"));
 		background.setFitHeight(500);
 		background.setFitWidth(700);
 		ImageView start = new ImageView(new Image("img/game_start.png"));
@@ -42,14 +44,15 @@ public class GameMenuView extends Application{
 		start.setOnMouseClicked(new EventHandler() {
 			boolean close;
 			int CHAR_SIZE = 25;
+
 			@Override
 			public void handle(Event args) {
 				close = false;
 				puzzle_view = new PuzzlePlatformerView();
 				puzzle_view.initModality(Modality.APPLICATION_MODAL);
 				puzzle_view.setResizable(false);
-				setUpLevelSelection(new Stage(),puzzle_view);
-				if(close) {
+				setUpLevelSelection(new Stage(), puzzle_view);
+				if (close) {
 					return;
 				}
 				try {
@@ -57,11 +60,12 @@ public class GameMenuView extends Application{
 				} catch (Exception e) {
 					System.out.println("UNABLE TO LOAD THE GAME");
 				}
-				
+
 			}
-			
+
 			/**
 			 * Setups level slection stage
+			 * 
 			 * @param selection
 			 * @param view
 			 * @author Eujin Ko
@@ -69,27 +73,27 @@ public class GameMenuView extends Application{
 			 */
 			public void setUpLevelSelection(Stage selection, PuzzlePlatformerView view) {
 				@SuppressWarnings("unused")
-				Insets insets = new Insets(CHAR_SIZE+5,CHAR_SIZE+5,0,CHAR_SIZE+5);
+				Insets insets = new Insets(CHAR_SIZE + 5, CHAR_SIZE + 5, 0, CHAR_SIZE + 5);
 				// create radiobuttons for world 1
 				Label label1 = new Label("Desert World:");
-				RadioButton r1 = new RadioButton("Easy"); 
+				RadioButton r1 = new RadioButton("Easy");
 				RadioButton r2 = new RadioButton("Medium");
 				RadioButton r3 = new RadioButton("Hard");
 				r1.setSelected(true);
-				ToggleGroup tg1 = new ToggleGroup(); 
-				r1.setToggleGroup(tg1); 
+				ToggleGroup tg1 = new ToggleGroup();
+				r1.setToggleGroup(tg1);
 				r2.setToggleGroup(tg1);
 				r3.setToggleGroup(tg1);
 				HBox hbox1 = new HBox(label1, r1, r2, r3);
 				// create radiobuttons for world 2
 				Label label1_2 = new Label("Ocean World:");
-				RadioButton r1_2 = new RadioButton("Easy"); 
+				RadioButton r1_2 = new RadioButton("Easy");
 				RadioButton r2_2 = new RadioButton("Medium");
 				RadioButton r3_2 = new RadioButton("Hard");
-				r1_2.setToggleGroup(tg1); 
+				r1_2.setToggleGroup(tg1);
 				r2_2.setToggleGroup(tg1);
 				r3_2.setToggleGroup(tg1);
-				HBox hbox1_2 = new HBox(label1_2, r1_2, r2_2, r3_2);				
+				HBox hbox1_2 = new HBox(label1_2, r1_2, r2_2, r3_2);
 				hbox1.setSpacing(10);
 				hbox1_2.setSpacing(10);
 				// set buttons
@@ -97,26 +101,26 @@ public class GameMenuView extends Application{
 				b1.setOnAction(new EventHandler<ActionEvent>() {
 					@Override
 					public void handle(ActionEvent event) {
-						if(r1.isSelected()) {
+						if (r1.isSelected()) {
 							view.level = view.EASY;
 							view.world = view.WORLD1;
-						}else if (r2.isSelected()) {
+						} else if (r2.isSelected()) {
 							view.level = view.MEDIUM;
 							view.world = view.WORLD1;
-						}else if (r3.isSelected()) {
+						} else if (r3.isSelected()) {
 							view.level = view.HARD;
 							view.world = view.WORLD1;
-						}else if(r1_2.isSelected()) {
+						} else if (r1_2.isSelected()) {
 							view.level = view.EASY_2;
 							view.world = view.WORLD2;
-						}else if (r2_2.isSelected()) {
+						} else if (r2_2.isSelected()) {
 							view.level = view.MEDIUM_2;
 							view.world = view.WORLD2;
-						}else if (r3_2.isSelected()) {
+						} else if (r3_2.isSelected()) {
 							view.level = view.HARD_2;
 							view.world = view.WORLD2;
 						}
-//						System.out.println("Current level: "+ view.level);
+						// System.out.println("Current level: "+ view.level);
 						selection.close();
 					}
 				});
@@ -129,8 +133,9 @@ public class GameMenuView extends Application{
 					}
 				});
 				HBox hbox2 = new HBox(b1, b2);
-				hbox2.setAlignment(Pos.CENTER); hbox2.setSpacing(20);
-				VBox vbox = new VBox(hbox1,hbox1_2, hbox2);
+				hbox2.setAlignment(Pos.CENTER);
+				hbox2.setSpacing(20);
+				VBox vbox = new VBox(hbox1, hbox1_2, hbox2);
 				vbox.setSpacing(30);
 				vbox.setPadding(new Insets(30));
 				BorderPane p2 = new BorderPane();
@@ -140,20 +145,20 @@ public class GameMenuView extends Application{
 				Scene scene = new Scene(p2, 400, 180); // best size
 				selection.setScene(scene);
 				selection.showAndWait();
-			}					
-		});	
+			}
+		});
 		ImageView help = new ImageView(new Image("img/game_help.png"));
 		help.setFitHeight(50);
 		help.setFitWidth(300);
 		help.setTranslateX(250);
 		help.setTranslateY(320);
-		root.getChildren().addAll(background,start,help);
+		root.getChildren().addAll(background, start, help);
 		return root;
 	}
 
-	
 	/**
 	 * starts the stage
+	 * 
 	 * @author Eujin Ko
 	 */
 	@Override
@@ -163,7 +168,7 @@ public class GameMenuView extends Application{
 		stage.setTitle("Blinking Rectangle Adventure");
 		stage.setScene(scene);
 		stage.show();
-		
+
 	}
 
 }

@@ -1,6 +1,5 @@
 package placeholder_etc;
 
-
 import java.io.File;
 import java.util.Scanner;
 import javafx.scene.control.*;
@@ -18,8 +17,8 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class Puzzlebasic extends Application {
-	private static final int MOVE = 0;
-	// 25 x 25 pixel square
+    private static final int MOVE = 0;
+    // 25 x 25 pixel square
     final int SIZE = 50;
     // Points needed to draw a triangle
     final int TRIANGLE = 3;
@@ -27,8 +26,8 @@ public class Puzzlebasic extends Application {
     private int x = 1;
     Button nextMove;
     GraphicsContext gc;
-	public char[][] maze;
-	
+    public char[][] maze;
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -36,7 +35,7 @@ public class Puzzlebasic extends Application {
     @Override
     public void start(Stage primaryStage) {
         // Process the input file and store it in a 2D array of characters
-        char[][] maze = readMaze("PublicTestCases/basic.txt");
+        char[][] maze = readMaze("Map/basic.txt");
         primaryStage.setTitle("Puzzle");
 
         Group root = new Group();
@@ -59,36 +58,36 @@ public class Puzzlebasic extends Application {
 
         // Input + Text Output
         VBox vb = new VBox(2);
-        
+
         setupNodes(hb, cmdLabel, vb, command);
         nextMove.setOnAction(new CommandHandler(command));
 
         p.setCenter(canvas);
         p.setBottom(vb);
-        
+
         primaryStage.setScene(new Scene(p));
         primaryStage.show();
     }
-    
+
     class CommandHandler implements EventHandler<ActionEvent> {
-    	private TextField command;
+        private TextField command;
 
-    	CommandHandler(TextField command) {
-    		this.command = command;
-    	}
+        CommandHandler(TextField command) {
+            this.command = command;
+        }
 
-    	/*
-    	 * Button EventHandler to take input command
-    	 * when button is clicked.
-    	 */
-    	@Override
-    	public void handle(ActionEvent event) {
-    		parseLine(command.getText());
+        /*
+         * Button EventHandler to take input command
+         * when button is clicked.
+         */
+        @Override
+        public void handle(ActionEvent event) {
+            parseLine(command.getText());
 
-    	}
+        }
 
     }
-    
+
     /*
      * Sets up the TextField, label, and button to be
      * at the bottom
@@ -105,8 +104,7 @@ public class Puzzlebasic extends Application {
         vb.getChildren().add(inputCmd);
     }
 
-
-	/*
+    /*
      * Iterates over the 2D array maze and draws the shape that corresponds
      * to the character.
      */
@@ -178,20 +176,20 @@ public class Puzzlebasic extends Application {
 
         return maze;
     }
-    
+
     public void parseLine(String line) {
         System.out.println("reading " + line); // Print line for debugging
         if (line.toLowerCase().compareTo("up") == 0 && y - MOVE >= 0
                 && maze[y - MOVE][x] != '*') {
             move(y - MOVE, x);
-        } 
+        }
     }
-    
+
     /**
      * This function 'erases' the old triangle and redraws
      * it in the next move location to make it appear that
-     * the triangle is navigating the maze. int newY and 
-     * int newX represent the coordinates of the valid move. 
+     * the triangle is navigating the maze. int newY and
+     * int newX represent the coordinates of the valid move.
      */
     public void move(int newY, int newX) {
         gc.clearRect(x * SIZE, y * SIZE, SIZE, SIZE);
